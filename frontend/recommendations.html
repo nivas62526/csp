@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health & Preventive Recommendations &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="dashboard.html" class="nav-link-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="farms.html" class="nav-link-item"><i class="bi bi-building"></i><span>Farm Management</span></a></li>
+          <li class="nav-item-custom"><a href="batches.html" class="nav-link-item"><i class="bi bi-grid-fill"></i><span>Batches</span></a></li>
+          <li class="nav-item-custom"><a href="conditions.html" class="nav-link-item"><i class="bi bi-clipboard2-pulse"></i><span>Bird Conditions</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="image-prediction.html" class="nav-link-item"><i class="bi bi-camera"></i><span>Image Prediction</span><span class="badge bg-primary nav-badge">CV</span></a></li>
+          <li class="nav-item-custom"><a href="predictions.html" class="nav-link-item"><i class="bi bi-cpu-fill"></i><span>AI Predictions</span><span class="badge bg-success nav-badge">Combined</span></a></li>
+          <li class="nav-item-custom"><a href="monitoring.html" class="nav-link-item"><i class="bi bi-activity"></i><span>Health Monitoring</span></a></li>
+          <li class="nav-item-custom"><a href="recommendations.html" class="nav-link-item active"><i class="bi bi-lightbulb-fill"></i><span>Recommendations</span></a></li>
+          <li class="nav-item-custom"><a href="alerts.html" class="nav-link-item"><i class="bi bi-bell-fill"></i><span>Alerts</span></a></li>
+          <li class="nav-item-custom"><a href="vaccinations.html" class="nav-link-item"><i class="bi bi-shield-plus"></i><span>Vaccinations</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="reports.html" class="nav-link-item"><i class="bi bi-graph-up-arrow"></i><span>Reports & Analytics</span></a></li>
+          <li class="nav-item-custom"><a href="admin.html" class="nav-link-item"><i class="bi bi-shield-lock"></i><span>Admin Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="profile.html" class="nav-link-item"><i class="bi bi-gear-fill"></i><span>Settings & Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">GreenValley Broiler Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn"><i class="bi bi-list"></i></button>
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown"><i class="bi bi-bell"></i><span class="badge-ping" id="topbarNotifBadge"></span></button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header"><span class="fw-bold">Notifications</span></div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header-title">
+          <div>
+            <h1 class="page-title">Flock Health & Biosecurity Recommendations</h1>
+            <p class="page-subtitle">Evidence-based preventive management protocols tailored to current microclimate and flock risk levels</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+              <i class="bi bi-printer"></i> Print Protocols
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Safety & Veterinary Notice Banner -->
+        <div class="ai-disclaimer-box mb-4">
+          <i class="bi bi-shield-check"></i>
+          <div>
+            <strong>AI Safety & Ethical Guidance:</strong> All protocols provided below represent standard non-therapeutic husbandry, environmental, and biosecurity preventive measures. This system does <em>not</em> prescribe drug dosages or antibiotics. Always contact an avian veterinarian for diagnostic necropsy and prescription treatments.
+          </div>
+        </div>
+
+        <!-- Four Core Pillar Sections -->
+        <div class="row g-4 mb-4">
+          <!-- 1. Environment & Ventilation -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header bg-warning-subtle">
+                <h5 class="dashboard-card-title text-dark">
+                  <i class="bi bi-fan text-warning"></i> 1. Environment & Microclimate Ventilation
+                </h5>
+                <span class="badge bg-danger">Priority: High</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Continuous Air Exchange & Ammonia Control</strong>
+                    <span class="small text-muted">Increase tunnel ventilation exhaust speeds during afternoon peak temperatures to maintain ammonia (NH3) concentrations safely below 15 ppm.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Evaporative Cooling Pad Inspection</strong>
+                    <span class="small text-muted">Check cooling pad water pumps and air filters twice daily to prevent uneven humidity pockets or cold drafts.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Optimal Litter Dryness Monitoring</strong>
+                    <span class="small text-muted">Maintain poultry litter moisture between 20% and 25%. Immediately rake or top-dress damp areas near drinker lines to inhibit coccidial oocyst sporulation.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Feed & Water Quality -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header bg-success-subtle">
+                <h5 class="dashboard-card-title text-dark">
+                  <i class="bi bi-droplet-half text-success"></i> 2. Feed & Water Quality Management
+                </h5>
+                <span class="badge bg-warning text-dark">Priority: Medium</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Water Line Sanitization & Flushing</strong>
+                    <span class="small text-muted">Flush enclosed nipple drinker lines daily with cool, potable water. Ensure water temperature remains below 24°C to sustain voluntary consumption.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Anti-Stress Hydration & Electrolytes</strong>
+                    <span class="small text-muted">Provide clean water enriched with commercial poultry electrolyte stabilizers during heat-stress periods to maintain osmotic balance.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Feed Freshness & Mould Prevention</strong>
+                    <span class="small text-muted">Inspect feed pans and storage silos for feed caking or mould growth. Run feeders early in the morning and late in the evening to stimulate appetite.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Hygiene & Biosecurity -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header bg-info-subtle">
+                <h5 class="dashboard-card-title text-dark">
+                  <i class="bi bi-shield-lock-fill text-primary"></i> 3. Shed Hygiene & Biosecurity Barriers
+                </h5>
+                <span class="badge bg-danger">Priority: High</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Disinfection Footbaths & Boot Changes</strong>
+                    <span class="small text-muted">Enforce dedicated shed footwear and replenish disinfectant footbaths every 48 hours using approved broad-spectrum biocides.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Wild Bird & Rodent Exclusion</strong>
+                    <span class="small text-muted">Verify integrity of wire mesh netting across all air inlets and repair tears immediately to avoid wild bird contamination.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Vehicle & Equipment Spray Wash</strong>
+                    <span class="small text-muted">All feed transport trucks and visitor vehicles must pass through pressurized tyre wash bays prior to perimeter entry.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Health Monitoring & Clinical Surveillance -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header bg-light">
+                <h5 class="dashboard-card-title text-dark">
+                  <i class="bi bi-clipboard2-pulse text-danger"></i> 4. Health Surveillance & Isolation
+                </h5>
+                <span class="badge bg-warning text-dark">Priority: Medium</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Immediate Sick Bird Isolation</strong>
+                    <span class="small text-muted">Gently separate birds exhibiting sneezing, eye discharge, or extreme lethargy into a dedicated sick bay to curb airborne transmission.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Daily Walk-Throughs & Posture Checks</strong>
+                    <span class="small text-muted">Conduct morning and evening walks along side walls and drinker lines. Note bird vocalizations, huddling patterns, and feather quality.</span>
+                  </div>
+                  <div class="list-group-item px-0 py-2">
+                    <strong class="d-block text-dark"><i class="bi bi-check-circle-fill text-success me-1"></i> Prompt Veterinary Consultation</strong>
+                    <span class="small text-muted">If daily mortality exceeds 0.2% of the flock or respiratory rales persist for >24 hours, contact your veterinarian for diagnostic post-mortem.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Veterinary Contact Card -->
+        <div class="dashboard-card bg-light border">
+          <div class="p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+              <h5 class="fw-bold text-dark mb-1"><i class="bi bi-hospital text-danger me-2"></i>Need Professional Veterinary Consultation?</h5>
+              <p class="text-muted small mb-0">Contact your regional government avian health diagnostic lab or certified private poultry veterinarian for farm visits and tissue sampling.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary" onclick="alert('Dispatching digital telemetry report to registered veterinarian (Demo)')">
+                <i class="bi bi-send-fill me-1"></i> Share Health Telemetry with Vet
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Customer Profile | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">Customer Profile Settings</h1>
+            <p class="text-xs text-slate-500">Update your company details, avatar, and contact preferences</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('customer_profile_edit') }}" enctype="multipart/form-data" class="space-y-6">
+            <!-- Avatar Upload & Preview -->
+            <div class="flex items-center space-x-6 pb-6 border-b border-slate-100">
+                <img src="{{ g.user.avatar_url or 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-500 shadow-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Profile Avatar</label>
+                    <input type="file" name="avatar_file" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="text-[10px] text-slate-400 mt-1">PNG, JPG up to 10MB</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name *</label>
+                    <input type="text" name="full_name" value="{{ g.user.full_name }}" required
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Company / Brand Name</label>
+                    <input type="text" name="company_name" value="{{ g.user.company_name }}" placeholder="e.g. Lumina Vision Labs"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Phone Number</label>
+                    <input type="text" name="phone" value="{{ g.user.phone }}" placeholder="+1-555-0199"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Location</label>
+                    <input type="text" name="location" value="{{ g.user.location }}" placeholder="e.g. Austin, TX"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Company Bio / Brand Overview</label>
+                <textarea name="bio" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">{{ g.user.bio }}</textarea>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow transition">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

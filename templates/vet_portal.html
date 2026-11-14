@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Vet Header Banner -->
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white rounded-3xl p-6 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-semibold mb-2">
+                <span>👨‍⚕️</span>
+                <span>{{ 'పశువైద్య సేవల పోర్టల్' if current_lang == 'te' else 'Veterinary Clinical Portal' }}</span>
+            </div>
+            <h2 class="text-2xl font-black">{{ current_user.name }}</h2>
+            <p class="text-xs text-blue-100 mt-1">
+                {{ current_user.specialization or 'Registered Avian Veterinarian' }} • {{ 'రైతుల ఫారాల నిఘా & సంరక్షణ' if current_lang == 'te' else 'Farm Health Surveillance & Prescriptions' }}
+            </p>
+        </div>
+        <div class="bg-white/10 backdrop-blur px-4 py-3 rounded-2xl border border-white/20 text-right">
+            <span class="text-xs font-semibold uppercase text-blue-200">{{ 'మొత్తం ఫారాలు' if current_lang == 'te' else 'Assigned Farms' }}</span>
+            <div class="text-2xl font-black">{{ farms|length }}</div>
+        </div>
+    </div>
+
+    <!-- Active Inquiries / Consultations Queue -->
+    <div>
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center space-x-2">
+                <span>📋</span>
+                <span>{{ 'రైతుల సంప్రదింపులు & మందుల సూచనలు' if current_lang == 'te' else 'Clinical Consultations & Farmer Inquiries' }}</span>
+            </h3>
+        </div>
+
+        {% if not consultations %}
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 text-center">
+                <p class="text-sm text-slate-400">
+                    {{ 'ఇంకా ఎలాంటి సంప్రదింపుల అభ్యర్థనలు రాలేదు.' if current_lang == 'te' else 'No pending health inquiries from farmers yet.' }}
+                </p>
+            </div>
+        {% else %}
+            <div class="space-y-4">
+                {% for c in consultations %}
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold 
+                                    {% if c.status == 'open' %}bg-rose-100 text-rose-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                                    {{ c.status.upper() }}
+                                </span>
+                                <h4 class="text-base font-bold text-slate-800 mt-1">{{ c.subject }}</h4>
+                                <p class="text-xs text-slate-500">
+                                    {{ c.farm_name }} • {{ 'రైతు:' if current_lang == 'te' else 'Farmer:' }} {{ c.farmer_name }} ({{ c.farmer_phone }}) • {{ c.created_at }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Symptoms -->
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs text-slate-700">
+                            <strong>{{ 'లక్షణాలు (Reported Symptoms):' if current_lang == 'te' else 'Reported Symptoms:' }}</strong>
+                            <p class="mt-1">{{ c.symptoms }}</p>
+                        </div>
+
+                        {% if c.status == 'reviewed' %}
+                            <!-- Already Reviewed Prescription -->
+                            <div class="bg-blue-50 p-3.5 rounded-xl border border-blue-200 text-xs text-blue-900 space-y-1">
+                                <p><strong>Diagnosis:</strong> {{ c.vet_diagnosis }}</p>
+                                <p><strong>Prescription:</strong> {{ c.prescription }}</p>
+                                <p><strong>Recommendation:</strong> {{ c.recommendation }}</p>
+                            </div>
+                        {% else %}
+                            <!-- Veterinarian Reply Form -->
+                            <form method="POST" action="{{ url_for('vet_reply_consultation', consult_id=c.id) }}" class="space-y-2 pt-2 border-t border-slate-100">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Clinical Diagnosis</label>
+                                        <input type="text" name="vet_diagnosis" required placeholder="e.g. Mild CRD (Mycoplasma) + Heat Exhaustion" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Prescription & Dosage</label>
+                                        <input type="text" name="prescription" required placeholder="e.g. Tylosin 1g/L drinking water for 3 days" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Management Advice</label>
+                                    <input type="text" name="recommendation" required placeholder="e.g. Flush drinker pipes, run cooling pads 11 AM - 4 PM" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs">
+                                </div>
+                                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition">
+                                    <i class="fa-solid fa-file-medical mr-1"></i>
+                                    {{ 'మందులు & సలహా జారీ చేయండి' if current_lang == 'te' else 'Send Prescription & Advice' }}
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Monitored Farms & Flocks -->
+    <div>
+        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider mb-3">
+            {{ 'పర్యవేక్షణలో ఉన్న ఫారాలు' if current_lang == 'te' else 'Registered Farms & Flocks' }}
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {% for farm in farms %}
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-slate-800 text-sm">{{ farm.farm_name }}</h4>
+                    <p class="text-xs text-slate-500 mt-0.5">{{ farm.location or 'Location not set' }}</p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                        <span>{{ 'రైతు:' if current_lang == 'te' else 'Farmer:' }} {{ farm.farmer_name }}</span>
+                        <a href="tel:{{ farm.farmer_phone }}" class="text-blue-600 font-bold hover:underline">
+                            <i class="fa-solid fa-phone mr-1"></i>Call
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-3 bg-white p-6 rounded-2xl border border-slate-200 text-center text-slate-400 text-xs">
+                    {{ 'ఇంకా ఎలాంటి ఫారాలు నమోదు కాలేదు.' if current_lang == 'te' else 'No poultry farms registered in database yet.' }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bird Image AI Prediction &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="dashboard.html" class="nav-link-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="farms.html" class="nav-link-item"><i class="bi bi-building"></i><span>Farm Management</span></a></li>
+          <li class="nav-item-custom"><a href="batches.html" class="nav-link-item"><i class="bi bi-grid-fill"></i><span>Batches</span></a></li>
+          <li class="nav-item-custom"><a href="conditions.html" class="nav-link-item"><i class="bi bi-clipboard2-pulse"></i><span>Bird Conditions</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="image-prediction.html" class="nav-link-item active"><i class="bi bi-camera"></i><span>Image Prediction</span><span class="badge bg-primary nav-badge">CV</span></a></li>
+          <li class="nav-item-custom"><a href="predictions.html" class="nav-link-item"><i class="bi bi-cpu-fill"></i><span>AI Predictions</span><span class="badge bg-success nav-badge">Combined</span></a></li>
+          <li class="nav-item-custom"><a href="monitoring.html" class="nav-link-item"><i class="bi bi-activity"></i><span>Health Monitoring</span></a></li>
+          <li class="nav-item-custom"><a href="recommendations.html" class="nav-link-item"><i class="bi bi-lightbulb-fill"></i><span>Recommendations</span></a></li>
+          <li class="nav-item-custom"><a href="alerts.html" class="nav-link-item"><i class="bi bi-bell-fill"></i><span>Alerts</span></a></li>
+          <li class="nav-item-custom"><a href="vaccinations.html" class="nav-link-item"><i class="bi bi-shield-plus"></i><span>Vaccinations</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="reports.html" class="nav-link-item"><i class="bi bi-graph-up-arrow"></i><span>Reports & Analytics</span></a></li>
+          <li class="nav-item-custom"><a href="admin.html" class="nav-link-item"><i class="bi bi-shield-lock"></i><span>Admin Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="profile.html" class="nav-link-item"><i class="bi bi-gear-fill"></i><span>Settings & Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">GreenValley Broiler Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn"><i class="bi bi-list"></i></button>
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown"><i class="bi bi-bell"></i><span class="badge-ping" id="topbarNotifBadge"></span></button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header"><span class="fw-bold">Notifications</span></div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <h1 class="page-title">Bird Image Analysis & Computer Vision</h1>
+            <p class="page-subtitle">Deep learning visual inspection for early detection of avian physical distress symptoms</p>
+          </div>
+          <div>
+            <button type="button" class="btn btn-outline-dark shadow-xs rounded-pill px-3 py-2 fw-semibold" onclick="openCvScanHistoryModal()">
+              <i class="bi bi-clock-history me-1"></i> Scan History (<span id="cvHistoryCountBadge">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Best Practice Guidelines Alert -->
+        <div class="p-3 bg-white rounded-3 border mb-4 d-flex align-items-center gap-3">
+          <div class="p-2 rounded-circle bg-primary-subtle text-primary fs-4"><i class="bi bi-lightbulb-fill"></i></div>
+          <div class="small">
+            <strong class="text-dark d-block">Guideline for Best Visual Results:</strong>
+            <span class="text-muted">Upload a clear photo in good natural or shed lighting. Keep the bird's head, comb, eyes, and feathering centered in frame. Supported formats: JPG, JPEG, PNG.</span>
+          </div>
+        </div>
+
+        <!-- Quick Sample Image Presets Selector -->
+        <div class="dashboard-card mb-4">
+          <div class="p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold small text-dark"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Sample Images (Click to Test Instantly):</span>
+            </div>
+            <div class="row g-2">
+              <div class="col-6 col-md-3">
+                <button type="button" class="btn btn-sm btn-outline-success w-100 text-start" onclick="loadSamplePreset('healthy')">
+                  <i class="bi bi-check-circle me-1"></i> Healthy Broiler (Baseline)
+                </button>
+              </div>
+              <div class="col-6 col-md-3">
+                <button type="button" class="btn btn-sm btn-outline-warning w-100 text-start" onclick="loadSamplePreset('respiratory')">
+                  <i class="bi bi-exclamation-circle me-1"></i> Respiratory Distress Suspect
+                </button>
+              </div>
+              <div class="col-6 col-md-3">
+                <button type="button" class="btn btn-sm btn-outline-danger w-100 text-start" onclick="loadSamplePreset('fowlpox')">
+                  <i class="bi bi-shield-x me-1"></i> Fowl Pox Suspect
+                </button>
+              </div>
+              <div class="col-6 col-md-3">
+                <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start" onclick="loadSamplePreset('lethargy')">
+                  <i class="bi bi-dash-circle me-1"></i> Lethargy / Gut Stress
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Left Column: Upload & Live Preview Zone -->
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title"><i class="bi bi-upload text-primary"></i> Image Capture & Upload</h5>
+                <span class="badge bg-light text-dark border">JPG, JPEG, PNG</span>
+              </div>
+              <div class="dashboard-card-body">
+                <!-- Dropzone Area -->
+                <div class="upload-dropzone mb-3" id="imageDropzone">
+                  <i class="bi bi-cloud-arrow-up dropzone-icon"></i>
+                  <h5 class="fw-bold">Drag and drop bird image here</h5>
+                  <p class="text-muted small mb-3">or browse from your local device or camera</p>
+                  <label for="imageFileInput" class="btn btn-outline-primary btn-sm px-3">
+                    <i class="bi bi-folder2-open me-1"></i> Choose Image File
+                  </label>
+                  <input type="file" id="imageFileInput" class="d-none" accept="image/jpeg, image/jpg, image/png">
+                </div>
+
+                <!-- Preview Area -->
+                <div id="imagePreviewContainer" class="d-none">
+                  <div class="image-preview-wrapper mb-3">
+                    <img id="imagePreview" src="" alt="Bird Preview">
+                    <div class="scanner-laser" id="scannerLaser"></div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary flex-fill" id="runCvAnalysisBtn">
+                      <i class="bi bi-cpu-fill"></i> Analyze Image with AI
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" id="removeImageBtn">
+                      <i class="bi bi-trash"></i> Remove Image
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Direct Voice Disease Recognition & Instant Care Card -->
+                <div class="card p-3 border-2 border-primary-subtle rounded-3 mt-3 mb-2 shadow-sm" id="cvDirectVoiceCard" style="background: linear-gradient(145deg, #f0fdf4 0%, #e0f2fe 100%);">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge bg-danger text-white px-2 py-1"><i class="bi bi-mic-fill me-1"></i> Voice AI</span>
+                      <strong class="text-dark small" data-i18n="directVoiceCardTitle">🎙️ డైరెక్ట్ వాయిస్ వ్యాధి గుర్తింపు & చికిత్స</strong>
+                    </div>
+                    <div class="btn-group btn-group-sm" role="group" id="cvLangButtonGroup">
+                      <button type="button" class="btn btn-outline-success py-0 px-2 fw-bold small scan-lang-btn" data-lang="te" onclick="changeCvLanguage('te')">తెలుగు</button>
+                      <button type="button" class="btn btn-outline-success py-0 px-2 fw-bold small scan-lang-btn" data-lang="en" onclick="changeCvLanguage('en')">EN</button>
+                      <button type="button" class="btn btn-outline-success py-0 px-2 fw-bold small scan-lang-btn" data-lang="hi" onclick="changeCvLanguage('hi')">हिन्दी</button>
+                    </div>
+                  </div>
+
+                  <p class="text-muted small mb-2" data-i18n="voiceDiseaseSub" style="font-size: 0.78rem;">
+                    రాణీఖేత్, రొంప, కాక్సిడియోసిస్, ఫౌల్ పాక్స్, కోరిజా మొదలైన వ్యాధుల పేర్లు లేదా లక్షణాలు చెప్పండి.
+                  </p>
+
+                  <!-- Voice Action Buttons: Big Mic + Enter / Submit Button -->
+                  <div class="d-flex gap-2 my-2">
+                    <button type="button" class="btn btn-danger btn-lg rounded-pill shadow px-3 py-2 flex-grow-1 fw-bold d-flex align-items-center justify-content-center gap-2" id="cvDirectVoiceBtn" onclick="VoiceInput.toggleListening('cvSymptomsInput', 'cvDirectVoiceBtn')" style="font-size: 0.92rem;">
+                      <i class="bi bi-mic-fill fs-5"></i>
+                      <span id="cvDirectVoiceBtnText" data-i18n="speakDiseaseBtn">🎙️ మాట్లాడండి</span>
+                    </button>
+                    <button type="button" class="btn btn-success btn-lg rounded-pill shadow px-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" onclick="submitCvSymptoms()" title="Submit spoken symptoms and generate output immediately" style="font-size: 0.92rem;">
+                      <i class="bi bi-arrow-return-left fs-5"></i>
+                      <span>↵ Submit</span>
+                    </button>
+                  </div>
+
+                  <!-- Real-time Voice Listening / Recognition Banner -->
+                  <div id="mobVoiceListeningStatus" class="alert alert-info py-2 px-3 small my-2 d-none align-items-center justify-content-between rounded-3">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="spinner-grow spinner-grow-sm text-danger" role="status"></span>
+                      <span id="mobVoiceListeningText" class="fw-semibold">Listening... Speak now</span>
+                    </div>
+                    <div class="d-flex gap-1 align-items-center">
+                      <button type="button" class="btn btn-sm btn-success rounded-pill px-2 py-0 fw-bold" onclick="submitCvSymptoms()" style="font-size: 0.75rem;">
+                        <i class="bi bi-check-circle me-1"></i><span data-i18n="doneSpeakingBtn">✅ పూర్తయింది</span>
+                      </button>
+                      <button type="button" class="btn-close btn-sm p-1" onclick="VoiceInput.recognition && VoiceInput.recognition.stop()"></button>
+                    </div>
+                  </div>
+
+                  <!-- Spoken Transcript Display -->
+                  <div id="cvVoiceSpokenBox" class="p-2 bg-white rounded-3 border small my-2 d-none">
+                    <span class="text-muted d-block" style="font-size: 0.72rem;"><i class="bi bi-soundwave me-1 text-primary"></i> Spoken Disease / Symptoms:</span>
+                    <span id="cvVoiceSpokenText" class="fw-bold text-dark"></span>
+                  </div>
+
+                  <!-- Instant Detected Disease Alert Box -->
+                  <div id="cvVoiceDiseaseAlertBox" class="p-3 bg-white rounded-3 border-2 border-danger shadow-sm mt-2 d-none">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <div>
+                        <span class="badge bg-danger px-2 py-1 mb-1" id="cvVoiceRiskBadge">హై రిస్క్ / High Risk</span>
+                        <h6 class="fw-bold text-danger mb-0" id="cvVoiceDiseaseHeading">🚨 రాణీఖేత్ వ్యాధి (Ranikhet / Newcastle)</h6>
+                      </div>
+                      <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2 fw-semibold" onclick="VoiceInput.speakCurrentOutput()" title="Listen audio advice" style="font-size: 0.75rem;">
+                          <i class="bi bi-volume-up-fill me-1"></i><span data-i18n="listenAudioBtn">🔊 వినండి</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2" onclick="dismissVoiceDiseaseAlert()">&times;</button>
+                      </div>
+                    </div>
+                    <div class="p-2 bg-light rounded-2 border small mb-2" id="cvVoiceCareText" style="font-size: 0.78rem;">
+                      <strong>తక్షణ చికిత్స & జాగ్రత్తలు:</strong> సోకిన కోళ్లను వెంటనే వేరు చేయండి. లాసోటా వాక్సిన్ మరియు ఎలక్ట్రోలైట్స్ అందించండి.
+                    </div>
+                    <div class="d-flex gap-2">
+                      <a id="cvVoiceWhatsAppBtn" href="#" target="_blank" class="btn btn-sm btn-success rounded-pill flex-fill fw-bold" style="font-size: 0.8rem;">
+                        <i class="bi bi-whatsapp me-1"></i> <span data-i18n="consultVetWhatsApp">వాట్సాప్‌లో డాక్టర్‌తో సంప్రదించండి</span>
+                      </a>
+                      <button type="button" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold" onclick="fillSymptomsFromVoice()" style="font-size: 0.8rem;">
+                        <i class="bi bi-check2-circle me-1"></i> <span data-i18n="voiceApplyToScan">స్కాన్‌కు జోడించండి</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Hen Observed Symptoms Input with Voice & Multi-Language Support -->
+                <div class="card p-3 border rounded-3 bg-light mt-3 mb-2" id="cvSymptomsCard">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label fw-bold mb-0 text-dark small" for="cvSymptomsInput">
+                      <i class="bi bi-clipboard2-pulse-fill text-danger me-1"></i>
+                      <span data-i18n="henSymptoms">Hen Observed Symptoms</span>
+                    </label>
+                    <div class="d-flex gap-1">
+                      <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0" id="cvVoiceMicBtn" onclick="VoiceInput.toggleListening('cvSymptomsInput', 'cvVoiceMicBtn')" title="Dictate symptoms by voice" style="font-size: 0.75rem;">
+                        <i class="bi bi-mic me-1"></i><span data-i18n="voiceInput">Voice</span>
+                      </button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0" onclick="clearCvSymptoms()" title="Clear symptoms" style="font-size: 0.75rem;">
+                        <i class="bi bi-x-circle me-1"></i><span data-i18n="clearSymptoms">Clear</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <textarea id="cvSymptomsInput" class="form-control mb-2 rounded-3" rows="2" placeholder="Describe symptoms: e.g., sneezing, coughing, watery eyes, diarrhea, pale comb, wing droop, lethargic..." data-i18n-placeholder="enterHenSymptomsPlaceholder" onkeydown="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); submitCvSymptoms(); }"></textarea>
+
+                  <!-- Big Green Submit / Enter Button -->
+                  <button type="button" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow-xs mb-2" onclick="submitCvSymptoms()">
+                    <i class="bi bi-arrow-return-left me-1"></i> <span data-i18n="submitSymptomBtn">↵ సమర్పించండి / Enter (విశ్లేషించండి)</span>
+                  </button>
+
+                  <!-- Quick tap chips -->
+                  <div class="d-flex flex-wrap gap-1" id="cvQuickSymptomChips">
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="cough" onclick="toggleCvSymptomChip(this, 'cough')"><span data-i18n="chipCough">🤧 Cough / Sneeze</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="eyes" onclick="toggleCvSymptomChip(this, 'eyes')"><span data-i18n="chipEyes">👁️ Swollen Eyes</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="diarrhea" onclick="toggleCvSymptomChip(this, 'diarrhea')"><span data-i18n="chipDiarrhea">💧 Diarrhea</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="comb" onclick="toggleCvSymptomChip(this, 'comb')"><span data-i18n="chipComb">🐓 Comb Swelling</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="lethargic" onclick="toggleCvSymptomChip(this, 'lethargic')"><span data-i18n="chipLethargic">💤 Lethargic</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="feathers" onclick="toggleCvSymptomChip(this, 'feathers')"><span data-i18n="chipFeathers">🪶 Ruffled Feathers</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="appetite" onclick="toggleCvSymptomChip(this, 'appetite')"><span data-i18n="chipAppetite">📉 Low Feed</span></button>
+                    <button type="button" class="btn btn-sm btn-white border rounded-pill py-1 px-2 text-nowrap small cv-symptom-chip" data-symptom-key="legs" onclick="toggleCvSymptomChip(this, 'legs')"><span data-i18n="chipLegs">🦿 Leg Weakness</span></button>
+                  </div>
+                </div>
+
+                <!-- Scanning Progress Bar -->
+                <div id="scanProgressContainer" class="mt-3 d-none">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span class="fw-bold text-primary"><i class="bi bi-arrow-repeat spin me-1"></i> Running Neural Vision Feature Extraction...</span>
+                    <span class="fw-bold" id="scanProgressPercent">0%</span>
+                  </div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="scanProgressBar" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Prediction Results -->
+          <div class="col-lg-6">
+            <!-- Empty state when no image analyzed yet -->
+            <div id="emptyResultPlaceholder" class="dashboard-card text-center p-5">
+              <i class="bi bi-camera empty-state-icon"></i>
+              <h5 class="empty-state-title">No Image Analyzed Yet</h5>
+              <p class="empty-state-text">Select a sample photo from above or upload a bird image to view Computer Vision biometrics and risk scoring.</p>
+            </div>
+
+            <!-- Result Card -->
+            <div id="cvResultCard" class="prediction-result-card risk-low d-none">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-success px-3 py-2 fw-bold" id="cvRiskBadge">
+                  <i class="bi bi-check-circle-fill me-1"></i> Low Visual Risk
+                </span>
+                <span class="badge bg-light text-dark border fw-bold" id="cvConfidence">96.4% Confidence</span>
+              </div>
+
+              <h4 class="fw-bold mb-2" id="cvConditionTitle">Healthy Plumage & Alert Posture</h4>
+              <p class="text-muted small mb-2" id="cvSummary">
+                Visual Health Indicator: No ocular discharge, comb crusting, or feather disarray detected. Bird exhibits healthy upright stance.
+              </p>
+
+              <!-- Evaluated Hen Symptoms Display -->
+              <div id="cvReportedSymptomsBox" class="p-2 bg-warning-subtle rounded-3 border border-warning-subtle small mb-3 d-none">
+                <strong class="text-warning-emphasis d-block" data-i18n="reportedHenSymptoms"><i class="bi bi-clipboard2-pulse me-1"></i> Reported Hen Symptoms:</strong>
+                <span id="cvReportedSymptomsText" class="text-dark small"></span>
+              </div>
+
+              <!-- Feature Biometric Matrix -->
+              <h6 class="fw-bold small text-muted text-uppercase mb-2">Detected Visual Biometric Features</h6>
+              <div class="row g-2 mb-3" id="cvFeaturesContainer"></div>
+
+              <!-- Safety & Precautions Box -->
+              <div class="p-3 bg-danger-subtle rounded-3 border border-danger-subtle mb-3">
+                <strong class="d-flex align-items-center small text-danger fw-bold mb-2">
+                  <i class="bi bi-shield-fill-exclamation me-2 fs-6"></i>
+                  <span data-i18n="safetyPrecautions">Safety & Biosecurity Precautions</span>
+                </strong>
+                <ul id="cvSafetyList" class="small text-danger-emphasis mb-0 ps-3"></ul>
+              </div>
+
+              <!-- AI Predictions for Flock Progression -->
+              <div class="p-3 bg-warning-subtle rounded-3 border border-warning-subtle mb-3">
+                <strong class="d-flex align-items-center small text-warning-emphasis fw-bold mb-2">
+                  <i class="bi bi-graph-up-arrow me-2 fs-6"></i>
+                  <span data-i18n="aiPredictions">Flock AI Predictions & Projections</span>
+                </strong>
+                <ul id="cvPredictionsList" class="small text-warning-emphasis mb-0 ps-3"></ul>
+              </div>
+
+              <!-- Recommended Preventive & Treatment Guidance -->
+              <div class="p-3 bg-light rounded-3 border mb-3">
+                <strong class="d-block small text-dark mb-1"><i class="bi bi-bandaid text-primary me-1"></i> <span data-i18n="treatments">Treatment Protocols & Guidance</span>:</strong>
+                <span class="small text-muted" id="cvGuidance">Maintain baseline hygiene, clean drinking water, and standard feeding intervals.</span>
+                <div id="cvTreatmentsContainer" class="mt-2 pt-2 border-top d-none">
+                  <div class="small fw-semibold text-primary mb-1">Recommended Interventions:</div>
+                  <ul id="cvTreatmentsList" class="small text-muted mb-0 ps-3"></ul>
+                </div>
+              </div>
+
+              <!-- AI Safety Disclaimer -->
+              <div class="ai-disclaimer-box mb-3">
+                <i class="bi bi-shield-check"></i>
+                <span class="small">
+                  <strong>AI Safety Notice:</strong> Computer Vision inferences are early-warning screening aids. They do not constitute a confirmed veterinary diagnosis.
+                </span>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" onclick="speakCvResultAudio()" id="cvAudioBtn">
+                  <i class="bi bi-volume-up-fill me-1"></i> <span data-i18n="listenAudioBtn">🔊 Listen AI Advice</span>
+                </button>
+                <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold" onclick="openCvScanHistoryModal()">
+                  <i class="bi bi-clock-history me-1"></i> <span data-i18n="scanHistory">View in History</span>
+                </button>
+                <a href="predictions.html" class="btn btn-primary btn-sm rounded-pill flex-fill fw-bold">
+                  <i class="bi bi-layers me-1"></i> Combined Analysis &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/voice-input.js"></script>
+  <script src="assets/js/prediction.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    let currentImageSrc = '';
+    let currentSamplePreset = null;
+
+    const SYMPTOM_KEY_NAMES = {
+      cough: { en: 'Coughing / Sneezing', te: 'దగ్గు / తుమ్ములు', hi: 'खांसी / छींक', ta: 'இருமல் / தும்மல்', bn: 'কাশি / হাঁচি', es: 'Tos / Estornudo' },
+      eyes: { en: 'Swollen / Watery Eyes', te: 'కళ్ల వాపు / నీరు', hi: 'सूजी आंखें', ta: 'கண்கள் வீக்கம்', bn: 'ফোলা চোখ', es: 'Ojos hinchados' },
+      diarrhea: { en: 'Diarrhea / Wet Droppings', te: 'విరేచనాలు', hi: 'दस्त / पतला मल', ta: 'கழிச்சல் / பேதி', bn: 'ডায়রিয়া', es: 'Diarrea' },
+      comb: { en: 'Swollen / Pale Comb', te: 'జుట్టు / తల వాపు', hi: 'कलगी सूजन', ta: 'கொண்டை வீக்கம்', bn: 'ঝুঁটি ফোলা', es: 'Cresta hinchada' },
+      lethargic: { en: 'Lethargic / Dullness', te: 'నీరసం / బద్ధకం', hi: 'सुस्ती / कमजोरी', ta: 'சோர்வு / மந்தம்', bn: 'অলসতা', es: 'Letárgico' },
+      feathers: { en: 'Ruffled Feathers', te: 'ఈకలు రాలడం', hi: 'बिखरे पंख', ta: 'சிலிர்த்த இறகுகள்', bn: 'খসখসে পালক', es: 'Plumas erizadas' },
+      appetite: { en: 'Loss of Appetite', te: 'మేత తినకపోవడం', hi: 'कम दाना खाना', ta: 'தீவனம் குறைவு', bn: 'কম খাবার', es: 'Poco apetito' },
+      legs: { en: 'Leg Weakness / Limp', te: 'కాళ్ల బలహీనత / కుంటితనం', hi: 'पैर कमजोरी / लंगड़ाना', ta: 'கால் பலவீனம்', bn: 'পায়ের দুর্বলতা', es: 'Debilidad patas' }
+    };
+
+    function changeCvLanguage(lang) {
+      if (typeof I18n !== 'undefined') {
+        I18n.setLanguage(lang);
+      }
+      updateCvLangButtons(lang);
+      const langNames = { en: 'English', te: 'తెలుగు (Telugu)', hi: 'हिन्दी (Hindi)', ta: 'தமிழ் (Tamil)', bn: 'বাংলা (Bengali)', es: 'Español' };
+      const voicePrompt = (typeof I18n !== 'undefined') ? I18n.get('voiceListeningPrompt', 'Voice will listen in this language') : 'Voice will listen in this language';
+      showToast(`${voicePrompt} [${langNames[lang] || lang}]`, 'info');
+    }
+
+    function updateCvLangButtons(lang) {
+      const activeLang = lang || localStorage.getItem('smart_poultry_lang') || 'te';
+      document.querySelectorAll('.scan-lang-btn').forEach(btn => {
+        if (btn.getAttribute('data-lang') === activeLang) {
+          btn.classList.add('active', 'btn-success', 'text-white');
+          btn.classList.remove('btn-outline-success');
+        } else {
+          btn.classList.remove('active', 'btn-success', 'text-white');
+          btn.classList.add('btn-outline-success');
+        }
+      });
+    }
+
+    window.addEventListener('languageChanged', (e) => {
+      const lang = (e.detail && e.detail.lang) || localStorage.getItem('smart_poultry_lang') || 'te';
+      updateCvLangButtons(lang);
+    });
+
+    function toggleCvSymptomChip(btn, symptomKey) {
+      const input = document.getElementById('cvSymptomsInput');
+      if (!input) return;
+
+      const currentLang = localStorage.getItem('smart_poultry_lang') || 'en';
+      const map = SYMPTOM_KEY_NAMES[symptomKey];
+      const localizedName = map ? (map[currentLang] || map['en']) : symptomKey;
+
+      let currentVal = input.value.trim();
+      let parts = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
+      
+      const allVariations = map ? Object.values(map).map(v => v.toLowerCase()) : [symptomKey.toLowerCase()];
+      const index = parts.findIndex(p => allVariations.includes(p.toLowerCase()));
+
+      if (index >= 0) {
+        parts.splice(index, 1);
+        btn.classList.remove('btn-success', 'text-white');
+        btn.classList.add('btn-white', 'border');
+      } else {
+        parts.push(localizedName);
+        btn.classList.remove('btn-white', 'border');
+        btn.classList.add('btn-success', 'text-white');
+      }
+      input.value = parts.join(', ');
+    }
+
+    function clearCvSymptoms() {
+      const input = document.getElementById('cvSymptomsInput');
+      if (input) input.value = '';
+      document.querySelectorAll('#cvQuickSymptomChips .cv-symptom-chip').forEach(btn => {
+        btn.classList.remove('btn-success', 'text-white');
+        btn.classList.add('btn-white', 'border');
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof I18n !== 'undefined') {
+        I18n.init();
+      }
+      updateCvLangButtons();
+      initDropzone();
+      updateCvHistoryBadge();
+      // Pre-load healthy sample as default
+      loadSamplePreset('healthy');
+    });
+
+    function initDropzone() {
+      const dropzone = document.getElementById('imageDropzone');
+      const fileInput = document.getElementById('imageFileInput');
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      const previewImg = document.getElementById('imagePreview');
+      const removeBtn = document.getElementById('removeImageBtn');
+      const analyzeBtn = document.getElementById('runCvAnalysisBtn');
+
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFileSelect(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFileSelect(e.target.files[0]);
+        }
+      });
+
+      removeBtn.addEventListener('click', () => {
+        currentImageSrc = '';
+        currentSamplePreset = null;
+        fileInput.value = '';
+        previewContainer.classList.add('d-none');
+        dropzone.classList.remove('d-none');
+        document.getElementById('cvResultCard').classList.add('d-none');
+        document.getElementById('emptyResultPlaceholder').classList.remove('d-none');
+      });
+
+      analyzeBtn.addEventListener('click', () => {
+        runImageAnalysis();
+      });
+    }
+
+    function handleFileSelect(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        currentImageSrc = e.target.result;
+        currentSamplePreset = null;
+        displayPreview(currentImageSrc);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadSamplePreset(presetKey) {
+      const sample = SAMPLE_PREDICTIONS[presetKey];
+      if (!sample) return;
+      currentSamplePreset = presetKey;
+      currentImageSrc = sample.imageUrl;
+      displayPreview(currentImageSrc);
+      runImageAnalysis();
+    }
+
+    function displayPreview(src) {
+      const dropzone = document.getElementById('imageDropzone');
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      const previewImg = document.getElementById('imagePreview');
+
+      previewImg.src = src;
+      dropzone.classList.add('d-none');
+      previewContainer.classList.remove('d-none');
+    }
+
+    function runImageAnalysis() {
+      const laser = document.getElementById('scannerLaser');
+      const progressContainer = document.getElementById('scanProgressContainer');
+      const progressBar = document.getElementById('scanProgressBar');
+      const progressPercent = document.getElementById('scanProgressPercent');
+      const emptyPlaceholder = document.getElementById('emptyResultPlaceholder');
+      const resultCard = document.getElementById('cvResultCard');
+
+      laser.style.display = 'block';
+      progressContainer.classList.remove('d-none');
+      emptyPlaceholder.classList.add('d-none');
+      resultCard.classList.add('d-none');
+
+      let progress = 0;
+      const interval = setInterval(async () => {
+        progress += 20;
+        progressBar.style.width = `${progress}%`;
+        progressPercent.textContent = `${progress}%`;
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          laser.style.display = 'none';
+          progressContainer.classList.add('d-none');
+
+          const symptoms = document.getElementById('cvSymptomsInput') ? document.getElementById('cvSymptomsInput').value.trim() : '';
+          const analysis = await AIPredictor.analyzeImage(currentImageSrc, currentSamplePreset, symptoms);
+          renderCvResult(analysis);
+          showToast(`Image analysis completed: ${analysis.riskLevel} Visual Risk`, analysis.riskLevel === 'High' ? 'danger' : 'success');
+        }
+      }, 120);
+    }
+
+      // Render Safety & Precautions
+      const safetyList = document.getElementById('cvSafetyList');
+      if (safetyList) {
+        const precautions = res.safetyPrecautions && res.safetyPrecautions.length ? res.safetyPrecautions : [
+          'Maintain clean, disinfected drinking water lines.',
+          'Isolate any bird showing lethargy, nasal discharge or feather droop.',
+          'Enforce strict footbath disinfection at shed entry points.'
+        ];
+        safetyList.innerHTML = precautions.map(p => `<li>${p}</li>`).join('');
+      }
+
+      // Render AI Predictions
+      const predList = document.getElementById('cvPredictionsList');
+      if (predList) {
+        const predictions = res.predictions && res.predictions.length ? res.predictions : [
+          'Feed conversion efficiency projected at 1.48 FCR under standard care.',
+          'Flock mortality probability < 0.8% over next 7 days.',
+          'Expected target market weight reachable on schedule.'
+        ];
+        predList.innerHTML = predictions.map(p => `<li>${p}</li>`).join('');
+      }
+
+      // Render Treatments
+      const treatBox = document.getElementById('cvTreatmentsContainer');
+      const treatList = document.getElementById('cvTreatmentsList');
+      if (treatBox && treatList) {
+        if (res.treatments && res.treatments.length) {
+          treatList.innerHTML = res.treatments.map(t => `<li>${t}</li>`).join('');
+          treatBox.classList.remove('d-none');
+        } else {
+          treatBox.classList.add('d-none');
+        }
+      }
+
+      // Auto-save to scan history
+      try {
+        if (typeof MockAPI !== 'undefined' && MockAPI.saveScanResult) {
+          MockAPI.saveScanResult({
+            condition: res.visualCondition,
+            riskLevel: res.riskLevel,
+            confidence: res.confidence,
+            summary: res.aiSummary,
+            safetyPrecautions: res.safetyPrecautions || [],
+            predictions: res.predictions || [],
+            treatments: res.treatments || [],
+            guidance: res.recommendedActions,
+            symptoms: res.reportedSymptoms || '',
+            thumbnail: currentImageSrc || ''
+          });
+          updateCvHistoryBadge();
+        }
+      } catch (err) {
+        console.warn('Could not auto-save scan result:', err);
+      }
+
+      resultCard.classList.remove('d-none');
+    }
+
+    function updateCvHistoryBadge() {
+      const badge = document.getElementById('cvHistoryCountBadge');
+      if (!badge || typeof MockAPI === 'undefined') return;
+      const history = MockAPI.getScanHistory();
+      badge.textContent = history.length;
+    }
+
+    function speakCvResultAudio() {
+      const title = document.getElementById('cvConditionTitle')?.textContent || '';
+      const summary = document.getElementById('cvSummary')?.textContent || '';
+      const guidance = document.getElementById('cvGuidance')?.textContent || '';
+      const textToSpeak = `${title}. ${summary}. ${guidance}`;
+
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        const currentLang = localStorage.getItem('smart_poultry_lang') || 'en';
+        utterance.lang = currentLang === 'te' ? 'te-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-US';
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+        showToast('Playing AI diagnostic audio...', 'info');
+      } else {
+        showToast('Text-to-speech is not supported on this browser.', 'warning');
+      }
+    }
+
+    function openCvScanHistoryModal() {
+      renderCvScanHistory();
+      const modalEl = document.getElementById('cvScanHistoryModal');
+      if (modalEl) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+      }
+    }
+
+    function renderCvScanHistory() {
+      const container = document.getElementById('cvScanHistoryList');
+      if (!container || typeof MockAPI === 'undefined') return;
+
+      const history = MockAPI.getScanHistory();
+      if (!history || history.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-5 text-muted">
+            <i class="bi bi-clock-history fs-1 d-block mb-2 text-secondary"></i>
+            <h6 class="fw-bold">No Scan History Yet</h6>
+            <p class="small mb-0">Captured scans and AI evaluations will be automatically saved here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = history.map(item => {
+        const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Recent';
+        const riskClass = item.riskLevel === 'High' ? 'danger' : item.riskLevel === 'Medium' ? 'warning' : 'success';
+        const precautionsHtml = item.safetyPrecautions && item.safetyPrecautions.length
+          ? `<div class="mt-2 p-2 bg-danger-subtle rounded border border-danger-subtle small text-danger-emphasis">
+               <strong><i class="bi bi-shield-exclamation me-1"></i>Safety Precautions:</strong>
+               <ul class="mb-0 ps-3 mt-1">${item.safetyPrecautions.map(p => `<li>${p}</li>`).join('')}</ul>
+             </div>`
+          : '';
+        const predictionsHtml = item.predictions && item.predictions.length
+          ? `<div class="mt-2 p-2 bg-warning-subtle rounded border border-warning-subtle small text-warning-emphasis">
+               <strong><i class="bi bi-graph-up-arrow me-1"></i>AI Predictions:</strong>
+               <ul class="mb-0 ps-3 mt-1">${item.predictions.map(p => `<li>${p}</li>`).join('')}</ul>
+             </div>`
+          : '';
+
+        return `
+          <div class="card mb-3 border shadow-sm">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <div class="d-flex align-items-center gap-2">
+                  ${item.thumbnail ? `<img src="${item.thumbnail}" class="rounded border" style="width: 52px; height: 52px; object-fit: cover;">` : `<div class="rounded bg-light border d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;"><i class="bi bi-camera text-muted fs-4"></i></div>`}
+                  <div>
+                    <h6 class="fw-bold mb-0 text-dark">${item.condition || 'Bird Health Scan'}</h6>
+                    <span class="text-muted small">${dateStr}</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <span class="badge bg-${riskClass} text-${riskClass === 'warning' ? 'dark' : 'white'} fw-bold">${item.riskLevel || 'Low'} Risk</span>
+                  <button type="button" class="btn btn-sm btn-outline-danger border-0 p-1" onclick="deleteCvScanHistory('${item.id}')" title="Delete scan">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+              ${item.symptoms ? `<p class="small text-muted mb-1"><strong>Symptoms:</strong> ${item.symptoms}</p>` : ''}
+              <p class="small text-secondary mb-2">${item.summary || item.guidance || ''}</p>
+
+              ${precautionsHtml}
+              ${predictionsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function deleteCvScanHistory(id) {
+      if (typeof MockAPI !== 'undefined' && MockAPI.deleteScanResult) {
+        MockAPI.deleteScanResult(id);
+        renderCvScanHistory();
+        updateCvHistoryBadge();
+        showToast('Scan record deleted', 'info');
+      }
+    }
+
+    function clearAllCvScanHistory() {
+      if (!confirm('Are you sure you want to clear all scan history?')) return;
+      if (typeof MockAPI !== 'undefined' && MockAPI.clearScanHistory) {
+        MockAPI.clearScanHistory();
+        renderCvScanHistory();
+        updateCvHistoryBadge();
+        showToast('All scan history cleared', 'info');
+      }
+    }
+  </script>
+
+  <!-- Scan History Modal -->
+  <div class="modal fade" id="cvScanHistoryModal" tabindex="-1" aria-labelledby="cvScanHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold" id="cvScanHistoryModalLabel">
+            <i class="bi bi-clock-history text-primary me-2"></i> Hen AI Scan & Diagnosis History
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <span class="small text-muted">All visual scans, spoken symptoms, and AI predictions recorded on this system.</span>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearAllCvScanHistory()">
+              <i class="bi bi-trash me-1"></i> Clear All History
+            </button>
+          </div>
+          <div id="cvScanHistoryList">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <div class="modal-footer bg-light py-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

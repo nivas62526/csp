@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Creators | Admin Panel | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">Manage Creator Profiles</h1>
+            <p class="text-xs text-slate-500">Approve creator verification badges, feature top talent, and monitor performance</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-3">Creator</th>
+                        <th class="px-6 py-3">Rating</th>
+                        <th class="px-6 py-3">Completed</th>
+                        <th class="px-6 py-3">Hourly Rate</th>
+                        <th class="px-6 py-3">Verified Badge</th>
+                        <th class="px-6 py-3">Featured Badge</th>
+                        <th class="px-6 py-3">Status</th>
+                        <th class="px-6 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                    {% for cr in creators %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 flex items-center space-x-3">
+                                <img src="{{ cr.avatar_url or 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80' }}" class="w-10 h-10 rounded-2xl object-cover">
+                                <div>
+                                    <span class="font-bold text-slate-900 block">{{ cr.full_name }}</span>
+                                    <span class="text-[10px] text-indigo-600 font-semibold block">{{ cr.tagline or 'Creator' }}</span>
+                                    <span class="text-[10px] text-slate-400 block">{{ cr.email }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-amber-500 font-bold"><i class="fa-solid fa-star mr-1"></i>{{ "%.2f"|format(cr.rating_avg) }}</span>
+                                <span class="text-slate-400 text-[10px]">({{ cr.rating_count }})</span>
+                            </td>
+                            <td class="px-6 py-4 font-bold text-slate-800">{{ cr.completed_projects_count }} Ads</td>
+                            <td class="px-6 py-4 font-semibold text-slate-900">${{ cr.hourly_rate|int }}/hr</td>
+                            <td class="px-6 py-4">
+                                <form method="POST" action="{{ url_for('admin_toggle_user', user_id=cr.id) }}">
+                                    <input type="hidden" name="action" value="toggle_verified">
+                                    <button type="submit" class="px-2.5 py-1 rounded text-[10px] font-bold uppercase {% if cr.verified %}bg-blue-100 text-blue-700{% else %}bg-slate-100 text-slate-500{% endif %} transition">
+                                        <i class="fa-solid fa-check mr-1"></i>{{ 'Verified' if cr.verified else 'Unverified' }}
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="px-6 py-4">
+                                <form method="POST" action="{{ url_for('admin_toggle_user', user_id=cr.id) }}">
+                                    <input type="hidden" name="action" value="toggle_featured">
+                                    <button type="submit" class="px-2.5 py-1 rounded text-[10px] font-bold uppercase {% if cr.featured %}bg-amber-100 text-amber-800{% else %}bg-slate-100 text-slate-500{% endif %} transition">
+                                        <i class="fa-solid fa-star mr-1"></i>{{ 'Featured' if cr.featured else 'Standard' }}
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if cr.is_active %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Active</span>
+                                {% else %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">Suspended</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 flex items-center space-x-2">
+                                <form method="POST" action="{{ url_for('admin_toggle_user', user_id=cr.id) }}">
+                                    <input type="hidden" name="action" value="toggle_active">
+                                    <button type="submit" class="px-2.5 py-1 rounded text-[11px] font-bold {% if cr.is_active %}bg-rose-50 text-rose-600 hover:bg-rose-100{% else %}bg-emerald-50 text-emerald-600 hover:bg-emerald-100{% endif %} transition">
+                                        {{ 'Suspend' if cr.is_active else 'Activate' }}
+                                    </button>
+                                </form>
+                                <a href="{{ url_for('creator_profile_view', creator_id=cr.id) }}" target="_blank" class="p-1.5 text-slate-400 hover:text-indigo-600" title="View Public Profile">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

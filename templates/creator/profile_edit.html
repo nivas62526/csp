@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Creator Profile & Pricing | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-8">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">Creator Studio & Pricing Packages</h1>
+            <p class="text-xs text-slate-500">Configure your profile, verified skillset, and commercial package rates</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('creator_profile_edit') }}" enctype="multipart/form-data" class="space-y-8">
+            <!-- 1. Profile & Avatar -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider text-indigo-600">1. Creator Profile Information</h3>
+                
+                <div class="flex items-center space-x-6 pb-4 border-b border-slate-100">
+                    <img src="{{ g.user.avatar_url or 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-500 shadow-sm">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Creator Avatar</label>
+                        <input type="file" name="avatar_file" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Display Name *</label>
+                        <input type="text" name="full_name" value="{{ g.user.full_name }}" required
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Professional Tagline *</label>
+                        <input type="text" name="tagline" value="{{ profile.tagline if profile else '' }}" placeholder="e.g. 3D Motion Graphics & CGI Commercial Director" required
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Years of Experience</label>
+                        <input type="number" name="experience_years" value="{{ profile.experience_years if profile else 2 }}" min="0" max="40"
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Hourly Base Rate ($ USD)</label>
+                        <input type="number" name="hourly_rate" value="{{ profile.hourly_rate|int if profile else 50 }}" min="10" step="5"
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Location</label>
+                        <input type="text" name="location" value="{{ g.user.location }}" placeholder="e.g. Los Angeles, CA"
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Detailed Creator Bio</label>
+                    <textarea name="bio" rows="4" placeholder="Tell clients about your background, past brand clients, creative software (Cinema 4D, Blender, After Effects), and ad styles..."
+                              class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">{{ g.user.bio }}</textarea>
+                </div>
+            </div>
+
+            <!-- 2. Skills Tags -->
+            <div class="space-y-3 pt-4 border-t border-slate-200">
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider text-indigo-600">2. Skills & Specialties (Comma Separated)</h3>
+                <input type="text" name="skills_csv" value="{{ skills_csv }}" placeholder="3D Motion Graphics, Octane Render, TikTok UGC, 4K Color Grading, Voiceover"
+                       class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <p class="text-[11px] text-slate-400">Separate each skill or software tool with a comma.</p>
+            </div>
+
+            <!-- 3. Service Packages (3 Tiers) -->
+            <div class="space-y-6 pt-4 border-t border-slate-200">
+                <div>
+                    <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider text-indigo-600">3. Service Pricing Tiers</h3>
+                    <p class="text-xs text-slate-500">Define your 3 commercial package offerings for client bookings</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Basic Tier -->
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-200 text-slate-700">Basic Tier</span>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Package Title</label>
+                            <input type="text" name="basic_title" value="{{ services.get('basic', {}).get('title', 'Social 3D Teaser (15s)') }}"
+                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Description</label>
+                            <textarea name="basic_desc" rows="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none">{{ services.get('basic', {}).get('description', 'Single 15s commercial cut with sound design.') }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Price ($)</label>
+                                <input type="number" name="basic_price" value="{{ services.get('basic', {}).get('price', 250)|int }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Days</label>
+                                <input type="number" name="basic_days" value="{{ services.get('basic', {}).get('delivery_days', 3) }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Revisions</label>
+                                <input type="number" name="basic_revisions" value="{{ services.get('basic', {}).get('revisions_allowed', 2) }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Standard Tier -->
+                    <div class="p-5 rounded-2xl border-2 border-indigo-500 bg-indigo-50/20 space-y-4 shadow-sm">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-indigo-600 text-white">Standard Tier</span>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Package Title</label>
+                            <input type="text" name="standard_title" value="{{ services.get('standard', {}).get('title', 'Full 30s Commercial') }}"
+                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Description</label>
+                            <textarea name="standard_desc" rows="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none">{{ services.get('standard', {}).get('description', 'Complete 30s 4K commercial with full animation, text overlays, and audio mix.') }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Price ($)</label>
+                                <input type="number" name="standard_price" value="{{ services.get('standard', {}).get('price', 600)|int }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Days</label>
+                                <input type="number" name="standard_days" value="{{ services.get('standard', {}).get('delivery_days', 5) }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Revisions</label>
+                                <input type="number" name="standard_revisions" value="{{ services.get('standard', {}).get('revisions_allowed', 3) }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Premium Tier -->
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-600 text-white">Premium Tier</span>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Package Title</label>
+                            <input type="text" name="premium_title" value="{{ services.get('premium', {}).get('title', 'Brand Campaign Suite (60s + 3 Cuts)') }}"
+                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Description</label>
+                            <textarea name="premium_desc" rows="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none">{{ services.get('premium', {}).get('description', 'Master brand film + vertical 9:16 and 1:1 cutdowns with raw files.') }}</textarea>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Price ($)</label>
+                                <input type="number" name="premium_price" value="{{ services.get('premium', {}).get('price', 1400)|int }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Days</label>
+                                <input type="number" name="premium_days" value="{{ services.get('premium', {}).get('delivery_days', 8) }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Revisions</label>
+                                <input type="number" name="premium_revisions" value="{{ services.get('premium', {}).get('revisions_allowed', 5) }}" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200 flex items-center justify-end">
+                <button type="submit" class="px-8 py-3 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow-md shadow-indigo-500/20 transition">
+                    Save Profile & Packages
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

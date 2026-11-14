@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ creator.full_name }} | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- Creator Profile Header Banner -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <!-- Top Gradient Banner -->
+        <div class="h-36 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative">
+            <div class="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
+        </div>
+
+        <div class="px-8 pb-8 pt-0 relative">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 -mt-16">
+                <!-- Avatar & Identity -->
+                <div class="flex flex-col sm:flex-row items-center sm:items-end space-y-4 sm:space-y-0 sm:space-x-6 text-center sm:text-left">
+                    <div class="relative">
+                        <img src="{{ creator.avatar_url or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200' }}" alt="{{ creator.full_name }}" class="w-32 h-32 rounded-3xl object-cover border-4 border-white shadow-xl">
+                        {% if creator.verified %}
+                            <span class="absolute bottom-1 right-1 w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs shadow-md" title="Verified Pro Creator">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                            <h1 class="text-2xl font-black text-slate-900">{{ creator.full_name }}</h1>
+                            {% if creator.featured %}
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">Featured</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm font-semibold text-indigo-600">{{ creator.tagline or 'Video Producer' }}</p>
+                        <p class="text-xs text-slate-500 flex items-center justify-center sm:justify-start space-x-3 pt-1">
+                            <span><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>{{ creator.location }}</span>
+                            <span>&bull;</span>
+                            <span><i class="fa-solid fa-clock-rotate-left mr-1 text-slate-400"></i>{{ creator.experience_years }} Yrs Exp</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Actions & CTA -->
+                <div class="flex items-center justify-center sm:justify-end space-x-3">
+                    <a href="{{ url_for('messages_inbox', user=creator.id) }}" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center space-x-2">
+                        <i class="fa-regular fa-comment-dots text-indigo-600 text-sm"></i>
+                        <span>Chat Directly</span>
+                    </a>
+                    <button onclick="openBookingModal('custom', 'Custom Commercial Project', {{ creator.hourly_rate * 5 }})" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow-md shadow-indigo-500/20 transition transform hover:-translate-y-0.5 flex items-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Send Booking Request</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="mt-8 pt-6 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center sm:text-left">
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Rating</span>
+                    <p class="text-lg font-black text-amber-500 flex items-center justify-center sm:justify-start space-x-1 mt-0.5">
+                        <i class="fa-solid fa-star text-sm"></i>
+                        <span>{{ "%.2f"|format(creator.rating_avg) }}</span>
+                        <span class="text-xs font-normal text-slate-400">({{ creator.rating_count }} reviews)</span>
+                    </p>
+                </div>
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Completed Projects</span>
+                    <p class="text-lg font-black text-slate-900 mt-0.5">{{ creator.completed_projects_count }}</p>
+                </div>
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Hourly Rate</span>
+                    <p class="text-lg font-black text-slate-900 mt-0.5">${{ creator.hourly_rate|int }}<span class="text-xs font-normal text-slate-400">/hr</span></p>
+                </div>
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Portfolio Videos</span>
+                    <p class="text-lg font-black text-indigo-600 mt-0.5">{{ videos|length }} Showcase Ads</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2 Column Layout: Left Content (Bio, Videos, Reviews) & Right Packages -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left 2 Cols -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- About & Skills -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h2 class="text-base font-extrabold text-slate-900">About the Creator</h2>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                    {{ creator.bio }}
+                </p>
+
+                {% if skills %}
+                    <div class="pt-3 border-t border-slate-100">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Verified Skills & Tools</h3>
+                        <div class="flex flex-wrap gap-2">
+                            {% for s in skills %}
+                                <span class="px-3 py-1 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                    {{ s }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Portfolio Video Showcase -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Portfolio & Past Commercials</h2>
+                        <p class="text-xs text-slate-500">Click any video to play the commercial preview</p>
+                    </div>
+                    <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-600">{{ videos|length }} Videos</span>
+                </div>
+
+                {% if videos %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% for v in videos %}
+                            <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 video-card-hover group cursor-pointer"
+                                 onclick="playVideoModal('{{ v.video_url }}', '{{ v.title }}', '{{ creator.full_name }}')">
+                                <div class="relative aspect-video bg-slate-900">
+                                    <img src="{{ v.thumbnail_url or 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=500' }}" alt="{{ v.title }}" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center play-overlay">
+                                        <div class="w-10 h-10 rounded-full bg-white/90 text-indigo-600 flex items-center justify-center shadow">
+                                            <i class="fa-solid fa-play ml-0.5 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-black/80 text-white">{{ v.duration }}</span>
+                                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-600 text-white uppercase">{{ v.category }}</span>
+                                </div>
+                                <div class="p-3.5">
+                                    <h4 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition truncate">{{ v.title }}</h4>
+                                    <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{{ v.description }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-xs text-slate-400 py-6 text-center">No portfolio videos uploaded yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Client Reviews -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Verified Client Reviews</h2>
+                        <p class="text-xs text-slate-500">Feedback left on completed video contracts</p>
+                    </div>
+                    <div class="flex items-center space-x-1 text-amber-500 font-bold text-sm">
+                        <i class="fa-solid fa-star"></i>
+                        <span>{{ "%.2f"|format(creator.rating_avg) }}</span>
+                    </div>
+                </div>
+
+                {% if reviews %}
+                    <div class="divide-y divide-slate-100 space-y-4">
+                        {% for r in reviews %}
+                            <div class="pt-4 first:pt-0 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="{{ r.reviewer_avatar or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80' }}" class="w-8 h-8 rounded-full object-cover">
+                                        <div>
+                                            <h4 class="text-xs font-bold text-slate-900">{{ r.reviewer_name }}</h4>
+                                            <p class="text-[10px] text-slate-400">{{ r.reviewer_company or 'Verified Client' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1 text-amber-400 text-xs">
+                                        {% for i in range(r.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">{{ r.review_text }}</p>
+                                <span class="text-[10px] text-slate-400 block">{{ r.created_at }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-xs text-slate-400 py-6 text-center">No reviews yet. Be the first to book this creator!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Col: Service Packages & Pricing -->
+        <div class="space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4 sticky top-24">
+                <h2 class="text-base font-extrabold text-slate-900">Service Packages</h2>
+                <p class="text-xs text-slate-500">Select a pre-packaged tier or customize your booking</p>
+
+                {% if services %}
+                    <div class="space-y-4">
+                        {% for srv in services %}
+                            <div class="p-4 rounded-2xl border-2 {% if srv.tier == 'standard' %}border-indigo-500 bg-indigo-50/20 shadow-sm{% else %}border-slate-200 bg-slate-50/60{% endif %} space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                                        {% if srv.tier == 'basic' %}bg-slate-200 text-slate-700
+                                        {% elif srv.tier == 'standard' %}bg-indigo-600 text-white
+                                        {% else %}bg-purple-600 text-white{% endif %}">
+                                        {{ srv.tier }}
+                                    </span>
+                                    <span class="text-xl font-black text-slate-900">${{ srv.price|int }}</span>
+                                </div>
+
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">{{ srv.title }}</h4>
+                                    <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">{{ srv.description }}</p>
+                                </div>
+
+                                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-200">
+                                    <span><i class="fa-regular fa-clock mr-1"></i>{{ srv.delivery_days }} Days Delivery</span>
+                                    <span><i class="fa-solid fa-rotate mr-1"></i>{{ srv.revisions_allowed }} Revisions</span>
+                                </div>
+
+                                <button onclick="openBookingModal('{{ srv.tier }}', '{{ srv.title }}', {{ srv.price }})"
+                                        class="w-full py-2 rounded-xl text-xs font-bold text-white {% if srv.tier == 'standard' %}gradient-brand shadow{% else %}bg-slate-900 hover:bg-slate-800{% endif %} transition">
+                                    Select {{ srv.tier|capitalize }} Package
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-xs text-slate-400">Custom quotes available upon booking request.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Booking Request Modal -->
+<div id="booking-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+                <h3 class="text-lg font-black text-slate-900">Send Booking Request</h3>
+                <p class="text-xs text-slate-500">Initiate a new video advertisement project with {{ creator.full_name }}</p>
+            </div>
+            <button onclick="closeBookingModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form method="POST" action="{{ url_for('create_booking', creator_id=creator.id) }}" enctype="multipart/form-data" class="space-y-4 mt-4">
+            <input type="hidden" id="modal-service-tier" name="service_tier" value="standard">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Project Campaign Title *</label>
+                <input type="text" id="modal-project-title" name="project_title" required placeholder="e.g. 30s 3D Launch Teaser for Wireless Earbuds"
+                       class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ad Category</label>
+                    <select name="category" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="3D Animation">3D Animation</option>
+                        <option value="UGC">TikTok & UGC Ad</option>
+                        <option value="Tech">Tech Commercial</option>
+                        <option value="Fashion & Beauty">Fashion & Beauty</option>
+                        <option value="Food & Beverage">Food & Beverage</option>
+                        <option value="Corporate">Corporate / SaaS</option>
+                        <option value="VFX">VFX & Motion Graphics</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Proposed Budget ($ USD) *</label>
+                    <input type="number" id="modal-budget" name="budget" required min="50" step="25"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Desired Delivery Deadline</label>
+                <input type="date" name="delivery_deadline" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Detailed Requirement Brief *</label>
+                <textarea name="requirement_brief" rows="4" required placeholder="Describe your brand, target audience, video duration, key visual hooks, audio preferences, and deliverables needed..."
+                          class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Reference Video URLs</label>
+                    <input type="text" name="reference_urls" placeholder="https://youtube.com/... or TikTok link"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Attach Brief File / Brand Assets</label>
+                    <input type="file" name="attachment_file" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+                <button type="button" onclick="closeBookingModal()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow-md shadow-indigo-500/20">Submit Booking Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openBookingModal(tier, title, price) {
+    const modal = document.getElementById('booking-modal');
+    document.getElementById('modal-service-tier').value = tier;
+    if (title && !document.getElementById('modal-project-title').value) {
+        document.getElementById('modal-project-title').value = title;
+    }
+    if (price) {
+        document.getElementById('modal-budget').value = price;
+    }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
+{% endblock %}

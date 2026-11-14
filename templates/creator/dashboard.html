@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Creator Studio Dashboard | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- Header Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <img src="{{ g.user.avatar_url or 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' }}" class="w-14 h-14 rounded-2xl object-cover border-2 border-indigo-500 shadow-sm">
+                {% if profile and profile.verified %}
+                    <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center text-[10px] shadow" title="Verified Pro Creator">
+                        <i class="fa-solid fa-check"></i>
+                    </span>
+                {% endif %}
+            </div>
+            <div>
+                <h1 class="text-2xl font-black text-slate-900">{{ g.user.full_name }}'s Creator Studio</h1>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    {{ profile.tagline if profile else 'Video Producer' }} &bull; Rating: <strong class="text-amber-500">★ {{ "%.2f"|format(profile.rating_avg) if profile else '5.00' }}</strong>
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('creator_portfolio') }}" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow-md shadow-indigo-500/20 transition flex items-center space-x-2">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>Upload Portfolio Video</span>
+            </a>
+            <a href="{{ url_for('creator_profile_edit') }}" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+                <i class="fa-solid fa-sliders mr-1"></i> Edit Pricing & Skills
+            </a>
+        </div>
+    </div>
+
+    <!-- Creator KPI Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Revenue</p>
+                <p class="text-2xl font-extrabold text-emerald-600 mt-1">${{ "{:,.0f}".format(total_earnings) }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Projects</p>
+                <p class="text-2xl font-extrabold text-indigo-600 mt-1">{{ active_projects|length }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-clapperboard"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Pending Requests</p>
+                <p class="text-2xl font-extrabold text-amber-600 mt-1">{{ pending_bookings|length }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-inbox"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Portfolio Views</p>
+                <p class="text-2xl font-extrabold text-slate-900 mt-1">{{ video_stats.total_views if video_stats else 0 }}</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl">
+                <i class="fa-regular fa-eye"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Production Projects -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-black text-slate-900">Active Video Deliverables & Milestones</h2>
+                <p class="text-xs text-slate-500">Manage draft renders, revisions, and final delivery cuts</p>
+            </div>
+            <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-indigo-100 text-indigo-700">{{ active_projects|length }} In Production</span>
+        </div>
+
+        {% if active_projects %}
+            <div class="divide-y divide-slate-100">
+                {% for proj in active_projects %}
+                    <div class="p-6 hover:bg-slate-50/70 transition flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="space-y-2 flex-grow">
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 uppercase">{{ proj.category }}</span>
+                                <span class="text-xs font-bold text-slate-400">#PRJ-{{ proj.id }}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
+                                    {% if proj.status == 'revision_requested' %}bg-rose-100 text-rose-800
+                                    {% elif proj.status == 'in_review' %}bg-amber-100 text-amber-800
+                                    {% else %}bg-indigo-100 text-indigo-800{% endif %}">
+                                    {{ proj.status|replace('_', ' ') }}
+                                </span>
+                            </div>
+
+                            <h3 class="text-base font-bold text-slate-900">{{ proj.title }}</h3>
+
+                            <div class="flex items-center space-x-4 text-xs text-slate-500">
+                                <div class="flex items-center space-x-1.5">
+                                    <img src="{{ proj.customer_avatar or 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80' }}" class="w-5 h-5 rounded-full object-cover">
+                                    <span class="font-medium text-slate-700">Client: {{ proj.customer_name }}</span>
+                                </div>
+                                <span>&bull;</span>
+                                <span class="font-bold text-emerald-600">${{ "{:,.0f}".format(proj.budget) }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Stage Action Button -->
+                        <div class="flex-shrink-0 flex items-center space-x-3">
+                            <div class="text-right mr-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase block">Milestone Stage</span>
+                                <span class="text-xs font-bold text-indigo-600">Stage {{ proj.stage }} of 9</span>
+                            </div>
+                            <a href="{{ url_for('creator_project_manage', project_id=proj.id) }}"
+                               class="px-5 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow transition flex items-center space-x-1.5">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Manage Studio</span>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="p-12 text-center text-slate-400 space-y-2">
+                <i class="fa-solid fa-video-slash text-4xl text-slate-300"></i>
+                <p class="text-sm font-medium">No active production orders right now.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pending Inquiries Section -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-base font-black text-slate-900">Incoming Booking Requests</h2>
+            <a href="{{ url_for('creator_bookings') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700">View All</a>
+        </div>
+
+        {% if pending_bookings %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for b in pending_bookings %}
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 uppercase">Pending Review</span>
+                            <span class="text-base font-black text-slate-900">${{ "{:,.0f}".format(b.budget) }}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900">{{ b.project_title }}</h4>
+                        <p class="text-[11px] text-slate-500 line-clamp-2">{{ b.requirement_brief }}</p>
+                        <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-700">From: {{ b.customer_name }}</span>
+                            <a href="{{ url_for('creator_bookings') }}" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Review Request</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-xs text-slate-400 py-4 text-center">No pending booking requests at this time.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

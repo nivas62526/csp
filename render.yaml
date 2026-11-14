@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: smart-poultry-app
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DB_ENGINE
+        value: "mysql"
+      - key: DATABASE_URL
+        value: "" # Fill with your Cloud MySQL connection URL e.g. from Aiven, PlanetScale, or Railway

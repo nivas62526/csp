@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Combined AI Predictions &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="dashboard.html" class="nav-link-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="farms.html" class="nav-link-item"><i class="bi bi-building"></i><span>Farm Management</span></a></li>
+          <li class="nav-item-custom"><a href="batches.html" class="nav-link-item"><i class="bi bi-grid-fill"></i><span>Batches</span></a></li>
+          <li class="nav-item-custom"><a href="conditions.html" class="nav-link-item"><i class="bi bi-clipboard2-pulse"></i><span>Bird Conditions</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="image-prediction.html" class="nav-link-item"><i class="bi bi-camera"></i><span>Image Prediction</span><span class="badge bg-primary nav-badge">CV</span></a></li>
+          <li class="nav-item-custom"><a href="predictions.html" class="nav-link-item active"><i class="bi bi-cpu-fill"></i><span>AI Predictions</span><span class="badge bg-success nav-badge">Combined</span></a></li>
+          <li class="nav-item-custom"><a href="monitoring.html" class="nav-link-item"><i class="bi bi-activity"></i><span>Health Monitoring</span></a></li>
+          <li class="nav-item-custom"><a href="recommendations.html" class="nav-link-item"><i class="bi bi-lightbulb-fill"></i><span>Recommendations</span></a></li>
+          <li class="nav-item-custom"><a href="alerts.html" class="nav-link-item"><i class="bi bi-bell-fill"></i><span>Alerts</span></a></li>
+          <li class="nav-item-custom"><a href="vaccinations.html" class="nav-link-item"><i class="bi bi-shield-plus"></i><span>Vaccinations</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="reports.html" class="nav-link-item"><i class="bi bi-graph-up-arrow"></i><span>Reports & Analytics</span></a></li>
+          <li class="nav-item-custom"><a href="admin.html" class="nav-link-item"><i class="bi bi-shield-lock"></i><span>Admin Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="profile.html" class="nav-link-item"><i class="bi bi-gear-fill"></i><span>Settings & Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">GreenValley Broiler Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn"><i class="bi bi-list"></i></button>
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown"><i class="bi bi-bell"></i><span class="badge-ping" id="topbarNotifBadge"></span></button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header"><span class="fw-bold">Notifications</span></div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header-title">
+          <div>
+            <h1 class="page-title">AI Disease-Risk & Multi-Modal Analysis</h1>
+            <p class="page-subtitle">Unified synthesis of Computer Vision image biometrics with flock environmental conditions</p>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="recommendations.html" class="btn btn-outline-primary">
+              <i class="bi bi-lightbulb-fill"></i> View Recommendations
+            </a>
+          </div>
+        </div>
+
+        <!-- Visual Flow Stepper Diagram -->
+        <div class="dashboard-card mb-4 bg-dark text-white border-0 shadow-sm">
+          <div class="p-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <div class="badge bg-primary rounded-circle p-2 fs-6"><i class="bi bi-camera"></i></div>
+                <div>
+                  <div class="fw-bold small text-white">1. Bird Image Tensor</div>
+                  <div class="text-white-50" style="font-size:0.75rem;">Vision Biometrics</div>
+                </div>
+              </div>
+
+              <div class="text-white-50 fs-4 d-none d-md-block"><i class="bi bi-plus-lg"></i></div>
+
+              <div class="d-flex align-items-center gap-2">
+                <div class="badge bg-warning rounded-circle p-2 fs-6"><i class="bi bi-thermometer-half"></i></div>
+                <div>
+                  <div class="fw-bold small text-white">2. Farm Conditions</div>
+                  <div class="text-white-50" style="font-size:0.75rem;">Temp, Feed, Mortality</div>
+                </div>
+              </div>
+
+              <div class="text-white-50 fs-4 d-none d-md-block"><i class="bi bi-arrow-right"></i></div>
+
+              <div class="d-flex align-items-center gap-2">
+                <div class="badge bg-info rounded-circle p-2 fs-6"><i class="bi bi-cpu"></i></div>
+                <div>
+                  <div class="fw-bold small text-white">3. Multi-Modal AI Engine</div>
+                  <div class="text-white-50" style="font-size:0.75rem;">Weighted Decision Tree</div>
+                </div>
+              </div>
+
+              <div class="text-white-50 fs-4 d-none d-md-block"><i class="bi bi-arrow-right"></i></div>
+
+              <div class="d-flex align-items-center gap-2">
+                <div class="badge bg-success rounded-circle p-2 fs-6"><i class="bi bi-shield-check"></i></div>
+                <div>
+                  <div class="fw-bold small text-white">4. Overall Risk Output</div>
+                  <div class="text-white-50" style="font-size:0.75rem;">Early-Warning Score</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Large Combined Assessment Hero Card -->
+        <div class="dashboard-card mb-4 border-2 border-warning shadow-sm">
+          <div class="dashboard-card-header bg-warning-subtle py-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-shield-fill-exclamation text-warning fs-4"></i>
+              <h5 class="fw-bold mb-0 text-dark">Combined Multi-Modal AI Assessment</h5>
+            </div>
+            <span class="badge bg-warning text-dark px-3 py-2 fw-bold fs-6">MEDIUM RISK (88.4% Confidence)</span>
+          </div>
+          <div class="dashboard-card-body">
+            <div class="row g-4 align-items-center">
+              <div class="col-lg-8">
+                <h5 class="fw-bold mb-2">Integrated Flocks Risk Early-Warning: Sub-optimal Stress Indicators Detected</h5>
+                <p class="text-muted small mb-3">
+                  The Multi-Modal inference system synthesized visual observations of mild conjunctival redness and ruffled posture with farm telemetry showing an 18% decrease in feed consumption and elevated mortality in Batch B-102.
+                </p>
+                <div class="row g-2">
+                  <div class="col-sm-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Vision Model Status:</span>
+                      <strong class="text-warning"><i class="bi bi-camera me-1"></i> Medium Visual Risk (89.2% Conf.)</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Condition Model Status:</span>
+                      <strong class="text-warning"><i class="bi bi-clipboard2-pulse me-1"></i> Medium Health Risk (87.6% Conf.)</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 text-center border-start">
+                <div class="p-3 bg-light rounded-3">
+                  <div class="text-muted small fw-bold mb-1">COMPOSITE RISK INDEX</div>
+                  <div class="display-5 fw-extrabold text-warning">58 <span class="fs-5 text-muted">/ 100</span></div>
+                  <div class="badge bg-warning text-dark px-3 py-1 mt-1">Medium Risk Action Zone</div>
+                  <div class="mt-3">
+                    <a href="recommendations.html" class="btn btn-sm btn-primary w-100">
+                      <i class="bi bi-check2-circle"></i> View Recommended Protocol
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-Column Breakdown: Farm Conditions vs AI Predictions -->
+        <div class="row g-4">
+          <!-- Left Column: Current Farm Condition Profile -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">
+                  <i class="bi bi-clipboard-data text-primary"></i> Monitored Farm Conditions (Batch B-102)
+                </h5>
+                <span class="badge bg-light text-dark border">Age: 31 Days</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-responsive mb-3">
+                  <table class="table custom-table table-sm mb-0">
+                    <tbody>
+                      <tr>
+                        <td class="text-muted fw-semibold">Ambient Temperature</td>
+                        <td><strong>28.5 °C</strong></td>
+                        <td><span class="badge bg-warning-subtle text-warning">Elevated (+3.5°C)</span></td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted fw-semibold">Relative Humidity</td>
+                        <td><strong>64.0 %</strong></td>
+                        <td><span class="badge bg-success-subtle text-success">Normal</span></td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted fw-semibold">Daily Feed Consumption</td>
+                        <td><strong>210 kg</strong></td>
+                        <td><span class="badge bg-danger-subtle text-danger">Low (-18%)</span></td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted fw-semibold">Daily Water Intake</td>
+                        <td><strong>410 L</strong></td>
+                        <td><span class="badge bg-success-subtle text-success">Normal</span></td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted fw-semibold">Daily Mortality</td>
+                        <td><strong>5 birds</strong></td>
+                        <td><span class="badge bg-danger-subtle text-danger">Elevated</span></td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted fw-semibold">Flock Activity Level</td>
+                        <td><strong>Low Activity</strong></td>
+                        <td><span class="badge bg-warning-subtle text-warning">Suppressed</span></td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted fw-semibold">Reported Clinical Signs</td>
+                        <td colspan="2"><span class="badge bg-danger-subtle text-danger me-1">Sneezing</span> <span class="badge bg-danger-subtle text-danger">Reduced Feed Intake</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="text-end">
+                  <a href="conditions.html" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil me-1"></i> Update Condition Entry</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: AI Risk Indicators & Breakdown -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">
+                  <i class="bi bi-cpu-fill text-primary"></i> AI Model Indicators & Confidence
+                </h5>
+                <span class="badge bg-success-subtle text-success">Model v2.4-Active</span>
+              </div>
+              <div class="dashboard-card-body">
+                <h6 class="fw-bold small text-muted text-uppercase mb-2">Automated Risk Indicator Signals</h6>
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Temperature:</span>
+                      <span class="small fw-bold text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Warning (Heat Stress)</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Humidity:</span>
+                      <span class="small fw-bold text-success"><i class="bi bi-check-circle me-1"></i>Normal (64%)</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Feed Consumption:</span>
+                      <span class="small fw-bold text-danger"><i class="bi bi-x-circle me-1"></i>Low Intake Alert</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Water Consumption:</span>
+                      <span class="small fw-bold text-success"><i class="bi bi-check-circle me-1"></i>Normal Intake</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Mortality Trend:</span>
+                      <span class="small fw-bold text-danger"><i class="bi bi-arrow-up-circle me-1"></i>Elevated Spike</span>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded border">
+                      <span class="small text-muted d-block">Flock Activity:</span>
+                      <span class="small fw-bold text-warning"><i class="bi bi-dash-circle me-1"></i>Low Movement</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ai-disclaimer-box">
+                  <i class="bi bi-shield-check"></i>
+                  <span class="small">
+                    <strong>AI Safety Assurance:</strong> Results are early warning risk probabilities designed to prevent flock loss. No antibiotic or medication prescriptions are dispensed without veterinarian review.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

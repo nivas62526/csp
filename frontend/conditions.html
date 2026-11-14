@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bird Condition Entry &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="overview.html" class="nav-link-item"><i class="bi bi-layout-text-window-reverse"></i><span>Project Overview</span></a></li>
+          <li class="nav-item-custom"><a href="dashboard.html" class="nav-link-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="farms.html" class="nav-link-item"><i class="bi bi-building"></i><span>Farm Management</span></a></li>
+          <li class="nav-item-custom"><a href="batches.html" class="nav-link-item"><i class="bi bi-grid-fill"></i><span>Batches</span></a></li>
+          <li class="nav-item-custom"><a href="conditions.html" class="nav-link-item active"><i class="bi bi-clipboard2-pulse"></i><span>Bird Conditions</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="image-prediction.html" class="nav-link-item"><i class="bi bi-camera"></i><span>Image Prediction</span><span class="badge bg-primary nav-badge">CV</span></a></li>
+          <li class="nav-item-custom"><a href="predictions.html" class="nav-link-item"><i class="bi bi-cpu-fill"></i><span>AI Predictions</span><span class="badge bg-success nav-badge">Combined</span></a></li>
+          <li class="nav-item-custom"><a href="monitoring.html" class="nav-link-item"><i class="bi bi-activity"></i><span>Health Monitoring</span></a></li>
+          <li class="nav-item-custom"><a href="recommendations.html" class="nav-link-item"><i class="bi bi-lightbulb-fill"></i><span>Recommendations</span></a></li>
+          <li class="nav-item-custom"><a href="alerts.html" class="nav-link-item"><i class="bi bi-bell-fill"></i><span>Alerts</span></a></li>
+          <li class="nav-item-custom"><a href="vaccinations.html" class="nav-link-item"><i class="bi bi-shield-plus"></i><span>Vaccinations</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="reports.html" class="nav-link-item"><i class="bi bi-graph-up-arrow"></i><span>Reports & Analytics</span></a></li>
+          <li class="nav-item-custom"><a href="admin.html" class="nav-link-item"><i class="bi bi-shield-lock"></i><span>Admin Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="profile.html" class="nav-link-item"><i class="bi bi-gear-fill"></i><span>Settings & Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">GreenValley Broiler Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn"><i class="bi bi-list"></i></button>
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown"><i class="bi bi-bell"></i><span class="badge-ping" id="topbarNotifBadge"></span></button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header"><span class="fw-bold">Notifications</span></div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header-title">
+          <div>
+            <h1 class="page-title">Flock Health Condition Entry</h1>
+            <p class="page-subtitle">Input daily feed, water, microclimate observations, and observed flock symptoms for AI risk evaluation</p>
+          </div>
+          <div>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadSampleConditionData()">
+              <i class="bi bi-lightning-charge-fill text-warning"></i> Load Stress Scenario Preset
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Left Column: Condition Entry Form -->
+          <div class="col-lg-7">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title"><i class="bi bi-clipboard2-pulse text-primary"></i> Daily Observation Form</h5>
+                <span class="small text-muted"><i class="bi bi-calendar-event me-1"></i> Today: <strong id="currentDateDisplay"></strong></span>
+              </div>
+              <div class="dashboard-card-body">
+                <form id="birdConditionForm">
+                  <!-- Farm & Batch Selection -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Farm Facility <span class="text-danger">*</span></label>
+                      <select class="form-select" id="condFarmSelect" required></select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Batch Cohort <span class="text-danger">*</span></label>
+                      <select class="form-select" id="condBatchSelect" required></select>
+                    </div>
+                  </div>
+
+                  <!-- Bird Demographics -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                      <label class="form-label">Flock Age (Days) <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" id="condBirdAge" value="31" min="1" required>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Number of Birds <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" id="condBirdCount" value="2500" min="1" required>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Avg Weight (kg)</label>
+                      <input type="number" step="0.01" class="form-control" id="condAvgWeight" value="1.68">
+                    </div>
+                  </div>
+
+                  <!-- Microclimate Readings -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Shed Temperature (°C) <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-thermometer-half"></i></span>
+                        <input type="number" step="0.1" class="form-control" id="condTemperature" value="28.5" required>
+                      </div>
+                      <span class="text-muted small">Standard optimum: 22 - 25 °C</span>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Relative Humidity (%) <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-droplet"></i></span>
+                        <input type="number" step="0.1" class="form-control" id="condHumidity" value="64.0" required>
+                      </div>
+                      <span class="text-muted small">Standard optimum: 55 - 65 %</span>
+                    </div>
+                  </div>
+
+                  <!-- Daily Consumptions & Mortality -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                      <label class="form-label">Feed Consumption (kg) <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" id="condFeed" value="210" required>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Water Intake (L) <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" id="condWater" value="410" required>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Daily Mortality (Birds) <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" id="condMortality" value="5" min="0" required>
+                    </div>
+                  </div>
+
+                  <!-- Flock Activity Level -->
+                  <div class="mb-3">
+                    <label class="form-label d-block">Flock Activity & Movement Level <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="condActivity" id="actNormal" value="Normal">
+                        <label class="form-check-label" for="actNormal"><i class="bi bi-activity text-success me-1"></i> Normal / Active</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="condActivity" id="actLow" value="Low" checked>
+                        <label class="form-check-label" for="actLow"><i class="bi bi-pause-circle text-warning me-1"></i> Low Activity</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="condActivity" id="actVeryLow" value="Very Low">
+                        <label class="form-check-label" for="actVeryLow"><i class="bi bi-dash-circle text-danger me-1"></i> Very Low / Lethargic</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Symptoms Checklist -->
+                  <div class="mb-3">
+                    <label class="form-label">Observed Clinical Signs & Symptoms (Check all that apply)</label>
+                    <div class="row g-2 p-3 bg-light rounded-3 border">
+                      <div class="col-sm-6">
+                        <div class="form-check">
+                          <input class="form-check-input symptom-check" type="checkbox" value="Coughing / Rales" id="symCough">
+                          <label class="form-check-label small" for="symCough">Coughing / Tracheal Rales</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-check">
+                          <input class="form-check-input symptom-check" type="checkbox" value="Sneezing" id="symSneeze" checked>
+                          <label class="form-check-label small" for="symSneeze">Sneezing / Nasal Discharge</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-check">
+                          <input class="form-check-input symptom-check" type="checkbox" value="Reduced Feed Intake" id="symFeed" checked>
+                          <label class="form-check-label small" for="symFeed">Reduced Feed Intake</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-check">
+                          <input class="form-check-input symptom-check" type="checkbox" value="Reduced Water Intake" id="symWater">
+                          <label class="form-check-label small" for="symWater">Reduced Water Intake</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-check">
+                          <input class="form-check-input symptom-check" type="checkbox" value="Abnormal Droppings" id="symDrop">
+                          <label class="form-check-label small" for="symDrop">Abnormal / Diarrheal Droppings</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-check">
+                          <input class="form-check-input symptom-check" type="checkbox" value="Facial / Comb Swelling" id="symSwell">
+                          <label class="form-check-label small" for="symSwell">Facial / Comb Swelling</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Notes -->
+                  <div class="mb-4">
+                    <label class="form-label">Additional Farmer Notes & Observations</label>
+                    <textarea class="form-control" id="condNotes" rows="2" placeholder="e.g. Birds gathering closer to water lines, slight panting during afternoon heat."></textarea>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary flex-fill py-2" id="analyzeConditionBtn">
+                      <i class="bi bi-cpu-fill"></i> Analyze Health Condition (AI)
+                    </button>
+                    <button type="button" class="btn btn-outline-success px-4" id="saveConditionBtn" style="display: none;">
+                      <i class="bi bi-check2-circle"></i> Save Record
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: AI Condition Prediction & Risk Preview -->
+          <div class="col-lg-5">
+            <!-- Loading Indicator -->
+            <div id="aiAnalyzingSpinner" class="dashboard-card text-center p-5 d-none">
+              <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+              <h5 class="fw-bold">Evaluating Machine Learning Health Model...</h5>
+              <p class="text-muted small mb-0">Correlating temperature anomalies, feed consumption delta, and reported symptoms</p>
+            </div>
+
+            <!-- Result Card -->
+            <div id="conditionResultCard" class="prediction-result-card risk-medium">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-warning text-dark px-3 py-2 fw-bold" id="resRiskBadge">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Medium Disease-Risk
+                </span>
+                <span class="badge bg-light text-dark border small" id="resConfidence">88.4% Confidence</span>
+              </div>
+
+              <h4 class="fw-bold mb-2" id="resTitle">Medium Disease-Risk (Sub-optimal Conditions Detected)</h4>
+              <p class="text-muted small mb-4" id="resSummary">
+                Clinical observations of sneezing combined with elevated mortality (5 birds) and sub-optimal feed intake (-18%) indicate flock environmental stress or early respiratory irritation.
+              </p>
+
+              <!-- Parameter Indicator Chips -->
+              <h6 class="fw-bold small text-muted text-uppercase mb-2">Evaluated Health Indicators</h6>
+              <div class="d-flex flex-wrap gap-2 mb-4" id="resIndicatorsContainer">
+                <span class="badge bg-danger-subtle text-danger border p-2">Mortality: 5 birds (Elevated)</span>
+                <span class="badge bg-danger-subtle text-danger border p-2">Feed Intake: 210 kg (Low)</span>
+                <span class="badge bg-warning-subtle text-warning border p-2">Temperature: 28.5°C (Attention)</span>
+                <span class="badge bg-warning-subtle text-warning border p-2">Activity: Low Activity</span>
+                <span class="badge bg-danger-subtle text-danger border p-2">Signs: Sneezing, Reduced Feed</span>
+              </div>
+
+              <!-- Preventive Recommendations -->
+              <h6 class="fw-bold small text-muted text-uppercase mb-2">Immediate Preventive Actions</h6>
+              <div class="list-group list-group-flush border rounded-3 mb-4" id="resRecsContainer">
+                <div class="list-group-item small py-2 bg-light">
+                  <strong class="d-block text-warning"><i class="bi bi-fan me-1"></i> Ventilation & Airflow Adjustment</strong>
+                  <span class="text-muted">Ensure exhaust fan operation to mitigate ambient heat and lower shed ammonia below 15 ppm.</span>
+                </div>
+                <div class="list-group-item small py-2 bg-light">
+                  <strong class="d-block text-warning"><i class="bi bi-droplet-half me-1"></i> Electrolyte Hydration</strong>
+                  <span class="text-muted">Supply clean fresh drinking water supplemented with poultry electrolytes to alleviate heat stress.</span>
+                </div>
+              </div>
+
+              <!-- AI Safety Disclaimer -->
+              <div class="ai-disclaimer-box mb-3">
+                <i class="bi bi-shield-check"></i>
+                <span class="small">
+                  <strong>AI Early Warning:</strong> This result is an automated risk score to assist farm surveillance. Consult a licensed poultry veterinarian for suspected bacterial or viral diagnosis.
+                </span>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a href="predictions.html" class="btn btn-sm btn-primary flex-fill">
+                  <i class="bi bi-layers"></i> Combined Image & Condition Analysis &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/prediction.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      await populateFarmsAndBatches();
+      initFormEvents();
+    });
+
+    async function populateFarmsAndBatches() {
+      const farms = await MockAPI.getFarms();
+      const batches = await MockAPI.getBatches();
+
+      const farmSelect = document.getElementById('condFarmSelect');
+      const batchSelect = document.getElementById('condBatchSelect');
+
+      if (farms.length === 0) {
+        farmSelect.innerHTML = `<option value="F-001">Main Farm Facility (Default)</option>`;
+      } else {
+        farmSelect.innerHTML = farms.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+      }
+
+      if (batches.length === 0) {
+        batchSelect.innerHTML = `<option value="B-101">Batch Cohort 1 (Broiler Cobb 500)</option>`;
+      } else {
+        batchSelect.innerHTML = batches.map(b => `<option value="${b.id}" data-name="${b.name}">${b.name} (${b.birdType})</option>`).join('');
+      }
+    }
+
+    let lastCalculatedRisk = null;
+
+    function initFormEvents() {
+      const analyzeBtn = document.getElementById('analyzeConditionBtn');
+      const saveBtn = document.getElementById('saveConditionBtn');
+
+      analyzeBtn.addEventListener('click', () => {
+        runConditionAnalysis();
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        const formData = getFormData();
+        formData.riskLevel = lastCalculatedRisk ? lastCalculatedRisk.riskLevel : 'Low';
+        formData.confidence = lastCalculatedRisk ? lastCalculatedRisk.confidence : 95.0;
+        await MockAPI.saveCondition(formData);
+        showToast('Bird condition observation and AI risk analysis saved to records!', 'success', 'Log Saved');
+      });
+    }
+
+    function getFormData() {
+      const symptoms = [];
+      document.querySelectorAll('.symptom-check:checked').forEach(c => symptoms.push(c.value));
+      const activityEl = document.querySelector('input[name="condActivity"]:checked');
+
+      return {
+        farmId: document.getElementById('condFarmSelect').value,
+        batchId: document.getElementById('condBatchSelect').value,
+        birdAge: document.getElementById('condBirdAge').value,
+        birdCount: document.getElementById('condBirdCount').value,
+        avgWeight: document.getElementById('condAvgWeight').value,
+        temperature: document.getElementById('condTemperature').value,
+        humidity: document.getElementById('condHumidity').value,
+        feedConsumption: document.getElementById('condFeed').value,
+        waterConsumption: document.getElementById('condWater').value,
+        mortality: document.getElementById('condMortality').value,
+        activityLevel: activityEl ? activityEl.value : 'Normal',
+        symptoms: symptoms,
+        notes: document.getElementById('condNotes').value
+      };
+    }
+
+    function runConditionAnalysis() {
+      const formData = getFormData();
+      const spinner = document.getElementById('aiAnalyzingSpinner');
+      const resultCard = document.getElementById('conditionResultCard');
+      const saveBtn = document.getElementById('saveConditionBtn');
+
+      spinner.classList.remove('d-none');
+      resultCard.classList.add('d-none');
+
+      setTimeout(() => {
+        const evalResult = AIPredictor.calculateConditionRisk(formData);
+        spinner.classList.add('d-none');
+        resultCard.classList.remove('d-none');
+        saveBtn.style.display = 'inline-flex';
+
+        // Render evaluation results
+        const riskBadge = document.getElementById('resRiskBadge');
+        const cardEl = document.getElementById('conditionResultCard');
+
+        cardEl.className = `prediction-result-card ${evalResult.riskLevel === 'High' ? 'risk-high' : evalResult.riskLevel === 'Medium' ? 'risk-medium' : 'risk-low'}`;
+        riskBadge.className = `badge ${evalResult.riskLevel === 'High' ? 'bg-danger' : evalResult.riskLevel === 'Medium' ? 'bg-warning text-dark' : 'bg-success'} px-3 py-2 fw-bold`;
+        riskBadge.innerHTML = `<i class="bi bi-shield-fill me-1"></i> ${evalResult.riskLevel} Disease-Risk`;
+
+        document.getElementById('resConfidence').textContent = `${evalResult.confidence}% Confidence`;
+        document.getElementById('resTitle').textContent = evalResult.conditionRiskTitle;
+        document.getElementById('resSummary').textContent = evalResult.reasons.join(' ');
+
+        // Render Indicators
+        const indContainer = document.getElementById('resIndicatorsContainer');
+        indContainer.innerHTML = evalResult.indicators.map(ind => `
+          <span class="badge ${ind.status === 'danger' ? 'bg-danger-subtle text-danger' : ind.status === 'warning' ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success'} border p-2">
+            ${ind.label}: ${ind.value}
+          </span>
+        `).join('');
+
+        // Render Recommendations
+        const recContainer = document.getElementById('resRecsContainer');
+        recContainer.innerHTML = evalResult.recommendations.map(r => `
+          <div class="list-group-item small py-2 bg-light">
+            <strong class="d-block ${r.priority === 'High' ? 'text-danger' : r.priority === 'Medium' ? 'text-warning' : 'text-success'}">
+              <i class="bi bi-check-circle-fill me-1"></i> ${r.title}
+            </strong>
+            <span class="text-muted">${r.desc}</span>
+          </div>
+        `).join('');
+
+        showToast(`AI Risk assessment complete: ${evalResult.riskLevel} Risk`, evalResult.riskLevel === 'High' ? 'danger' : 'info');
+      }, 700);
+    }
+
+    function loadSampleConditionData() {
+      document.getElementById('condTemperature').value = 31.2;
+      document.getElementById('condHumidity').value = 72.0;
+      document.getElementById('condFeed').value = 175;
+      document.getElementById('condWater').value = 320;
+      document.getElementById('condMortality').value = 8;
+      document.getElementById('actVeryLow').checked = true;
+      document.getElementById('symCough').checked = true;
+      document.getElementById('symSneeze').checked = true;
+      document.getElementById('symFeed').checked = true;
+      document.getElementById('condNotes').value = 'Severe heat wave observed. Noticeable flock crowding near drinker lines and elevated gasping.';
+      showToast('Loaded Stress Scenario demo data', 'info');
+      runConditionAnalysis();
+    }
+  </script>
+</body>
+</html>

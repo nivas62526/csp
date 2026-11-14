@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Login &bull; SmartPoultry Mobile</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div class="auth-page-wrapper">
+    <!-- Left Hero Brand Visual Sidebar -->
+    <div class="auth-sidebar">
+      <div>
+        <a class="brand-logo text-white mb-4 d-inline-flex" href="index.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <h2 class="display-6 fw-bold text-white mt-4 mb-3">Precision Health & Disease-Risk Intelligence</h2>
+        <p class="text-white-50 lead">
+          Empowering poultry farmers with real-time flock condition tracking, IoT environmental telemetry, and multi-modal AI early risk prediction.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-4 bg-dark bg-opacity-50 border border-white border-opacity-10 backdrop-blur">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="p-2 rounded-circle bg-success bg-opacity-20 text-success">
+            <i class="bi bi-shield-lock-fill fs-4"></i>
+          </div>
+          <div>
+            <strong class="text-white d-block">Secure Farmer Login</strong>
+            <span class="small text-white-50">Direct Password Access & SMS Recovery</span>
+          </div>
+        </div>
+        <div class="small text-white-50 border-top border-white border-opacity-10 pt-2">
+          Sign in instantly with your registered mobile number and password. If you forgot your password, an OTP will be dispatched straight to your phone.
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between text-white-50 small">
+        <span>&copy; 2026 SmartPoultry System</span>
+        <a href="index.html" class="text-white-50 text-decoration-none hover-primary">&larr; Back to Mobile App</a>
+      </div>
+    </div>
+
+    <!-- Right Login Form Area -->
+    <div class="auth-content">
+      <div class="auth-card">
+        <div class="text-center mb-4">
+          <div class="d-inline-flex p-3 bg-success-subtle text-success rounded-circle mb-3">
+            <i class="bi bi-shield-lock-fill fs-3"></i>
+          </div>
+          <h3 class="fw-bold">Sign In to Your Farm</h3>
+          <p class="text-muted small">Enter your mobile number and password to access your cloud farm records</p>
+        </div>
+
+        <div id="authAlertBox" style="display: none;"></div>
+
+        <!-- Direct Mobile & Password Login Form -->
+        <form id="farmerLoginForm" onsubmit="event.preventDefault(); submitPasswordLogin();">
+          <div class="mb-3">
+            <label class="form-label fw-bold small">Mobile Number or Email <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <select class="form-select" id="pageCountryCode" style="max-width: 95px;">
+                <option value="+91" selected>🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+880">🇧🇩 +880</option>
+              </select>
+              <input type="text" class="form-control" id="pageMobileInput" placeholder="9876543210" required autofocus>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-bold small mb-0">Password <span class="text-danger">*</span></label>
+              <button type="button" class="btn btn-link p-0 small text-decoration-none text-success fw-bold" onclick="openForgotPasswordModal()">
+                Forgot Password?
+              </button>
+            </div>
+            <div class="input-group">
+              <input type="password" class="form-control" id="pagePasswordInput" placeholder="••••••••" required>
+              <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('pagePasswordInput', this)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="loginSubmitBtn" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard
+          </button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+          <p class="small text-muted mb-2">
+            Don't have a farm registered? <a href="register.html" class="fw-bold text-success text-decoration-none">Register New Farm &rarr;</a>
+          </p>
+          <a href="index.html" class="small fw-bold text-muted text-decoration-none">&larr; Open Mobile App View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORGOT PASSWORD MODAL (OTP DISPATCHED DIRECTLY TO PHONE) -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold">
+            <i class="bi bi-key-fill text-warning me-2"></i>Reset Password via SMS OTP
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body py-3">
+          <div id="resetAlertBox" style="display: none;"></div>
+
+          <!-- Step 1: Enter Mobile Number to Receive OTP -->
+          <div id="resetStepPhone">
+            <p class="text-muted small mb-3">
+              Enter your registered mobile number. An OTP will be dispatched directly to your mobile phone via SMS.
+            </p>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Registered Mobile Number <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <select class="form-select form-select-sm" id="resetCountryCode" style="max-width: 95px;">
+                  <option value="+91" selected>🇮🇳 +91</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                </select>
+                <input type="tel" class="form-control" id="resetMobileInput" placeholder="9876543210" maxlength="10" required>
+              </div>
+            </div>
+            <button type="button" id="btnSendResetOtp" class="btn btn-warning w-100 py-2 rounded-pill fw-bold shadow-sm" onclick="sendResetOtp()">
+              <i class="bi bi-send-check me-1"></i> Send OTP to Phone
+            </button>
+          </div>
+
+          <!-- Step 2: Enter OTP & New Password -->
+          <div id="resetStepVerify" class="d-none">
+            <div class="text-center mb-3 p-2 bg-light rounded-3">
+              <div class="small text-muted">OTP dispatched to: <strong id="resetTargetDisplay">+91 XXXXX XXXXX</strong></div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Enter 6-Digit OTP <span class="text-danger">*</span></label>
+              <input type="text" class="form-control text-center fs-4 fw-bold letter-spacing-2" id="resetOtpInput" maxlength="6" placeholder="••••••" style="letter-spacing: 6px;" required>
+              <div class="d-flex justify-content-between align-items-center mt-1">
+                <span class="text-muted small">Didn't receive code?</span>
+                <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success fw-bold" id="resendResetOtpBtn" onclick="sendResetOtp()" disabled>
+                  Resend OTP (60s)
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">New Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" id="resetNewPassword" placeholder="Minimum 6 characters" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Confirm New Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" id="resetConfirmPassword" placeholder="Re-type new password" required>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-light rounded-pill btn-sm flex-fill" onclick="backToResetPhone()">
+                Back
+              </button>
+              <button type="button" id="btnConfirmReset" class="btn btn-success rounded-pill btn-sm flex-fill py-2 fw-bold" onclick="submitPasswordReset()">
+                <i class="bi bi-check2-circle me-1"></i> Reset Password & Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script>
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'bi bi-eye';
+      }
+    }
+
+    function openForgotPasswordModal() {
+      const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+      document.getElementById('resetStepPhone').classList.remove('d-none');
+      document.getElementById('resetStepVerify').classList.add('d-none');
+      document.getElementById('resetAlertBox').style.display = 'none';
+
+      // Pre-fill mobile number if already entered on main form
+      const mainMobile = document.getElementById('pageMobileInput').value.trim();
+      if (mainMobile && mainMobile.replace(/\D/g, '').length >= 10) {
+        document.getElementById('resetMobileInput').value = mainMobile.replace(/\D/g, '').slice(-10);
+      }
+      modal.show();
+    }
+
+    function backToResetPhone() {
+      document.getElementById('resetStepVerify').classList.add('d-none');
+      document.getElementById('resetStepPhone').classList.remove('d-none');
+    }
+
+    // 1. Direct Password Login (No OTP required)
+    async function submitPasswordLogin() {
+      const code = document.getElementById('pageCountryCode').value;
+      const rawInput = document.getElementById('pageMobileInput').value.trim();
+      const password = document.getElementById('pagePasswordInput').value;
+      const btn = document.getElementById('loginSubmitBtn');
+
+      if (!rawInput) {
+        showAlert('Please enter your mobile number or email.', 'danger');
+        return;
+      }
+      if (!password) {
+        showAlert('Please enter your password.', 'danger');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+
+      const cleanDigits = rawInput.replace(/\D/g, '');
+      const fullIdentifier = (cleanDigits.length === 10) ? `${code}${cleanDigits}` : rawInput;
+
+      const res = await MobileAuth.loginWithPassword(fullIdentifier, password);
+      if (res.success) {
+        showAlert('Login successful! Loading your farm data...', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 600);
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard';
+        showAlert(res.message || 'Invalid mobile number or password. Check credentials or click "Forgot Password".', 'danger');
+      }
+    }
+
+    // 2. Send OTP for Forgot Password
+    async function sendResetOtp() {
+      const code = document.getElementById('resetCountryCode').value;
+      const num = document.getElementById('resetMobileInput').value.trim();
+      const btn = document.getElementById('btnSendResetOtp');
+
+      if (!num || num.length < 10) {
+        showResetAlert('Please enter a valid 10-digit mobile number.', 'warning');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Dispatching OTP to Phone...';
+      }
+
+      const res = await MobileAuth.sendOtpForLogin(num, code);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-check me-1"></i> Send OTP to Phone';
+      }
+
+      if (res.success) {
+        showResetAlert('OTP dispatched to your mobile phone via SMS!', 'success');
+        document.getElementById('resetTargetDisplay').textContent = `${code} ${num}`;
+        document.getElementById('resetStepPhone').classList.add('d-none');
+        document.getElementById('resetStepVerify').classList.remove('d-none');
+        document.getElementById('resetOtpInput').value = '';
+        document.getElementById('resetOtpInput').focus();
+      } else {
+        showResetAlert(res.message || 'Failed to dispatch OTP SMS.', 'danger');
+      }
+    }
+
+    // 3. Submit Reset Password with OTP
+    async function submitPasswordReset() {
+      const code = document.getElementById('resetCountryCode').value;
+      const num = document.getElementById('resetMobileInput').value.trim();
+      const otp = document.getElementById('resetOtpInput').value.trim();
+      const newPwd = document.getElementById('resetNewPassword').value;
+      const confirmPwd = document.getElementById('resetConfirmPassword').value;
+      const btn = document.getElementById('btnConfirmReset');
+
+      if (!otp || otp.length !== 6) {
+        showResetAlert('Please enter the 6-digit OTP received on your mobile.', 'warning');
+        return;
+      }
+      if (!newPwd || newPwd.length < 6) {
+        showResetAlert('Password must be at least 6 characters long.', 'warning');
+        return;
+      }
+      if (newPwd !== confirmPwd) {
+        showResetAlert('Passwords do not match. Please verify.', 'warning');
+        return;
+      }
+
+      const cleanNum = num.replace(/\D/g, '').slice(-10);
+      const fullPhone = `${code} ${cleanNum}`;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Updating Password...';
+
+      const res = await MobileAuth.resetPassword(fullPhone, otp, newPwd);
+      if (res.success) {
+        showResetAlert('Password updated successfully! Logging you in...', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 800);
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Reset Password & Sign In';
+        showResetAlert(res.message || 'Password reset failed.', 'danger');
+      }
+    }
+
+    function showAlert(msg, type) {
+      const box = document.getElementById('authAlertBox');
+      box.className = `alert alert-${type} py-2 px-3 small rounded-3 mb-3`;
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    function showResetAlert(msg, type) {
+      const box = document.getElementById('resetAlertBox');
+      box.className = `alert alert-${type} py-2 px-3 small rounded-3 mb-3`;
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

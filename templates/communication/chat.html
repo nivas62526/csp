@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages & Project Chat | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-3 min-h-[75vh]">
+        <!-- Left Column: Conversations List -->
+        <div class="border-r border-slate-200 flex flex-col h-full bg-slate-50/50">
+            <div class="p-4 border-b border-slate-200 bg-white">
+                <h2 class="text-base font-black text-slate-900">Direct Messages</h2>
+                <p class="text-xs text-slate-400">Collaborate with creators & brands</p>
+            </div>
+
+            <div class="overflow-y-auto flex-grow divide-y divide-slate-100">
+                {% if conversations %}
+                    {% for conv in conversations %}
+                        <a href="{{ url_for('messages_inbox', user=conv.id) }}"
+                           class="p-4 flex items-center space-x-3 hover:bg-slate-100/80 transition block {% if active_contact and active_contact.id == conv.id %}bg-indigo-50/70 border-l-4 border-indigo-600{% endif %}">
+                            <div class="relative">
+                                <img src="{{ conv.avatar_url or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80' }}" class="w-11 h-11 rounded-2xl object-cover">
+                                {% if conv.unread_count > 0 %}
+                                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center">
+                                        {{ conv.unread_count }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-xs font-bold text-slate-900 truncate">{{ conv.full_name }}</h4>
+                                    <span class="text-[9px] text-slate-400 font-medium">{{ conv.last_time[:10] if conv.last_time else '' }}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ conv.last_message or 'Started a conversation' }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-8 text-center text-slate-400 text-xs">
+                        <i class="fa-regular fa-comment-dots text-3xl text-slate-300 block mb-2"></i>
+                        No conversation threads yet. Browse creators and click "Chat Directly" to begin.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Active Chat Feed -->
+        <div class="md:col-span-2 flex flex-col h-full bg-white">
+            {% if active_contact %}
+                <!-- Active Chat Header -->
+                <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-white">
+                    <div class="flex items-center space-x-3">
+                        <img src="{{ active_contact.avatar_url or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100' }}" class="w-10 h-10 rounded-2xl object-cover border border-slate-200">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+                                <span>{{ active_contact.full_name }}</span>
+                                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-slate-100 text-slate-600">{{ active_contact.role }}</span>
+                            </h3>
+                            <p class="text-[11px] text-slate-400">{{ active_contact.company_name or active_contact.location }}</p>
+                        </div>
+                    </div>
+                    {% if active_contact.role == 'creator' %}
+                        <a href="{{ url_for('creator_profile_view', creator_id=active_contact.id) }}" class="px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition">
+                            View Profile
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Messages Stream -->
+                <div id="chat-messages-container" class="flex-grow p-6 overflow-y-auto space-y-4 max-h-[55vh]">
+                    {% if messages %}
+                        {% for msg in messages %}
+                            <div class="flex items-end space-x-2 {% if msg.sender_id == g.user.id %}justify-end{% else %}justify-start{% endif %}">
+                                <div class="max-w-md space-y-1">
+                                    <div class="p-3.5 text-xs {% if msg.sender_id == g.user.id %}chat-bubble-sent{% else %}chat-bubble-received{% endif %}">
+                                        {{ msg.content }}
+                                    </div>
+                                    <span class="text-[9px] text-slate-400 block {% if msg.sender_id == g.user.id %}text-right{% endif %}">
+                                        {{ msg.created_at }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-xs text-slate-400 text-center py-12">Start the conversation by sending a message below.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Send Message Form -->
+                <div class="p-4 border-t border-slate-200 bg-slate-50/50">
+                    <form id="chat-send-form" class="flex items-center space-x-2">
+                        <input type="hidden" id="chat-receiver-id" value="{{ active_contact.id }}">
+                        <input type="text" id="chat-input-content" required placeholder="Type your message to {{ active_contact.full_name }}..."
+                               class="flex-grow px-4 py-3 rounded-2xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <button type="submit" class="px-5 py-3 rounded-2xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow transition flex items-center space-x-1.5 flex-shrink-0">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span class="hidden sm:inline">Send</span>
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="flex items-center justify-center flex-grow p-12 text-center text-slate-400">
+                    <div>
+                        <i class="fa-regular fa-comments text-5xl text-slate-300 block mb-3"></i>
+                        <p class="text-sm font-semibold text-slate-600">Select a conversation thread to view messages</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const chatContainer = document.getElementById('chat-messages-container');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    const form = document.getElementById('chat-send-form');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const receiverId = document.getElementById('chat-receiver-id').value;
+            const input = document.getElementById('chat-input-content');
+            const content = input.value.trim();
+            if (!content) return;
+
+            const formData = new FormData();
+            formData.append('receiver_id', receiverId);
+            formData.append('content', content);
+
+            fetch('/api/send-message', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'flex items-end space-x-2 justify-end';
+                    bubble.innerHTML = `
+                        <div class="max-w-md space-y-1">
+                            <div class="p-3.5 text-xs chat-bubble-sent">
+                                ${data.content}
+                            </div>
+                            <span class="text-[9px] text-slate-400 block text-right">
+                                Just now
+                            </span>
+                        </div>
+                    `;
+                    chatContainer.appendChild(bubble);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    input.value = '';
+                }
+            })
+            .catch(() => {
+                form.submit();
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Profile & Settings &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="dashboard.html" class="nav-link-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="farms.html" class="nav-link-item"><i class="bi bi-building"></i><span>Farm Management</span></a></li>
+          <li class="nav-item-custom"><a href="batches.html" class="nav-link-item"><i class="bi bi-grid-fill"></i><span>Batches</span></a></li>
+          <li class="nav-item-custom"><a href="conditions.html" class="nav-link-item"><i class="bi bi-clipboard2-pulse"></i><span>Bird Conditions</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="image-prediction.html" class="nav-link-item"><i class="bi bi-camera"></i><span>Image Prediction</span><span class="badge bg-primary nav-badge">CV</span></a></li>
+          <li class="nav-item-custom"><a href="predictions.html" class="nav-link-item"><i class="bi bi-cpu-fill"></i><span>AI Predictions</span><span class="badge bg-success nav-badge">Combined</span></a></li>
+          <li class="nav-item-custom"><a href="monitoring.html" class="nav-link-item"><i class="bi bi-activity"></i><span>Health Monitoring</span></a></li>
+          <li class="nav-item-custom"><a href="recommendations.html" class="nav-link-item"><i class="bi bi-lightbulb-fill"></i><span>Recommendations</span></a></li>
+          <li class="nav-item-custom"><a href="alerts.html" class="nav-link-item"><i class="bi bi-bell-fill"></i><span>Alerts</span></a></li>
+          <li class="nav-item-custom"><a href="vaccinations.html" class="nav-link-item"><i class="bi bi-shield-plus"></i><span>Vaccinations</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="reports.html" class="nav-link-item"><i class="bi bi-graph-up-arrow"></i><span>Reports & Analytics</span></a></li>
+          <li class="nav-item-custom"><a href="admin.html" class="nav-link-item"><i class="bi bi-shield-lock"></i><span>Admin Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="profile.html" class="nav-link-item active"><i class="bi bi-gear-fill"></i><span>Settings & Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">GreenValley Broiler Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn"><i class="bi bi-list"></i></button>
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown"><i class="bi bi-bell"></i><span class="badge-ping" id="topbarNotifBadge"></span></button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header"><span class="fw-bold">Notifications</span></div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header-title">
+          <div>
+            <h1 class="page-title">Farmer Profile & System Preferences</h1>
+            <p class="page-subtitle">Manage personal information, farm metadata, alerts, and security credentials</p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Profile Card -->
+          <div class="col-lg-4">
+            <div class="dashboard-card text-center p-4">
+              <div class="user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <h5 class="fw-bold mb-1 sync-user-name">Robert Sterling</h5>
+              <p class="text-muted small mb-2 sync-user-farm">GreenValley Broiler Farm</p>
+              <span class="badge bg-primary-subtle text-primary mb-3">Verified Farm Operator</span>
+
+              <div class="p-3 bg-light rounded-3 text-start small border mb-3">
+                <div class="mb-2"><i class="bi bi-envelope text-primary me-2"></i><span class="sync-user-email">robert.sterling@poultrysmart.com</span></div>
+                <div class="mb-2"><i class="bi bi-telephone text-primary me-2"></i><span>+1 (555) 234-8901</span></div>
+                <div><i class="bi bi-geo-alt text-primary me-2"></i><span>Punjab Agro Zone, Block 4</span></div>
+              </div>
+
+              <a href="login.html" class="btn btn-outline-danger btn-sm w-100">
+                <i class="bi bi-box-arrow-right me-1"></i> Sign Out of Farm Account
+              </a>
+            </div>
+          </div>
+
+          <!-- Edit Profile & Settings Tabs -->
+          <div class="col-lg-8">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="profileTabs">
+                  <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabPersonalInfo">Personal & Farm Info</a></li>
+                  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabSecurity">Password & Security</a></li>
+                  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabNotifications">Notification Preferences</a></li>
+                </ul>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="tab-content">
+                  <!-- Tab 1: Personal Info -->
+                  <div class="tab-pane fade show active" id="tabPersonalInfo">
+                    <form id="updateProfileForm">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="profFullName" value="Robert Sterling" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Email Address <span class="text-danger">*</span></label>
+                          <input type="email" class="form-control" id="profEmail" value="robert.sterling@poultrysmart.com" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Phone Number</label>
+                          <input type="tel" class="form-control" id="profPhone" value="+1 (555) 234-8901">
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Primary Farm Facility Name</label>
+                          <input type="text" class="form-control" id="profFarmName" value="GreenValley Broiler Farm">
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label">Facility Location</label>
+                          <input type="text" class="form-control" id="profLocation" value="Punjab Agro Zone, Block 4">
+                        </div>
+                        <div class="col-12 pt-3 border-top text-end">
+                          <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i> Save Profile Changes</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+
+                  <!-- Tab 2: Security & Password -->
+                  <div class="tab-pane fade" id="tabSecurity">
+                    <form id="changePasswordForm">
+                      <div class="row g-3">
+                        <div class="col-12">
+                          <label class="form-label">Current Password</label>
+                          <input type="password" class="form-control" id="currPass" placeholder="••••••••" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">New Password</label>
+                          <input type="password" class="form-control" id="newPass" placeholder="••••••••" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Confirm New Password</label>
+                          <input type="password" class="form-control" id="confirmNewPass" placeholder="••••••••" required>
+                        </div>
+                        <div class="col-12 pt-3 border-top text-end">
+                          <button type="submit" class="btn btn-primary"><i class="bi bi-key-fill"></i> Update Password</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+
+                  <!-- Tab 3: Notification Preferences -->
+                  <div class="tab-pane fade" id="tabNotifications">
+                    <div class="list-group list-group-flush">
+                      <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                        <div>
+                          <strong class="d-block text-dark">High Mortality & Outbreak Alerts</strong>
+                          <span class="small text-muted">Instant push notification and SMS when daily mortality spikes above baseline.</span>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" checked>
+                        </div>
+                      </div>
+                      <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                        <div>
+                          <strong class="d-block text-dark">Temperature & Humidity Microclimate Warnings</strong>
+                          <span class="small text-muted">Alert when ambient shed temperature exceeds 28°C or drops below 20°C.</span>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" checked>
+                        </div>
+                      </div>
+                      <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                        <div>
+                          <strong class="d-block text-dark">Vaccination Schedule Reminders</strong>
+                          <span class="small text-muted">Receive reminders 48 hours and 24 hours prior to scheduled immunizations.</span>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" checked>
+                        </div>
+                      </div>
+                      <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                        <div>
+                          <strong class="d-block text-dark">Weekly Analytical Performance Digest</strong>
+                          <span class="small text-muted">Automated PDF summary of FCR, feed efficiency, and livability sent to your email.</span>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pt-3 border-top text-end">
+                      <button type="button" class="btn btn-primary" onclick="showToast('Notification preferences updated!', 'success')">
+                        <i class="bi bi-check2"></i> Save Notification Settings
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = MockAPI.getUserProfile();
+      if (user) {
+        document.getElementById('profFullName').value = user.fullName || 'Robert Sterling';
+        document.getElementById('profEmail').value = user.email || 'robert.sterling@poultrysmart.com';
+        document.getElementById('profPhone').value = user.phone || '+1 (555) 234-8901';
+        document.getElementById('profFarmName').value = user.farmName || 'GreenValley Broiler Farm';
+        document.getElementById('profLocation').value = user.location || 'Punjab Agro Zone, Block 4';
+      }
+
+      document.getElementById('updateProfileForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const updated = {
+          fullName: document.getElementById('profFullName').value.trim(),
+          email: document.getElementById('profEmail').value.trim(),
+          phone: document.getElementById('profPhone').value.trim(),
+          farmName: document.getElementById('profFarmName').value.trim(),
+          location: document.getElementById('profLocation').value.trim()
+        };
+        MockAPI.updateUserProfile(updated);
+        showToast('Profile information successfully saved!', 'success');
+        setTimeout(() => location.reload(), 500);
+      });
+
+      document.getElementById('changePasswordForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newPass = document.getElementById('newPass').value;
+        const confirmPass = document.getElementById('confirmNewPass').value;
+        if (newPass !== confirmPass) {
+          showToast('New passwords do not match', 'danger');
+          return;
+        }
+        showToast('Password updated securely!', 'success');
+        document.getElementById('changePasswordForm').reset();
+      });
+    });
+  </script>
+</body>
+</html>

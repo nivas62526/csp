@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Farm &bull; SmartPoultry Mobile</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div class="auth-page-wrapper">
+    <!-- Left Hero Brand Visual Sidebar -->
+    <div class="auth-sidebar">
+      <div>
+        <a class="brand-logo text-white mb-4 d-inline-flex" href="index.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <h2 class="display-6 fw-bold text-white mt-4 mb-3">Join the Smart Precision Farming Network</h2>
+        <p class="text-white-50 lead">
+          Register your poultry farm today to unlock automated disease-risk detection, daily flock health analytics, and biosecurity tracking.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-4 bg-dark bg-opacity-50 border border-white border-opacity-10 backdrop-blur">
+        <h5 class="text-white fw-bold mb-3"><i class="bi bi-stars text-warning me-2"></i>What you get:</h5>
+        <ul class="list-unstyled text-white-50 small mb-0">
+          <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Unlimited batch lifecycle & bird condition logging</li>
+          <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Computer Vision visual image disease-risk scanning with live camera</li>
+          <li class="mb-2"><i class="bi bi-check2 text-success me-2"></i>Instant mortality & feed deviation alert notifications</li>
+          <li><i class="bi bi-check2 text-success me-2"></i>Direct 24/7 Veterinary hotline & WhatsApp support</li>
+        </ul>
+      </div>
+
+      <div class="d-flex justify-content-between text-white-50 small">
+        <span>&copy; 2026 SmartPoultry System</span>
+        <a href="index.html" class="text-white-50 text-decoration-none hover-primary">&larr; Back to Mobile App</a>
+      </div>
+    </div>
+
+    <!-- Right Register Form Area -->
+    <div class="auth-content">
+      <div class="auth-card" style="max-width: 540px;">
+        <div class="text-center mb-4">
+          <div class="d-inline-flex p-3 bg-success-subtle text-success rounded-circle mb-3">
+            <i class="bi bi-building-add fs-3"></i>
+          </div>
+          <h3 class="fw-bold">Register New Farm</h3>
+          <p class="text-muted small">Create your farm account with mobile number and password</p>
+        </div>
+
+        <div id="regAlertBox" style="display: none;"></div>
+
+        <!-- Registration Form -->
+        <form id="regForm" onsubmit="event.preventDefault(); submitRegistration();">
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Farmer Full Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="regFarmerName" placeholder="e.g. Ramesh Patel" required autofocus>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Farm Facility Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="regFacilityName" placeholder="e.g. Patel Broiler Farm" required>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Farm Location / Region <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="regLocation" placeholder="e.g. Hyderabad Agro Zone" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Email Address (Optional)</label>
+              <input type="email" class="form-control" id="regEmailInput" placeholder="farmer@poultry.com">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Mobile Number <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <select class="form-select" id="regCountryCode" style="max-width: 95px;">
+                <option value="+91" selected>🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+880">🇧🇩 +880</option>
+              </select>
+              <input type="tel" class="form-control" id="regMobileInput" placeholder="9876543210" maxlength="10" required>
+            </div>
+          </div>
+
+          <!-- Password & Confirm Password -->
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" id="regPassword" placeholder="Minimum 6 characters" minlength="6" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Confirm Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" id="regConfirmPassword" placeholder="Re-type password" minlength="6" required>
+            </div>
+          </div>
+
+          <button type="submit" id="regSubmitBtn" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm">
+            <i class="bi bi-person-check-fill me-1"></i> Create Farm Account & Start
+          </button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+          <p class="small text-muted mb-2">
+            Already have an account? <a href="login.html" class="fw-bold text-success text-decoration-none">Sign In with Mobile & Password &rarr;</a>
+          </p>
+          <a href="index.html" class="small fw-bold text-muted text-decoration-none">&larr; Open Mobile App View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script>
+    function showRegAlert(msg, type) {
+      const box = document.getElementById('regAlertBox');
+      box.className = `alert alert-${type} py-2 px-3 small rounded-3 mb-3`;
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    async function submitRegistration() {
+      const name = document.getElementById('regFarmerName').value.trim();
+      const farm = document.getElementById('regFacilityName').value.trim();
+      const loc = document.getElementById('regLocation').value.trim();
+      const email = document.getElementById('regEmailInput').value.trim();
+      const code = document.getElementById('regCountryCode').value;
+      const num = document.getElementById('regMobileInput').value.trim();
+      const pwd = document.getElementById('regPassword').value;
+      const cpwd = document.getElementById('regConfirmPassword').value;
+      const btn = document.getElementById('regSubmitBtn');
+
+      if (!name || !farm || !loc) {
+        showRegAlert('Please fill in your full name, farm facility name, and location.', 'warning');
+        return;
+      }
+
+      if (!num || num.length < 10) {
+        showRegAlert('Please enter a valid 10-digit mobile number.', 'warning');
+        return;
+      }
+
+      if (!pwd || pwd.length < 6) {
+        showRegAlert('Password must be at least 6 characters long.', 'warning');
+        return;
+      }
+
+      if (pwd !== cpwd) {
+        showRegAlert('Passwords do not match. Please verify your password.', 'warning');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+
+      const cleanNum = num.replace(/\D/g, '').slice(-10);
+      const fullPhone = `${code} ${cleanNum}`;
+
+      const regData = {
+        fullName: name,
+        phone: fullPhone,
+        email: email || null,
+        password: pwd,
+        farmName: farm,
+        location: loc,
+        role: 'farmer'
+      };
+
+      const res = await MobileAuth.registerWithPassword(regData);
+      if (res.success) {
+        showRegAlert('Account created successfully! Redirecting to farm dashboard...', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 700);
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-person-check-fill me-1"></i> Create Farm Account & Start';
+        showRegAlert(res.message || 'Registration failed. Please check details or sign in if already registered.', 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

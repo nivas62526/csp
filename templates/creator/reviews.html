@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Client Reviews & Ratings | Creator Studio | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">Client Reviews & Rating Score</h1>
+            <p class="text-xs text-slate-500">Authentic client feedback left on completed commercial video projects</p>
+        </div>
+        <div class="flex items-center space-x-3 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm self-start sm:self-auto">
+            <span class="text-2xl font-black text-amber-500 flex items-center space-x-1">
+                <i class="fa-solid fa-star text-xl"></i>
+                <span>{{ "%.2f"|format(profile.rating_avg) if profile else '5.00' }}</span>
+            </span>
+            <div class="text-left border-l border-slate-200 pl-3">
+                <span class="text-xs font-bold text-slate-800 block">Overall Score</span>
+                <span class="text-[10px] text-slate-400 block">{{ profile.rating_count if profile else 0 }} Total Ratings</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <h2 class="text-base font-extrabold text-slate-900">Review History ({{ reviews|length }})</h2>
+
+        {% if reviews %}
+            <div class="divide-y divide-slate-100 space-y-4">
+                {% for r in reviews %}
+                    <div class="pt-6 first:pt-0 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="flex items-center space-x-3">
+                                <img src="{{ r.reviewer_avatar or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100' }}" class="w-10 h-10 rounded-2xl object-cover border border-slate-200">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">{{ r.reviewer_name }}</h4>
+                                    <p class="text-[10px] text-slate-400">{{ r.company_name or 'Verified Brand Client' }} &bull; Project: <span class="font-semibold text-slate-600">{{ r.project_title }}</span></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center space-x-1 text-amber-400 text-xs">
+                                    {% for i in range(r.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                                </div>
+                                <span class="text-[10px] text-slate-400">{{ r.created_at }}</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed bg-slate-50/70 p-4 rounded-2xl border border-slate-100">
+                            "{{ r.review_text }}"
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="p-12 text-center text-slate-400 space-y-2">
+                <i class="fa-regular fa-star text-4xl text-slate-300"></i>
+                <p class="text-sm font-medium">No reviews received yet. Complete video orders to build your rating profile.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

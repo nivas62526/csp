@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SmartPoultry Mobile &bull; Farm Health, Eggs & Marketing</title>
+  
+  <!-- Fonts & Bootstrap 5 CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/mobile-app.css">
+</head>
+<body class="mobile-app-body">
+
+  <div class="mobile-app-shell">
+    
+    <!-- Top Mobile Header -->
+    <header class="mobile-header">
+      <a href="#" class="mobile-brand" onclick="switchMobileTab('dashboard')">
+        <div class="mobile-brand-icon"><i class="bi bi-shield-check"></i></div>
+        <span>Smart<span class="text-success">Poultry</span></span>
+      </a>
+      
+      <div class="d-flex align-items-center gap-1">
+        <!-- Language Selector Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light border rounded-pill px-2 py-1 small dropdown-toggle" data-bs-toggle="dropdown" id="langDropdownBtn">
+            <i class="bi bi-translate text-primary me-1"></i><span id="currentLangLabel">EN</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+            <li><button class="dropdown-item small" onclick="I18n.setLanguage('en')">🇬🇧 English</button></li>
+            <li><button class="dropdown-item small" onclick="I18n.setLanguage('hi')">🇮🇳 हिन्दी (Hindi)</button></li>
+            <li><button class="dropdown-item small" onclick="I18n.setLanguage('te')">🇮🇳 తెలుగు (Telugu)</button></li>
+            <li><button class="dropdown-item small" onclick="I18n.setLanguage('ta')">🇮🇳 தமிழ் (Tamil)</button></li>
+            <li><button class="dropdown-item small" onclick="I18n.setLanguage('bn')">🇮🇳 বাংলা (Bengali)</button></li>
+            <li><button class="dropdown-item small" onclick="I18n.setLanguage('es')">🇪🇸 Español</button></li>
+          </ul>
+        </div>
+
+        <!-- Mobile Account / Login Button -->
+        <button class="btn btn-sm btn-outline-success rounded-pill px-2 py-1 small" data-bs-toggle="modal" data-bs-target="#mobileAuthModal" id="authBtnTrigger">
+          <i class="bi bi-phone me-1"></i><span id="authBtnText" data-i18n="loginWithMobile">Login</span>
+        </button>
+
+        <!-- Switch to Project Overview -->
+        <a href="/overview" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1 small" title="Project Overview & Architecture">
+          <i class="bi bi-info-circle me-1"></i><span class="small d-none d-sm-inline">Overview</span>
+        </a>
+
+        <!-- Switch to Full Desktop Dashboard -->
+        <a href="/" class="btn btn-sm btn-outline-dark rounded-pill px-2 py-1 small" title="Switch to Full Desktop Dashboard">
+          <i class="bi bi-display me-1"></i><span class="small d-none d-sm-inline">Desktop</span>
+        </a>
+
+        <!-- Clean Data Reset Button -->
+        <button class="btn btn-sm btn-outline-danger rounded-pill px-2 py-1" onclick="clearAllCustomerData()" title="Wipe Data and Start Clean">
+          <i class="bi bi-trash3"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Account Status Pill -->
+    <div class="px-3 pt-2 pb-0 d-flex justify-content-between align-items-center">
+      <div id="authStatusPill" class="small">
+        <i class="bi bi-person-circle text-muted me-1"></i><span class="small text-muted">Guest / Farmer</span>
+      </div>
+      <button class="btn btn-link btn-sm text-decoration-none text-muted p-0 small" onclick="switchMobileTab('support')">
+        <i class="bi bi-headset text-success me-1"></i><span data-i18n="getHelp">Get Help</span>
+      </button>
+    </div>
+
+    <!-- Quick Module Navigation Pills -->
+    <div class="px-3 py-2 overflow-x-auto d-flex gap-2">
+      <button class="btn btn-sm btn-light border rounded-pill px-3 text-nowrap py-1 small active-pill" id="pillDashboard" onclick="switchMobileTab('dashboard')">
+        <i class="bi bi-speedometer2 text-success me-1"></i> Dashboard
+      </button>
+      <button class="btn btn-sm btn-light border rounded-pill px-3 text-nowrap py-1 small" id="pillEggs" onclick="switchMobileTab('eggs')">
+        <i class="bi bi-egg-fill text-warning me-1"></i> Eggs & Market
+      </button>
+      <button class="btn btn-sm btn-light border rounded-pill px-3 text-nowrap py-1 small" id="pillHygiene" onclick="switchMobileTab('hygiene')">
+        <i class="bi bi-droplet-half text-info me-1"></i> Hygiene Audit
+      </button>
+      <button class="btn btn-sm btn-light border rounded-pill px-3 text-nowrap py-1 small" id="pillGeo" onclick="switchMobileTab('geo')">
+        <i class="bi bi-geo-alt-fill text-danger me-1"></i> Geo Structure
+      </button>
+      <button class="btn btn-sm btn-light border rounded-pill px-3 text-nowrap py-1 small" id="pillFarms" onclick="switchMobileTab('farms')">
+        <i class="bi bi-building text-primary me-1"></i> Farms
+      </button>
+    </div>
+
+    <!-- MAIN VIEWS (SPA Mini-Mobile Format) -->
+
+    <!-- ==========================================
+         VIEW 1: DASHBOARD (Live Customer Data)
+         ========================================== -->
+    <section id="viewDashboard" class="app-view active-view">
+      <!-- Welcome Banner -->
+      <div class="p-3 bg-white rounded-4 border mb-3 shadow-xs">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>
+            <span class="text-muted small" data-i18n="welcomeBack">Welcome Back,</span>
+            <h5 class="fw-bold text-dark mb-0 sync-user-name" data-i18n="defaultFarmer">Poultry Farmer</h5>
+          </div>
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+            <i class="bi bi-circle-fill me-1" style="font-size:6px;"></i> <span data-i18n="activeStatus">Active</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="d-flex gap-2 mb-3 overflow-x-auto pb-1">
+        <button class="btn btn-sm btn-success text-nowrap rounded-pill flex-fill py-2" data-bs-toggle="modal" data-bs-target="#addFarmModal">
+          <i class="bi bi-building-add me-1"></i> <span data-i18n="addFarm">Add Farm</span>
+        </button>
+        <button class="btn btn-sm btn-primary text-nowrap rounded-pill flex-fill py-2" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+          <i class="bi bi-plus-circle me-1"></i> <span data-i18n="addBatch">Add Batch</span>
+        </button>
+        <button class="btn btn-sm btn-warning text-dark text-nowrap rounded-pill flex-fill py-2 fw-bold" onclick="switchMobileTab('eggs')">
+          <i class="bi bi-egg me-1"></i> Eggs
+        </button>
+        <button class="btn btn-sm btn-dark text-nowrap rounded-pill flex-fill py-2" onclick="switchMobileTab('scan')">
+          <i class="bi bi-camera me-1"></i> <span data-i18n="aiScan">AI Scan</span>
+        </button>
+      </div>
+
+      <!-- Live Customer KPIs (Dynamic from Customer Data) -->
+      <div class="mini-kpi-grid">
+        <div class="mini-kpi-box">
+          <span class="mini-kpi-label"><i class="bi bi-egg-fried text-success me-1"></i> <span data-i18n="totalBirds">Total Birds</span></span>
+          <div class="mini-kpi-val" id="mobTotalBirds">0</div>
+          <span class="text-muted" style="font-size: 0.72rem;" id="mobFarmsCount" data-i18n="farmsReg">0 Farms Registered</span>
+        </div>
+
+        <div class="mini-kpi-box">
+          <span class="mini-kpi-label"><i class="bi bi-grid-fill text-primary me-1"></i> <span data-i18n="activeBatches">Active Batches</span></span>
+          <div class="mini-kpi-val" id="mobActiveBatches">0</div>
+          <span class="text-muted" style="font-size: 0.72rem;" id="mobBatchesCount" data-i18n="cohorts">0 Cohorts</span>
+        </div>
+
+        <div class="mini-kpi-box">
+          <span class="mini-kpi-label"><i class="bi bi-basket3 text-warning me-1"></i> <span data-i18n="dailyFeed">Daily Feed</span></span>
+          <div class="mini-kpi-val" id="mobDailyFeed">0 <small class="fs-6 text-muted">kg</small></div>
+          <span class="text-muted" style="font-size: 0.72rem;" data-i18n="customerTotal">Customer Total</span>
+        </div>
+
+        <div class="mini-kpi-box">
+          <span class="mini-kpi-label"><i class="bi bi-heartbreak text-danger me-1"></i> <span data-i18n="mortality">Mortality</span></span>
+          <div class="mini-kpi-val text-danger" id="mobMortalityRate">0.00%</div>
+          <span class="text-muted" style="font-size: 0.72rem;" id="mobDeathsCount" data-i18n="deathsTotal">0 Total</span>
+        </div>
+      </div>
+
+      <!-- Overall Farm Health Score Gauge Card -->
+      <div class="mobile-card bg-dark text-white border-0 shadow-sm mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="badge bg-success" id="mobHealthBadge" data-i18n="statusOptimal">Flock Status: Optimal</span>
+          <span class="text-white-50 small"><i class="bi bi-cpu me-1"></i> AI Risk Model</span>
+        </div>
+        <div class="d-flex align-items-center gap-3 my-2">
+          <div style="width: 70px; height: 70px; position: relative;">
+            <svg viewBox="0 0 36 36" class="w-100 h-100" style="transform: rotate(-90deg);">
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="4" />
+              <path id="mobGaugePath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="100, 100" stroke-linecap="round" />
+            </svg>
+            <div style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+              <strong class="fs-5 text-white" id="mobScoreVal">100</strong>
+            </div>
+          </div>
+          <div class="flex-grow-1">
+            <strong class="d-block small text-white" id="mobAssessmentTitle" data-i18n="flockScore">Flock Health Score</strong>
+            <p class="text-white-50 mb-0" style="font-size: 0.76rem;" id="mobAssessmentDesc" data-i18n="flockScoreDesc">
+              Computed from your registered batches and daily condition inputs.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. Registered Farms Card on Dashboard -->
+      <div class="mobile-card mb-3">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-building text-primary"></i> <span data-i18n="registeredFarms">My Registered Farms</span></h6>
+          <button class="btn btn-sm btn-link text-primary p-0 text-decoration-none fw-bold" data-bs-toggle="modal" data-bs-target="#addFarmModal" data-i18n="addFarm">
+            + Add Farm
+          </button>
+        </div>
+        <div id="mobDashFarmsContainer"></div>
+      </div>
+
+      <!-- 2. Active Batches List Card with Age Predictions -->
+      <div class="mobile-card mb-3">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-grid-3x3 text-success"></i> <span data-i18n="myActiveBatches">My Active Batches</span></h6>
+          <button class="btn btn-sm btn-link text-success p-0 text-decoration-none fw-bold" data-bs-toggle="modal" data-bs-target="#addBatchModal" data-i18n="addBatch">
+            + Add Batch
+          </button>
+        </div>
+        <div id="mobBatchesListContainer"></div>
+      </div>
+
+      <!-- 3. AI Flock Age Predictor (Food, Water & Temperature) -->
+      <div class="mobile-card mb-3 border-2 border-warning-subtle shadow-sm" style="background: linear-gradient(180deg, #ffffff 0%, #fffdf5 100%);">
+        <div class="mobile-card-header">
+          <div>
+            <h6 class="mobile-card-title text-dark mb-0">
+              <i class="bi bi-calculator-fill text-warning me-1"></i> <span data-i18n="agePredictorTitle">Flock Age AI Predictor</span>
+            </h6>
+            <span class="text-muted" style="font-size: 0.72rem;">Predict Food, Water & Optimal Temp by Hen Age</span>
+          </div>
+          <span class="badge bg-warning text-dark px-2 py-1"><i class="bi bi-cpu-fill me-1"></i> AI Model</span>
+        </div>
+        
+        <div class="p-1">
+          <!-- Inputs Row -->
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label small fw-bold mb-1 text-muted" style="font-size: 0.75rem;"><i class="bi bi-calendar3 me-1 text-primary"></i> <span data-i18n="flockAgeDays">Hen Age (Days)</span></label>
+              <div class="input-group input-group-sm">
+                <input type="number" class="form-control fw-bold text-center" id="mobAgeInput" min="1" max="100" value="21" oninput="handleAgePredictorChange()">
+                <span class="input-group-text small">Days</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold mb-1 text-muted" style="font-size: 0.75rem;"><i class="bi bi-egg-fried me-1 text-success"></i> <span data-i18n="birdsCount">Flock Size</span></label>
+              <div class="input-group input-group-sm">
+                <input type="number" class="form-control fw-bold text-center" id="mobAgeBirdCount" min="10" step="100" value="1000" oninput="handleAgePredictorChange()">
+                <span class="input-group-text small">Birds</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Age Slider -->
+          <div class="mb-2">
+            <input type="range" class="form-range" id="mobAgeSlider" min="1" max="60" value="21" oninput="document.getElementById('mobAgeInput').value = this.value; handleAgePredictorChange()">
+            <div class="d-flex justify-content-between text-muted" style="font-size: 0.68rem;">
+              <span>Day 1 (Chicks)</span>
+              <span>Day 14 (W2)</span>
+              <span>Day 28 (W4)</span>
+              <span>Day 42+ (Harvest)</span>
+            </div>
+          </div>
+
+          <!-- Quick Age Preset Chips -->
+          <div class="d-flex flex-wrap gap-1 mb-3">
+            <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small age-preset-btn" onclick="setAgePreset(1)">D1</button>
+            <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small age-preset-btn" onclick="setAgePreset(7)">W1 (D7)</button>
+            <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small age-preset-btn" onclick="setAgePreset(14)">W2 (D14)</button>
+            <button type="button" class="btn btn-sm btn-success text-white border rounded-pill py-0 px-2 small age-preset-btn active" onclick="setAgePreset(21)">W3 (D21)</button>
+            <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small age-preset-btn" onclick="setAgePreset(28)">W4 (D28)</button>
+            <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small age-preset-btn" onclick="setAgePreset(35)">W5 (D35)</button>
+            <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small age-preset-btn" onclick="setAgePreset(42)">W6 (D42)</button>
+          </div>
+
+          <!-- Live Prediction Output Triad (Food, Water, Temp) -->
+          <div class="row g-2">
+            <!-- 1. Food Quantity -->
+            <div class="col-12 col-sm-4">
+              <div class="p-2 rounded-3 border bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="small fw-bold text-success"><i class="bi bi-basket3-fill me-1"></i> <span data-i18n="predictFood">Food (Feed)</span></span>
+                  <span class="badge bg-success-subtle text-success small" id="resAgeFeedStage">Grower</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-1">
+                  <h4 class="fw-bold mb-0 text-dark" id="resAgeFeedTotalKg">55.0</h4>
+                  <span class="text-muted small">kg/day</span>
+                </div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">
+                  <span id="resAgeFeedPerBird">55</span>g / bird &bull; <span id="resAgeFeedBags">8</span> bags/wk
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Water Quantity -->
+            <div class="col-12 col-sm-4">
+              <div class="p-2 rounded-3 border bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="small fw-bold text-primary"><i class="bi bi-droplet-half me-1"></i> <span data-i18n="predictWater">Water</span></span>
+                  <span class="badge bg-primary-subtle text-primary small">Ratio 2:1</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-1">
+                  <h4 class="fw-bold mb-0 text-dark" id="resAgeWaterTotalL">110.0</h4>
+                  <span class="text-muted small">L/day</span>
+                </div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">
+                  <span id="resAgeWaterPerBird">110</span>ml / bird &bull; <span id="resAgeWaterWeekly">770</span> L/wk
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Optimal Temperature -->
+            <div class="col-12 col-sm-4">
+              <div class="p-2 rounded-3 border bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="small fw-bold text-danger"><i class="bi bi-thermometer-sun me-1"></i> <span data-i18n="predictTemp">Optimal Temp</span></span>
+                  <span class="badge bg-danger-subtle text-danger small" id="resAgeTempRange">24-26°C</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-1">
+                  <h4 class="fw-bold mb-0 text-dark" id="resAgeTempTarget">25.0</h4>
+                  <span class="text-muted small">°C (<span id="resAgeTempTargetF">77</span>°F)</span>
+                </div>
+                <div class="text-muted small mt-1 text-truncate" style="font-size: 0.72rem;" id="resAgeBroodingStatus" title="Natural Comfort">
+                  Natural Comfort
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Climate Advice Footnote -->
+          <div class="p-2 bg-light rounded-3 border small mt-2 d-flex align-items-start gap-2" style="font-size: 0.75rem;">
+            <i class="bi bi-info-circle-fill text-primary mt-1"></i>
+            <span id="resAgeClimateAdvice" class="text-dark">Turn off supplementary heat during daytime. Increase cross-ventilation to remove ammonia fumes.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Recent Scans & AI History Preview -->
+      <div class="mobile-card mb-3">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-clock-history text-dark"></i> <span>Recent Hen Scans & Diagnoses</span></h6>
+          <button class="btn btn-sm btn-outline-dark rounded-pill py-0 px-2 fw-semibold" onclick="openScanHistoryModal()" style="font-size: 0.75rem;">
+            <span data-i18n="scanHistory">View All History &rarr;</span>
+          </button>
+        </div>
+        <div id="mobDashRecentScansContainer"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 2: MY FARMS & BATCHES
+         ========================================== -->
+    <section id="viewFarms" class="app-view">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0" data-i18n="farmsCohortsTitle">Farms & Cohorts</h5>
+        <div class="d-flex gap-1">
+          <button class="btn btn-sm btn-success rounded-pill" data-bs-toggle="modal" data-bs-target="#addFarmModal">
+            <i class="bi bi-plus-lg"></i> <span data-i18n="addFarm">Farm</span>
+          </button>
+          <button class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+            <i class="bi bi-plus-lg"></i> <span data-i18n="addBatch">Batch</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-card">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-building text-primary"></i> <span data-i18n="registeredFarms">Registered Farms</span></h6>
+          <span class="badge bg-light text-dark border" id="mobFarmsBadgeCount">0 Facilities</span>
+        </div>
+        <div id="mobFarmsContainer"></div>
+      </div>
+
+      <div class="mobile-card">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-grid-fill text-success"></i> <span data-i18n="flockBatches">Flock Batch Cohorts</span></h6>
+          <span class="badge bg-light text-dark border" id="mobBatchesBadgeCount">0 Batches</span>
+        </div>
+        <div id="mobBatchesFullContainer"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 3: AI BIRD CAMERA SCAN (Live Camera + Upload)
+         ========================================== -->
+    <section id="viewScan" class="app-view">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h5 class="fw-bold mb-1" data-i18n="aiScanTitle">AI Bird Image Inspection</h5>
+          <p class="text-muted small mb-0" data-i18n="aiScanSubtitle">Capture or upload a clear photo of the bird for Computer Vision health analysis</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 py-1 fw-bold shadow-xs d-flex align-items-center gap-1" onclick="openScanHistoryModal()">
+          <i class="bi bi-clock-history"></i> <span data-i18n="scanHistory">History</span> (<span id="mobScanHistoryCountBadge">0</span>)
+        </button>
+      </div>
+
+      <!-- Direct Voice Disease Recognition & Instant Care Card -->
+      <div class="mobile-card mb-3 p-3 border-2 border-primary-subtle shadow-sm" id="mobDirectVoiceCard" style="background: linear-gradient(145deg, #f0fdf4 0%, #e0f2fe 100%); border-radius: 14px;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-danger text-white px-2 py-1"><i class="bi bi-mic-fill me-1"></i> Voice AI</span>
+            <strong class="text-dark small" data-i18n="directVoiceCardTitle">🎙️ డైరెక్ట్ వాయిస్ వ్యాధి గుర్తింపు & చికిత్స</strong>
+          </div>
+          <!-- Language pills -->
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-success py-0 px-2 fw-bold small scan-lang-btn" data-lang="te" onclick="changeScanLanguage('te')">తెలుగు</button>
+            <button type="button" class="btn btn-outline-success py-0 px-2 fw-bold small scan-lang-btn" data-lang="en" onclick="changeScanLanguage('en')">EN</button>
+            <button type="button" class="btn btn-outline-success py-0 px-2 fw-bold small scan-lang-btn" data-lang="hi" onclick="changeScanLanguage('hi')">हिन्दी</button>
+          </div>
+        </div>
+
+        <p class="text-muted small mb-2" data-i18n="voiceDiseaseSub" style="font-size: 0.78rem;">
+          రాణీఖేత్, రొంప, కాక్సిడియోసిస్, ఫౌల్ పాక్స్, కోరిజా మొదలైన వ్యాధుల పేర్లు లేదా లక్షణాలు చెప్పండి.
+        </p>
+
+        <!-- Voice Action Buttons: Big Mic + Enter / Submit Button -->
+        <div class="d-flex gap-2 my-2">
+          <button type="button" class="btn btn-danger btn-lg rounded-pill shadow px-3 py-2 flex-grow-1 fw-bold d-flex align-items-center justify-content-center gap-2" id="mobDirectVoiceBtn" onclick="VoiceInput.toggleListening('mobScanSymptomsInput', 'mobDirectVoiceBtn')" style="font-size: 0.92rem;">
+            <i class="bi bi-mic-fill fs-5"></i>
+            <span id="mobDirectVoiceBtnText" data-i18n="speakDiseaseBtn">🎙️ మాట్లాడండి</span>
+          </button>
+          <button type="button" class="btn btn-success btn-lg rounded-pill shadow px-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" onclick="submitScanSymptoms()" title="Submit spoken symptoms and generate output immediately" style="font-size: 0.92rem;">
+            <i class="bi bi-arrow-return-left fs-5"></i>
+            <span>↵ Submit</span>
+          </button>
+        </div>
+
+        <!-- Real-time Voice Listening / Recognition Banner -->
+        <div id="mobVoiceListeningStatus" class="alert alert-info py-2 px-3 small my-2 d-none align-items-center justify-content-between rounded-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="spinner-grow spinner-grow-sm text-danger" role="status"></span>
+            <span id="mobVoiceListeningText" class="fw-semibold">Listening... Speak now</span>
+          </div>
+          <div class="d-flex gap-1 align-items-center">
+            <button type="button" class="btn btn-sm btn-success rounded-pill px-2 py-0 fw-bold" onclick="submitScanSymptoms()" style="font-size: 0.75rem;">
+              <i class="bi bi-check-circle me-1"></i><span data-i18n="doneSpeakingBtn">✅ పూర్తయింది</span>
+            </button>
+            <button type="button" class="btn-close btn-sm p-1" onclick="VoiceInput.recognition && VoiceInput.recognition.stop()"></button>
+          </div>
+        </div>
+
+        <!-- Spoken Voice Transcript Box -->
+        <div id="mobVoiceSpokenBox" class="p-2 bg-white rounded-3 border small my-2 d-none">
+          <span class="text-muted d-block" style="font-size: 0.72rem;"><i class="bi bi-soundwave me-1 text-primary"></i> Spoken Disease / Symptoms:</span>
+          <span id="mobVoiceSpokenText" class="fw-bold text-dark"></span>
+        </div>
+
+        <!-- Instant Detected Disease Alert Box (Shows output immediately upon speaking or submit) -->
+        <div id="mobVoiceDiseaseAlertBox" class="p-3 bg-white rounded-3 border-2 border-danger shadow-sm mt-2 d-none">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <span class="badge bg-danger px-2 py-1 mb-1" id="mobVoiceRiskBadge">హై రిస్క్ / High Risk</span>
+              <h6 class="fw-bold text-danger mb-0" id="mobVoiceDiseaseHeading">🚨 రాణీఖేత్ వ్యాధి (Ranikhet / Newcastle)</h6>
+            </div>
+            <div class="d-flex gap-1">
+              <button class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2 fw-semibold" onclick="VoiceInput.speakCurrentOutput()" title="Listen audio advice" style="font-size: 0.75rem;">
+                <i class="bi bi-volume-up-fill me-1"></i><span data-i18n="listenAudioBtn">🔊 వినండి</span>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2" onclick="dismissVoiceDiseaseAlert()">&times;</button>
+            </div>
+          </div>
+          <div class="p-2 bg-light rounded-2 border small mb-2" id="mobVoiceCareText" style="font-size: 0.78rem;">
+            <strong>తక్షణ చికిత్స & జాగ్రత్తలు:</strong> సోకిన కోళ్లను వెంటనే వేరు చేయండి. లాసోటా వాక్సిన్ మరియు ఎలక్ట్రోలైట్స్ అందించండి.
+          </div>
+          <div class="d-flex gap-2">
+            <a id="mobVoiceWhatsAppBtn" href="#" target="_blank" class="btn btn-sm btn-success rounded-pill flex-fill fw-bold" style="font-size: 0.8rem;">
+              <i class="bi bi-whatsapp me-1"></i> <span data-i18n="consultVetWhatsApp">వాట్సాప్‌లో డాక్టర్‌తో సంప్రదించండి</span>
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold" onclick="fillSymptomsFromVoice()" style="font-size: 0.8rem;">
+              <i class="bi bi-check2-circle me-1"></i> <span data-i18n="voiceApplyToScan">స్కాన్‌కు జోడించండి</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field to enter the symptoms of the hen -->
+      <div class="mobile-card mb-3" id="mobScanSymptomsCard">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label fw-bold mb-0 text-dark small" for="mobScanSymptomsInput">
+            <i class="bi bi-clipboard2-pulse-fill text-danger me-1"></i>
+            <span data-i18n="henSymptoms">Hen Observed Symptoms</span>
+          </label>
+          <div class="d-flex gap-1">
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0" id="mobScanVoiceMicBtn" onclick="VoiceInput.toggleListening('mobScanSymptomsInput', 'mobScanVoiceMicBtn')" title="Dictate symptoms by voice" style="font-size: 0.75rem;">
+              <i class="bi bi-mic me-1"></i><span data-i18n="voiceInput">Voice</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0" onclick="clearScanSymptoms()" title="Clear symptoms" style="font-size: 0.75rem;">
+              <i class="bi bi-x-circle me-1"></i><span data-i18n="clearSymptoms">Clear</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="text-muted small mb-2" data-i18n="henSymptomsDesc" style="font-size: 0.76rem;">
+          Enter or speak symptoms observed in the hen for accurate AI diagnosis and vet guidance
+        </p>
+        <textarea id="mobScanSymptomsInput" class="form-control mb-2 rounded-3 shadow-none border" rows="2" placeholder="Describe symptoms: e.g., sneezing, coughing, watery eyes, diarrhea, pale comb, wing droop, lethargic..." data-i18n-placeholder="enterHenSymptomsPlaceholder" onkeydown="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); submitScanSymptoms(); }"></textarea>
+        
+        <!-- Big Green Submit / Enter Button -->
+        <button type="button" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow-xs mb-2" onclick="submitScanSymptoms()">
+          <i class="bi bi-arrow-return-left me-1"></i> <span data-i18n="submitSymptomBtn">↵ సమర్పించండి / Enter (విశ్లేషించండి)</span>
+        </button>
+        
+        <div class="d-flex align-items-center justify-content-between mb-1">
+          <span class="text-muted fw-semibold" style="font-size: 0.72rem;">
+            <i class="bi bi-lightning-charge-fill text-warning me-1"></i><span data-i18n="quickSymptoms">Quick Tap Symptoms:</span>
+          </span>
+        </div>
+        <div class="d-flex flex-wrap gap-1" id="mobScanQuickSymptomChips">
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="cough" onclick="toggleScanSymptomChip(this, 'cough')"><span data-i18n="chipCough">🤧 Cough / Sneeze</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="eyes" onclick="toggleScanSymptomChip(this, 'eyes')"><span data-i18n="chipEyes">👁️ Swollen Eyes</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="diarrhea" onclick="toggleScanSymptomChip(this, 'diarrhea')"><span data-i18n="chipDiarrhea">💧 Diarrhea</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="comb" onclick="toggleScanSymptomChip(this, 'comb')"><span data-i18n="chipComb">🐓 Comb Swelling</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="lethargic" onclick="toggleScanSymptomChip(this, 'lethargic')"><span data-i18n="chipLethargic">💤 Lethargic</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="feathers" onclick="toggleScanSymptomChip(this, 'feathers')"><span data-i18n="chipFeathers">🪶 Ruffled Feathers</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="appetite" onclick="toggleScanSymptomChip(this, 'appetite')"><span data-i18n="chipAppetite">📉 Low Feed</span></button>
+          <button type="button" class="btn btn-sm btn-light border rounded-pill py-1 px-2 text-nowrap small mob-symptom-chip" data-symptom-key="legs" onclick="toggleScanSymptomChip(this, 'legs')"><span data-i18n="chipLegs">🦿 Leg Weakness</span></button>
+        </div>
+      </div>
+
+      <div id="liveCameraContainer" class="live-camera-card mb-3 d-none">
+        <video id="liveCameraStream" class="camera-video-stream" autoplay playsinline muted></video>
+        <div class="camera-reticle-overlay">
+          <div class="camera-reticle-text"><i class="bi bi-bounding-box me-1"></i> Align Bird in Frame</div>
+        </div>
+        <div class="camera-controls-bar">
+          <button type="button" class="camera-aux-btn" onclick="LiveCamera.toggleFacingMode()" title="Flip Camera">
+            <i class="bi bi-arrow-repeat"></i>
+          </button>
+          <button type="button" class="snap-photo-btn" onclick="snapCameraPhoto()" title="Snap Photo">
+            <i class="bi bi-camera-fill"></i>
+          </button>
+          <button type="button" class="camera-aux-btn" onclick="closeCameraStream()" title="Close Camera">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-card text-center p-4" id="mobUploadArea">
+        <div class="mobile-empty-icon bg-success-subtle text-success mx-auto mb-3" style="width: 70px; height: 70px; font-size: 2rem;">
+          <i class="bi bi-camera"></i>
+        </div>
+        <h6 class="fw-bold mb-1" data-i18n="openLiveCamera">Open Live Camera</h6>
+        <p class="text-muted small mb-3">Use your phone or tablet camera to snap bird photos directly</p>
+
+        <div class="d-flex flex-column gap-2 max-w-300 mx-auto">
+          <button type="button" class="btn btn-success rounded-pill py-2 fw-bold shadow-xs" onclick="startLiveCameraStream()">
+            <i class="bi bi-camera-video-fill me-1"></i> <span data-i18n="openLiveCamera">Open Live Camera</span>
+          </button>
+          <div class="d-flex align-items-center gap-2 my-1">
+            <hr class="flex-grow-1"><span class="text-muted small" style="font-size: 0.72rem;">OR</span><hr class="flex-grow-1">
+          </div>
+          <label for="mobImageFileInput" class="btn btn-outline-secondary rounded-pill py-2 small fw-semibold">
+            <i class="bi bi-image me-1"></i> <span data-i18n="choosePhoto">Choose from Gallery</span>
+          </label>
+          <input type="file" id="mobImageFileInput" class="d-none" accept="image/*">
+        </div>
+      </div>
+
+      <div id="mobPreviewContainer" class="mobile-card d-none">
+        <div class="image-preview-wrapper mb-3" style="max-height: 260px; overflow: hidden; border-radius: 12px; position:relative;">
+          <img id="mobPreviewImg" src="" alt="Bird Preview" style="width:100%; height:240px; object-fit:cover;">
+          <div class="scanner-laser" id="mobScannerLaser" style="display:none;"></div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-success flex-fill py-2 fw-bold" id="mobRunScanBtn" onclick="runMobileImageScan()">
+            <i class="bi bi-cpu-fill me-1"></i> <span data-i18n="runAiAnalysis">Run AI Analysis</span>
+          </button>
+          <button type="button" class="btn btn-outline-danger py-2" onclick="removeMobileImage()">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobScanResultCard" class="prediction-result-card risk-low d-none mb-3 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="badge bg-success px-3 py-1 fw-bold fs-6" id="mobScanRiskBadge">Low Risk</span>
+          <div class="d-flex align-items-center gap-1">
+            <span class="badge bg-light text-dark border small" id="mobScanConfidence">96% Conf.</span>
+            <button class="btn btn-sm btn-outline-danger py-0 px-2 rounded-pill small fw-semibold" onclick="VoiceInput.speakCurrentOutput(document.getElementById('mobScanTitle').textContent)" title="Listen Audio Advice">
+              <i class="bi bi-volume-up-fill me-1"></i><span data-i18n="listenAudioBtn">🔊 వినండి</span>
+            </button>
+          </div>
+        </div>
+        <h6 class="fw-bold mb-1 fs-6 text-dark" id="mobScanTitle" data-i18n="normalVisual">Normal Visual Indicators</h6>
+        <p class="text-muted small mb-2" id="mobScanSummary" data-i18n="normalVisualDesc">Clear eyes, normal comb pigmentation, upright posture.</p>
+        
+        <!-- Evaluated Symptoms Badge / Box -->
+        <div id="mobScanReportedSymptomsBox" class="p-2 bg-warning-subtle rounded-3 border border-warning-subtle small mb-3 d-none">
+          <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-clipboard2-pulse-fill text-warning-emphasis mt-1"></i>
+            <div>
+              <strong class="text-warning-emphasis d-block" data-i18n="reportedHenSymptoms">Reported Hen Symptoms:</strong>
+              <span id="mobScanReportedSymptomsText" class="text-dark small"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Safety & Precautions Box -->
+        <div class="p-3 bg-white rounded-3 border mb-2">
+          <strong class="d-block small text-dark mb-1">
+            <i class="bi bi-shield-check text-success me-1"></i> <span data-i18n="safetyPrecautions">Safety & Precautions (రక్షణ & భద్రతా చర్యలు)</span>:
+          </strong>
+          <ul id="mobScanSafetyList" class="small mb-0 ps-3 text-dark">
+            <li>Maintain standard shed biosecurity and fresh sanitized drinking water.</li>
+          </ul>
+        </div>
+
+        <!-- 2. AI Predictions & Prognosis Box -->
+        <div class="p-3 bg-white rounded-3 border mb-2">
+          <strong class="d-block small text-dark mb-1">
+            <i class="bi bi-graph-up-arrow text-primary me-1"></i> <span data-i18n="aiPredictions">AI Predictions & Prognosis (ముందస్తు అంచనాలు)</span>:
+          </strong>
+          <ul id="mobScanPredictionsList" class="small mb-0 ps-3 text-dark">
+            <li>Flock displays normal vigor and feed consumption rates.</li>
+          </ul>
+        </div>
+
+        <!-- 3. Treatment & Care Guidance Box -->
+        <div class="p-3 bg-white rounded-3 border mb-2">
+          <strong class="d-block small text-dark mb-1">
+            <i class="bi bi-capsule text-danger me-1"></i> <span data-i18n="treatments">Treatment Protocol (చికిత్స & సంరక్షణ)</span>:
+          </strong>
+          <div id="mobScanGuidance" class="small text-dark">
+            Maintain clean drinking water and baseline biosecurity.
+          </div>
+        </div>
+
+        <div class="ai-disclaimer-box mb-3">
+          <i class="bi bi-info-circle-fill"></i>
+          <span style="font-size: 0.72rem;" data-i18n="noticeAi"><strong>Notice:</strong> AI results are early-warning indicators. Consult veterinary support for confirmed diagnosis.</span>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-dark rounded-pill flex-fill py-2 fw-semibold" onclick="openScanHistoryModal()">
+            <i class="bi bi-clock-history me-1"></i> <span data-i18n="scanHistory">View in History</span>
+          </button>
+          <button class="btn btn-sm btn-success rounded-pill flex-fill py-2 fw-bold" onclick="shareScanWithVet()">
+            <i class="bi bi-whatsapp me-1"></i> <span data-i18n="shareWithVet">Share with Vet</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 4: LOG BIRD CONDITION (Voice & Text Input)
+         ========================================== -->
+    <section id="viewCondition" class="app-view">
+      <div class="mb-3">
+        <h5 class="fw-bold mb-1" data-i18n="logDailyTitle">Log Daily Condition</h5>
+        <p class="text-muted small mb-0" data-i18n="logDailySubtitle">Record today's flock feed, temperature, and observed symptoms with Voice or Text</p>
+      </div>
+
+      <div class="mobile-card">
+        <!-- Voice Input Speech Assistant Banner -->
+        <div class="p-3 bg-primary-subtle rounded-3 border border-primary-subtle mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small fw-bold text-primary"><i class="bi bi-mic-fill me-1"></i> Voice Symptom Dictation</span>
+            <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" id="voiceMicBtn" onclick="VoiceInput.toggleListening('condSymptomVoiceText', 'voiceMicBtn')">
+              <i class="bi bi-mic me-1"></i> Voice Input
+            </button>
+          </div>
+          <div class="small text-muted mb-2" data-i18n="speakSymptoms">
+            Tap mic and speak symptoms (e.g. coughing, sneezing, feed intake drop, lethargy)
+          </div>
+          <textarea class="form-control form-control-sm bg-white" id="condSymptomVoiceText" rows="2" placeholder="Spoken symptoms appear here or type freely..."></textarea>
+          <button type="button" class="btn btn-success btn-sm w-100 rounded-pill py-2 fw-bold mt-2 shadow-xs" onclick="VoiceInput.submitVoiceDiagnosis('condSymptomVoiceText')">
+            <i class="bi bi-arrow-return-left me-1"></i> <span data-i18n="submitVoice">↵ Submit Voice Message (AI విశ్లేషణ)</span>
+          </button>
+        </div>
+
+        <form id="mobConditionForm" onsubmit="handleCustomerConditionSubmit(event)">
+          <div class="mb-3">
+            <label class="form-label small fw-bold"><span data-i18n="selectBatch">Select Batch</span> <span class="text-danger">*</span></label>
+            <select class="form-select form-select-sm" id="mobCondBatchSelect" required></select>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-bold" data-i18n="tempC">Temp (°C)</label>
+              <input type="number" step="0.1" class="form-control form-control-sm" id="mobCondTemp" value="24.5" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold" data-i18n="humidityPct">Humidity (%)</label>
+              <input type="number" step="0.1" class="form-control form-control-sm" id="mobCondHum" value="62.0" required>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-bold"><span data-i18n="dailyFeedKg">Daily Feed (kg)</span> <span class="text-danger">*</span></label>
+              <input type="number" class="form-control form-control-sm" id="mobCondFeed" placeholder="e.g. 150" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold" data-i18n="waterIntakeL">Water Intake (L)</label>
+              <input type="number" class="form-control form-control-sm" id="mobCondWater" placeholder="e.g. 300">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold"><span data-i18n="mortalityToday">Mortality Count Today</span> <span class="text-danger">*</span></label>
+            <input type="number" class="form-control form-control-sm" id="mobCondMortality" value="0" min="0" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold d-block" data-i18n="flockActivity">Flock Activity</label>
+            <div class="d-flex gap-3 small">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="mobAct" id="mActNormal" value="Normal" checked>
+                <label class="form-check-label" for="mActNormal" data-i18n="active">Active</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="mobAct" id="mActLow" value="Low">
+                <label class="form-check-label" for="mActLow" data-i18n="low">Low</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="mobAct" id="mActVeryLow" value="Very Low">
+                <label class="form-check-label" for="mActVeryLow" data-i18n="lethargic">Lethargic</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold" data-i18n="observedSigns">Observed Signs (Check all that apply)</label>
+            <div class="row g-1 small">
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input mob-sym-chk" type="checkbox" value="Sneezing" id="mSymSneeze">
+                  <label class="form-check-label" for="mSymSneeze" data-i18n="sneezingCough">Sneezing / Cough</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input mob-sym-chk" type="checkbox" value="Reduced Feed" id="mSymFeed">
+                  <label class="form-check-label" for="mSymFeed" data-i18n="feedIntakeDrop">Feed Intake Drop</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input mob-sym-chk" type="checkbox" value="Abnormal Droppings" id="mSymDrop">
+                  <label class="form-check-label" for="mSymDrop" data-i18n="diarrheaWet">Diarrhea / Wet Litter</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input mob-sym-chk" type="checkbox" value="Swelling" id="mSymSwell">
+                  <label class="form-check-label" for="mSymSwell" data-i18n="combSwell">Comb / Eye Swell</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-pill">
+            <i class="bi bi-check2-circle me-1"></i> <span data-i18n="analyzeSave">Analyze & Save Condition</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 5: EGG PRODUCTION & DIRECT MARKETING
+         ========================================== -->
+    <section id="viewEggs" class="app-view">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h5 class="fw-bold mb-0">Eggs & Direct Marketing</h5>
+          <span class="text-muted small">Daily egg collection & farm-to-consumer sales</span>
+        </div>
+        <div class="d-flex gap-1">
+          <button class="btn btn-sm btn-warning text-dark rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#addEggModal">
+            <i class="bi bi-plus-lg"></i> Log Eggs
+          </button>
+          <button class="btn btn-sm btn-success rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#addMarketModal">
+            <i class="bi bi-tag-fill"></i> Sell
+          </button>
+        </div>
+      </div>
+
+      <!-- Egg Stats Summary -->
+      <div class="mini-kpi-grid mb-3">
+        <div class="mini-kpi-box">
+          <span class="mini-kpi-label"><i class="bi bi-egg text-warning me-1"></i> Total Eggs</span>
+          <div class="mini-kpi-val" id="eggTotalCount">0</div>
+          <span class="text-muted small" id="eggTrayCount">0 Trays (30/tray)</span>
+        </div>
+        <div class="mini-kpi-box">
+          <span class="mini-kpi-label"><i class="bi bi-x-circle text-danger me-1"></i> Damaged / Loss</span>
+          <div class="mini-kpi-val text-danger" id="eggDamagedCount">0</div>
+          <span class="text-muted small">Broken Shells</span>
+        </div>
+      </div>
+
+      <!-- Recent Egg Logs Card -->
+      <div class="mobile-card mb-3">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-journal-text text-warning"></i> Recent Egg Harvest Records</h6>
+        </div>
+        <div id="eggLogsContainer"></div>
+      </div>
+
+      <!-- Direct Marketplace Listings Card -->
+      <div class="mobile-card">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-shop text-success"></i> Direct Farm Sale Listings</h6>
+          <span class="badge bg-success-subtle text-success border" id="marketListingsCount">0 Active</span>
+        </div>
+        <div id="marketListingsContainer"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 6: CLEANLINESS & HYGIENE DETAILS
+         ========================================== -->
+    <section id="viewHygiene" class="app-view">
+      <div class="mb-3">
+        <h5 class="fw-bold mb-1" data-i18n="hygieneAuditTitle">Cleanliness & Biosecurity Hygiene Audit</h5>
+        <p class="text-muted small mb-0" data-i18n="hygieneAuditSubtitle">Daily farm sanitation checklist & biosecurity compliance rating</p>
+      </div>
+
+      <!-- Hygiene Rating Score Card -->
+      <div class="mobile-card bg-success text-white border-0 shadow-sm mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="badge bg-white text-success fw-bold">Biosecurity Index</span>
+          <small class="text-white-50"><i class="bi bi-shield-check me-1"></i> Certified</small>
+        </div>
+        <div class="d-flex align-items-center justify-content-between my-2">
+          <div>
+            <h2 class="display-6 fw-bold mb-0 text-white" id="hygieneScoreDisplay">95%</h2>
+            <div class="small text-white-50" id="hygieneRatingBadge">Optimal Sanitization Status</div>
+          </div>
+          <div class="text-end text-white-50 small">
+            <div>Water Line: Clean</div>
+            <div>Litter: Dry Condition</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Cleanliness Audit Form -->
+      <div class="mobile-card">
+        <h6 class="mobile-card-title mb-3"><i class="bi bi-clipboard-check-fill text-success"></i> Daily Cleanliness Audit Checklist</h6>
+        <form id="hygieneAuditForm" onsubmit="handleHygieneAuditSubmit(event)">
+          <div class="form-check p-3 bg-light rounded-3 border mb-2">
+            <input class="form-check-input ms-0 me-2" type="checkbox" id="hygWater" checked>
+            <label class="form-check-label small fw-bold" for="hygWater">
+              Water pipeline sanitized, flushed & chlorinated
+            </label>
+            <div class="text-muted small ps-4">Nipples / drinkers free from biofilm or bacterial algae</div>
+          </div>
+
+          <div class="form-check p-3 bg-light rounded-3 border mb-2">
+            <input class="form-check-input ms-0 me-2" type="checkbox" id="hygLitter" checked>
+            <label class="form-check-label small fw-bold" for="hygLitter">
+              Dry litter topping & lime powder applied
+            </label>
+            <div class="text-muted small ps-4">Prevents wet litter ammonia buildup and footpad dermatitis</div>
+          </div>
+
+          <div class="form-check p-3 bg-light rounded-3 border mb-2">
+            <input class="form-check-input ms-0 me-2" type="checkbox" id="hygFootbath" checked>
+            <label class="form-check-label small fw-bold" for="hygFootbath">
+              Footbath disinfectant replaced at shed entry
+            </label>
+            <div class="text-muted small ps-4">Fresh potassium permanganate / iodophor dip for visitors</div>
+          </div>
+
+          <div class="form-check p-3 bg-light rounded-3 border mb-2">
+            <input class="form-check-input ms-0 me-2" type="checkbox" id="hygPest" checked>
+            <label class="form-check-label small fw-bold" for="hygPest">
+              Rodent, beetle & fly bait traps inspected
+            </label>
+            <div class="text-muted small ps-4">Perimeter barrier check to prevent wild avian vectors</div>
+          </div>
+
+          <div class="form-check p-3 bg-light rounded-3 border mb-2">
+            <input class="form-check-input ms-0 me-2" type="checkbox" id="hygDisposal" checked>
+            <label class="form-check-label small fw-bold" for="hygDisposal">
+              Dead bird safe disposal in deep lime pit
+            </label>
+            <div class="text-muted small ps-4">Zero open-air carcasses to prevent predator contamination</div>
+          </div>
+
+          <div class="form-check p-3 bg-light rounded-3 border mb-3">
+            <input class="form-check-input ms-0 me-2" type="checkbox" id="hygLimewash" checked>
+            <label class="form-check-label small fw-bold" for="hygLimewash">
+              Cobweb removal & wall whitewash intact
+            </label>
+            <div class="text-muted small ps-4">Curtains and mesh screens dusted for unhindered airflow</div>
+          </div>
+
+          <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold">
+            <i class="bi bi-shield-fill-check me-1"></i> Submit Hygiene Inspection
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 7: FARM GEOGRAPHICAL & SHED STRUCTURE
+         ========================================== -->
+    <section id="viewGeo" class="app-view">
+      <div class="mb-3">
+        <h5 class="fw-bold mb-1" data-i18n="geoStructureTitle">Farm Geographical & Shed Structure</h5>
+        <p class="text-muted small mb-0" data-i18n="geoStructureSubtitle">GPS mapping, wind orientation, shed engineering & stocking density</p>
+      </div>
+
+      <div class="mobile-card">
+        <!-- Live GPS Detector -->
+        <div class="p-3 bg-light rounded-3 border mb-3 text-center">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="small fw-bold text-dark"><i class="bi bi-geo-alt-fill text-danger me-1"></i> GPS Coordinates</span>
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" onclick="detectFarmGpsLocation()">
+              <i class="bi bi-crosshair me-1"></i> Detect GPS
+            </button>
+          </div>
+          <div class="bg-white p-2 rounded border small font-monospace text-dark" id="displayGpsLocation">
+            Tap 'Detect GPS' to fetch farm coordinates
+          </div>
+        </div>
+
+        <form id="farmGeoForm" onsubmit="handleFarmGeoSubmit(event)">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Physical Address / Agro Zone</label>
+            <input type="text" class="form-control form-control-sm" id="geoAddress" placeholder="e.g. Plot 14, East Agro Zone">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold" data-i18n="shedOrientation">Shed Orientation & Cross Wind</label>
+            <select class="form-select form-select-sm" id="geoOrientation">
+              <option value="East - West (Cross-Wind)" selected>East - West (Prevents direct roof sunlight)</option>
+              <option value="North - South">North - South</option>
+              <option value="North-East to South-West">North-East to South-West</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold" data-i18n="ventilationMode">Ventilation Engineering Mode</label>
+            <select class="form-select form-select-sm" id="geoVentilation">
+              <option value="Tunnel Ventilation + Evaporative Cooling Pads" selected>Tunnel Ventilation + Evaporative Pads</option>
+              <option value="Open-Sided Shed with Winch Curtains">Open-Sided Shed with Winch Curtains</option>
+              <option value="Closed Environment Controlled (EC) Shed">Closed Environment Controlled (EC) Shed</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold" data-i18n="shedDimensions">Shed Dimensions (Feet)</label>
+            <div class="row g-2">
+              <div class="col-4">
+                <input type="number" class="form-control form-control-sm" id="geoLength" placeholder="Length (e.g. 100)" value="120" oninput="calculateShedCapacity()">
+                <span class="text-muted" style="font-size: 0.68rem;">Length (ft)</span>
+              </div>
+              <div class="col-4">
+                <input type="number" class="form-control form-control-sm" id="geoWidth" placeholder="Width (e.g. 30)" value="30" oninput="calculateShedCapacity()">
+                <span class="text-muted" style="font-size: 0.68rem;">Width (ft)</span>
+              </div>
+              <div class="col-4">
+                <input type="number" class="form-control form-control-sm" id="geoHeight" placeholder="Height (e.g. 12)" value="12">
+                <span class="text-muted" style="font-size: 0.68rem;">Height (ft)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Stocking Capacity Calculator Box -->
+          <div class="p-3 bg-success-subtle rounded-3 border border-success-subtle mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small fw-bold text-success"><i class="bi bi-rulers me-1"></i> Floor Area:</span>
+              <strong class="text-dark" id="displayFloorArea">3,600 sq.ft</strong>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="small fw-bold text-success"><i class="bi bi-egg-fried me-1"></i> Stocking Capacity:</span>
+              <strong class="text-success fs-6" id="displayStockingCapacity">3,000 Broilers</strong>
+            </div>
+            <div class="text-muted small mt-1" style="font-size: 0.72rem;">Calculated at optimal ~1.2 sq.ft/bird density standard.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold" data-i18n="nearestFarmBuffer">Buffer Distance to Nearest Farm (km)</label>
+            <input type="number" step="0.1" class="form-control form-control-sm" id="geoBufferDistance" value="2.5" placeholder="e.g. 2.5 km (Safe buffer > 1km)">
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-bold">
+            <i class="bi bi-check2-circle me-1"></i> Save Farm Structural Blueprint
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 8: CUSTOMER SUPPORT & HELPLINE
+         ========================================== -->
+    <section id="viewSupport" class="app-view">
+      <div class="mb-3">
+        <h5 class="fw-bold mb-1" data-i18n="customerSupportTitle">Customer & Vet Support</h5>
+        <p class="text-muted small mb-0" data-i18n="customerSupportSubtitle">Direct 24/7 poultry health assistance, agro-veterinary helpline, and ticket inquiries</p>
+      </div>
+
+      <a href="tel:+18005550199" class="support-action-tile">
+        <div class="support-icon call"><i class="bi bi-telephone-fill"></i></div>
+        <div class="flex-grow-1">
+          <strong class="d-block text-dark" data-i18n="callHotline">Call 24/7 Agro-Vet Hotline</strong>
+          <span class="small text-muted" data-i18n="hotlineNum">+1 (800) 555-0199 (Toll Free)</span>
+        </div>
+        <i class="bi bi-chevron-right text-muted"></i>
+      </a>
+
+      <a href="https://wa.me/15550199?text=Hello%20SmartPoultry%20Support,%20I%20need%20veterinary%20assistance%20for%20my%20flock." target="_blank" class="support-action-tile">
+        <div class="support-icon whatsapp"><i class="bi bi-whatsapp"></i></div>
+        <div class="flex-grow-1">
+          <strong class="d-block text-dark" data-i18n="whatsappAssistant">WhatsApp Poultry Assistant</strong>
+          <span class="small text-muted" data-i18n="whatsappDesc">Chat with expert avian technicians</span>
+        </div>
+        <i class="bi bi-chevron-right text-muted"></i>
+      </a>
+
+      <div class="mobile-card mt-3">
+        <div class="mobile-card-header">
+          <h6 class="mobile-card-title"><i class="bi bi-envelope-paper text-primary"></i> <span data-i18n="submitQuery">Submit Support Query / Case</span></h6>
+        </div>
+        <form id="customerSupportForm" onsubmit="handleSupportQuerySubmit(event)">
+          <div class="mb-2">
+            <label class="form-label small fw-bold"><span data-i18n="yourName">Your Name</span> <span class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-sm" id="supName" placeholder="e.g. Ramesh Patel" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-bold"><span data-i18n="phoneNum">Phone Number</span> <span class="text-danger">*</span></label>
+            <input type="tel" class="form-control form-control-sm" id="supPhone" placeholder="e.g. +91 9876543210" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-bold" data-i18n="urgencyLevel">Urgency Level</label>
+            <select class="form-select form-select-sm" id="supUrgency">
+              <option value="Normal" data-i18n="normalUrgency">General Question / Guidance</option>
+              <option value="Urgent" data-i18n="urgentUrgency">Urgent - Flock Symptoms Observed</option>
+              <option value="Emergency" data-i18n="emergencyUrgency">Critical - Sudden Mortality Spike</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold"><span data-i18n="describeIssue">Describe Issue / Symptoms</span> <span class="text-danger">*</span></label>
+            <textarea class="form-control form-control-sm" id="supMessage" rows="3" placeholder="Describe symptoms, bird age, shed conditions..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm w-100 py-2 fw-bold rounded-pill">
+            <i class="bi bi-send-fill me-1"></i> <span data-i18n="sendQuery">Send Query to Vet Team</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         BOTTOM NAVIGATION BAR (MINI MOBILE APP)
+         ========================================== -->
+    <nav class="mobile-bottom-nav">
+      <div class="bottom-nav-item active" id="navItemDashboard" onclick="switchMobileTab('dashboard')">
+        <i class="bi bi-speedometer2"></i>
+        <span data-i18n="navHome">Home</span>
+      </div>
+
+      <div class="bottom-nav-item" id="navItemEggs" onclick="switchMobileTab('eggs')">
+        <i class="bi bi-egg-fill"></i>
+        <span>Eggs</span>
+      </div>
+
+      <div class="bottom-nav-item scan-item" id="navItemScan" onclick="switchMobileTab('scan')">
+        <div class="scan-btn-circle">
+          <i class="bi bi-camera-fill"></i>
+        </div>
+        <span data-i18n="navScan">Scan</span>
+      </div>
+
+      <div class="bottom-nav-item" id="navItemCondition" onclick="switchMobileTab('condition')">
+        <i class="bi bi-clipboard2-pulse"></i>
+        <span data-i18n="navHealth">Health</span>
+      </div>
+
+      <div class="bottom-nav-item" id="navItemSupport" onclick="switchMobileTab('support')">
+        <i class="bi bi-headset"></i>
+        <span data-i18n="navSupport">Support</span>
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- ==========================================
+       MODALS
+       ========================================== -->
+
+  <!-- 1. MOBILE NUMBER & OTP AUTH MODAL -->
+  <div class="modal fade" id="mobileAuthModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold" id="authModalTitle"><i class="bi bi-shield-lock-fill text-success me-2"></i><span data-i18n="loginWithMobile">Mobile Login & Verification</span></h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body py-3">
+          <ul class="nav nav-pills nav-fill mb-3 bg-light p-1 rounded-pill" id="authTabs">
+            <li class="nav-item">
+              <button class="nav-link active rounded-pill btn-sm fw-bold" onclick="switchAuthMode('password')" id="tabBtnPassword">
+                <i class="bi bi-key me-1"></i> Password Login
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill btn-sm fw-bold" onclick="switchAuthMode('otp')" id="tabBtnOtp">
+                <i class="bi bi-phone me-1"></i> Mobile OTP
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link rounded-pill btn-sm fw-bold" onclick="switchAuthMode('register')" id="tabBtnRegister">
+                <i class="bi bi-person-plus me-1"></i> Register
+              </button>
+            </li>
+          </ul>
+
+          <!-- 1. PASSWORD LOGIN SECTION (DEFAULT) -->
+          <div id="authModePassword">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Mobile Number or Email</label>
+              <div class="input-group">
+                <select class="form-select form-select-sm" id="modalPassCountryCode" style="max-width: 95px;">
+                  <option value="+91" selected>🇮🇳 +91</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+971">🇦🇪 +971</option>
+                </select>
+                <input type="text" class="form-control" id="modalPassIdentifier" placeholder="9876543210 or email" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold mb-0">Password</label>
+                <a href="login.html" class="small text-success text-decoration-none fw-bold">Forgot Password?</a>
+              </div>
+              <div class="input-group">
+                <input type="password" class="form-control" id="modalPassPassword" placeholder="••••••••" required>
+                <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPassword('modalPassPassword', this)">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-success w-100 py-2 rounded-pill fw-bold mb-3" id="btnModalPassLogin" onclick="handleModalPasswordLogin()">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard
+            </button>
+
+            <div class="text-center pt-2 border-top">
+              <span class="small text-muted">Don't have an account?</span>
+              <a href="register.html" class="small text-success fw-bold text-decoration-none ms-1">Register New Farm &rarr;</a>
+            </div>
+          </div>
+
+          <!-- 2. MOBILE OTP SECTION -->
+          <div id="authModeOtp" class="d-none">
+            <div id="authStepPhone">
+              <div class="mb-3">
+                <label class="form-label small fw-bold" data-i18n="enterMobile">Enter 10-Digit Mobile Number</label>
+                <div class="input-group">
+                  <select class="form-select form-select-sm" id="countryCodeSelect" style="max-width: 95px;">
+                    <option value="+91" selected>🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                    <option value="+880">🇧🇩 +880</option>
+                  </select>
+                  <input type="tel" class="form-control" id="mobileNumberInput" placeholder="9876543210" maxlength="10" required>
+                </div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">We will send a 6-digit verification OTP code to this mobile number.</div>
+              </div>
+
+              <button type="button" class="btn btn-success w-100 py-2 rounded-pill fw-bold" id="btnModalSendOtp" onclick="handleSendOtp()">
+                <i class="bi bi-send-check me-1"></i> <span data-i18n="sendOtp">Send OTP</span>
+              </button>
+            </div>
+
+            <div id="authStepOtp" class="d-none">
+              <div class="text-center mb-3">
+                <div class="p-2 rounded-circle bg-success-subtle text-success mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                  <i class="bi bi-chat-left-dots"></i>
+                </div>
+                <h6 class="fw-bold mb-1" data-i18n="enterOtp">Enter 6-Digit OTP</h6>
+                <div class="text-muted small">Sent to <strong id="displayPendingMobile">+91 XXXXX XXXXX</strong></div>
+              </div>
+
+              <div class="mb-3 text-center">
+                <input type="text" class="form-control text-center fs-4 fw-bold letter-spacing-2" id="otpInput" maxlength="6" placeholder="••••••" style="letter-spacing: 6px;">
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-3 small">
+                <span class="text-muted">Didn't receive code?</span>
+                <button type="button" class="btn btn-link btn-sm text-decoration-none text-success p-0" id="resendOtpBtn" onclick="handleResendOtp()" disabled>
+                  <span data-i18n="resendOtp">Resend OTP</span> <span id="otpTimerText">(60s)</span>
+                </button>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-light rounded-pill btn-sm flex-fill" onclick="resetAuthStep()">
+                  Back
+                </button>
+                <button type="button" class="btn btn-success rounded-pill btn-sm flex-fill py-2 fw-bold" id="btnModalVerifyOtp" onclick="handleVerifyOtp()">
+                  <span data-i18n="verifyOtp">Verify & Sign In</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. REGISTRATION SECTION -->
+          <div id="authModeRegister" class="d-none">
+            <div class="mb-2">
+              <label class="form-label small fw-bold" data-i18n="yourName">Full Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="regFullName" placeholder="e.g. Ramesh Patel" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small fw-bold">Farm Facility Name</label>
+              <input type="text" class="form-control form-control-sm" id="regFarmName" placeholder="e.g. Sunrise Broiler Farm">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small fw-bold">Mobile Number <span class="text-danger">*</span></label>
+              <div class="input-group input-group-sm">
+                <select class="form-select" id="regCountryCode" style="max-width: 90px;">
+                  <option value="+91" selected>🇮🇳 +91</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                </select>
+                <input type="tel" class="form-control" id="regMobileInput" placeholder="9876543210" maxlength="10" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control form-control-sm" id="regPasswordInput" placeholder="Min 6 characters" required>
+            </div>
+
+            <button type="button" class="btn btn-success w-100 py-2 rounded-pill fw-bold" id="btnModalRegister" onclick="handleModalRegister()">
+              <i class="bi bi-building-add me-1"></i> Create Farm Account
+            </button>
+          </div>
+
+          <!-- 4. PROFILE / LOGGED IN SECTION -->
+
+          <div id="authStepProfile" class="d-none text-center">
+            <div class="user-avatar bg-success text-white mx-auto mb-2" style="width: 56px; height: 56px; font-size: 1.5rem;">
+              <i class="bi bi-person-check-fill"></i>
+            </div>
+            <h6 class="fw-bold mb-1 sync-user-name">Poultry Farmer</h6>
+            <div class="badge bg-success-subtle text-success border border-success mb-3 px-3 py-1 sync-user-phone">+91 9876543210</div>
+
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-outline-danger rounded-pill w-100 btn-sm" onclick="handleUserLogout()">
+                <i class="bi bi-box-arrow-right me-1"></i> <span data-i18n="logout">Log Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ADD FARM MODAL -->
+  <div class="modal fade" id="addFarmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold"><i class="bi bi-building-add text-success me-2"></i>Register Farm Facility</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="mobAddFarmForm" onsubmit="handleCustomerAddFarm(event)">
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Farm Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="mFarmName" placeholder="e.g. GreenValley Farm" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Location <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="mFarmLocation" placeholder="e.g. Punjab Agro Zone" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Bird Breed / Type</label>
+              <select class="form-select" id="mFarmBreed">
+                <option value="Broiler (Cobb 500)">Broiler (Cobb 500)</option>
+                <option value="Broiler (Ross 308)">Broiler (Ross 308)</option>
+                <option value="Layer (Hy-Line Brown)">Layer (Hy-Line Brown)</option>
+                <option value="Layer (BV 300)">Layer (BV 300)</option>
+                <option value="Breeder Flock">Breeder Flock</option>
+              </select>
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label small fw-bold">Max Capacity</label>
+                <input type="number" class="form-control" id="mFarmCapacity" placeholder="e.g. 5000" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold">Current Birds</label>
+                <input type="number" class="form-control" id="mFarmCurrent" placeholder="e.g. 2500" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light rounded-pill btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success rounded-pill btn-sm px-4 fw-bold">Save Farm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ADD BATCH MODAL -->
+  <div class="modal fade" id="addBatchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold"><i class="bi bi-grid-fill text-primary me-2"></i>Create Flock Batch</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="mobAddBatchForm" onsubmit="handleCustomerAddBatch(event)">
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Farm Facility</label>
+              <select class="form-select" id="mBatchFarmSelect"></select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Batch Name / Shed <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="mBatchName" placeholder="e.g. Batch 1 (Shed A)" required>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold">Bird Count <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="mBatchCount" placeholder="e.g. 2000" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold">Age (Days)</label>
+                <input type="number" class="form-control" id="mBatchAge" value="1" min="1" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Breed</label>
+              <select class="form-select" id="mBatchBreed">
+                <option value="Broiler (Cobb 500)">Broiler (Cobb 500)</option>
+                <option value="Broiler (Ross 308)">Broiler (Ross 308)</option>
+                <option value="Layer (Hy-Line Brown)">Layer (Hy-Line Brown)</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light rounded-pill btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary rounded-pill btn-sm px-4 fw-bold">Create Batch</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. LOG EGG HARVEST MODAL -->
+  <div class="modal fade" id="addEggModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold"><i class="bi bi-egg-fill text-warning me-2"></i>Log Daily Egg Harvest</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="mobAddEggForm" onsubmit="handleCustomerAddEgg(event)">
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Select Layer Batch</label>
+              <select class="form-select form-select-sm" id="eggBatchSelect"></select>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold">Total Eggs Collected <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="eggTotalInput" placeholder="e.g. 600" required oninput="calcEggTrayPreview()">
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold">Cracked / Damaged</label>
+                <input type="number" class="form-control" id="eggDamagedInput" placeholder="e.g. 12" value="0" oninput="calcEggTrayPreview()">
+              </div>
+            </div>
+            <div class="p-2 bg-light rounded text-center small mb-3">
+              <span class="text-muted">Estimated Standard Trays:</span>
+              <strong class="text-dark fs-6 ms-1" id="previewTraysCount">0 Trays</strong>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Notes</label>
+              <input type="text" class="form-control form-control-sm" id="eggNotesInput" placeholder="e.g. Morning 8 AM harvest">
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light rounded-pill btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning text-dark rounded-pill btn-sm px-4 fw-bold">Save Egg Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. ADD MARKET LISTING MODAL -->
+  <div class="modal fade" id="addMarketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold"><i class="bi bi-tag-fill text-success me-2"></i>Create Direct Sale Listing</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="mobAddMarketForm" onsubmit="handleCustomerAddMarket(event)">
+          <div class="modal-body py-3">
+            <div class="mb-2">
+              <label class="form-label small fw-bold">Item Title <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="mktTitle" placeholder="e.g. Fresh Farm Grade A Eggs" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small fw-bold">Category</label>
+              <select class="form-select form-select-sm" id="mktCategory">
+                <option value="Table Eggs (Brown/White)">Fresh Table Eggs</option>
+                <option value="Fertile Hatching Eggs">Fertile Hatching Eggs</option>
+                <option value="Live Country Chicken / Desi">Live Country Birds (Desi)</option>
+                <option value="Broiler Live Birds">Broiler Live Birds</option>
+                <option value="Organic Poultry Manure">Organic Poultry Manure / Fertilizer</option>
+              </select>
+            </div>
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-bold">Price per Unit ($ / ₹) <span class="text-danger">*</span></label>
+                <input type="number" step="0.5" class="form-control form-control-sm" id="mktPrice" placeholder="e.g. 180" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold">Unit Type</label>
+                <input type="text" class="form-control form-control-sm" id="mktUnit" value="Tray (30 eggs)" required>
+              </div>
+            </div>
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-bold">Available Quantity</label>
+                <input type="number" class="form-control form-control-sm" id="mktQty" value="20" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold">Contact Phone <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control form-control-sm" id="mktPhone" placeholder="+91 9876543210" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Location / Pickup details</label>
+              <input type="text" class="form-control form-control-sm" id="mktLocation" placeholder="e.g. Farm Gate Pickup or 15km Delivery">
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light rounded-pill btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success rounded-pill btn-sm px-4 fw-bold">Publish Listing</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <!-- 5. SCAN & DIAGNOSIS HISTORY MODAL -->
+  <div class="modal fade" id="scanHistoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-2">
+          <div class="d-flex align-items-center gap-2">
+            <div class="p-2 rounded-circle bg-primary-subtle text-primary fs-5"><i class="bi bi-clock-history"></i></div>
+            <div>
+              <h6 class="modal-title fw-bold mb-0">AI Scan & Diagnosis History</h6>
+              <span class="text-muted small" style="font-size: 0.75rem;">గతంలో స్కాన్ చేసిన కోళ్లు మరియు ఫలితాల చరిత్ర</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1">
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2 py-1 small" onclick="clearAllScanHistory()" title="Clear history">
+              <i class="bi bi-trash3 me-1"></i> Clear
+            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+        </div>
+        <div class="modal-body py-2">
+          <div id="scanHistoryListContainer"></div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-secondary rounded-pill btn-sm px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/prediction.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/camera.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/voice-input.js"></script>
+  <script>
+    let currentMobileImage = '';
+    let currentAuthMode = 'login';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      I18n.init();
+      MobileAuth.init();
+      await refreshAllCustomerViews();
+      await loadEggAndMarketViews();
+      await loadHygieneView();
+      await loadGeoStructureView();
+      initMobileImageInput();
+      updateAuthModalView();
+      updateScanLangButtons();
+    });
+
+    // 1. Mobile Tab Switcher
+    function switchMobileTab(tabKey) {
+      document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active-view'));
+      document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.px-3.py-2 button').forEach(p => p.classList.remove('active-pill'));
+
+      const viewMap = {
+        dashboard: { view: 'viewDashboard', nav: 'navItemDashboard', pill: 'pillDashboard' },
+        farms: { view: 'viewFarms', nav: null, pill: 'pillFarms' },
+        scan: { view: 'viewScan', nav: 'navItemScan', pill: null },
+        condition: { view: 'viewCondition', nav: 'navItemCondition', pill: null },
+        eggs: { view: 'viewEggs', nav: 'navItemEggs', pill: 'pillEggs' },
+        hygiene: { view: 'viewHygiene', nav: null, pill: 'pillHygiene' },
+        geo: { view: 'viewGeo', nav: null, pill: 'pillGeo' },
+        support: { view: 'viewSupport', nav: 'navItemSupport', pill: null }
+      };
+
+      const item = viewMap[tabKey] || viewMap.dashboard;
+      const viewEl = document.getElementById(item.view);
+      if (viewEl) viewEl.classList.add('active-view');
+      if (item.nav) {
+        const navEl = document.getElementById(item.nav);
+        if (navEl) navEl.classList.add('active');
+      }
+      if (item.pill) {
+        const pillEl = document.getElementById(item.pill);
+        if (pillEl) pillEl.classList.add('active-pill');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 2. Refresh Customer Views & Stats
+    async function refreshAllCustomerViews() {
+      const summary = await MockAPI.getDashboardSummary();
+      const farms = await MockAPI.getFarms();
+      const batches = await MockAPI.getBatches();
+
+      document.getElementById('mobTotalBirds').textContent = summary.totalBirds.toLocaleString();
+      document.getElementById('mobFarmsCount').textContent = `${farms.length} ${I18n.get('farmsReg', 'Farms Registered')}`;
+      document.getElementById('mobActiveBatches').textContent = batches.length;
+      document.getElementById('mobBatchesCount').textContent = `${batches.length} ${I18n.get('cohorts', 'Cohorts')}`;
+      document.getElementById('mobDailyFeed').innerHTML = `${summary.totalDailyFeed.toLocaleString()} <small class="fs-6 text-muted">kg</small>`;
+      document.getElementById('mobMortalityRate').textContent = `${summary.mortalityRate}%`;
+      document.getElementById('mobDeathsCount').textContent = `${summary.totalMortality} ${I18n.get('deathsTotal', 'Total')}`;
+
+      document.getElementById('mobScoreVal').textContent = summary.healthScore;
+      document.getElementById('mobGaugePath').setAttribute('stroke-dasharray', `${summary.healthScore}, 100`);
+      
+      const badge = document.getElementById('mobHealthBadge');
+      if (summary.riskLevel === 'High') {
+        badge.className = 'badge bg-danger';
+        badge.textContent = I18n.get('statusHigh', 'High Disease Risk Alert');
+        document.getElementById('mobGaugePath').setAttribute('stroke', '#ef4444');
+      } else if (summary.riskLevel === 'Medium') {
+        badge.className = 'badge bg-warning text-dark';
+        badge.textContent = I18n.get('statusMedium', 'Medium Risk Attention');
+        document.getElementById('mobGaugePath').setAttribute('stroke', '#f59e0b');
+      } else {
+        badge.className = 'badge bg-success';
+        badge.textContent = I18n.get('statusOptimal', 'Flock Status: Optimal');
+        document.getElementById('mobGaugePath').setAttribute('stroke', '#10b981');
+      }
+
+      // 1. Render Registered Farms directly on Dashboard
+      renderDashboardFarms(farms);
+
+      // 2. Render Active Batches with Age Predictions on Dashboard
+      renderDashboardBatches(batches);
+
+      // 3. Update Age Predictor widget
+      handleAgePredictorChange();
+
+      // 4. Render Recent Scans & History Preview
+      await renderDashboardRecentScans();
+
+      // Also render full views
+      renderFarmsView(farms, batches);
+      populateSelects(farms, batches);
+    }
+
+    // Render registered farms on dashboard
+    function renderDashboardFarms(farms) {
+      const container = document.getElementById('mobDashFarmsContainer');
+      if (!container) return;
+
+      if (farms.length === 0) {
+        container.innerHTML = `
+          <div class="mobile-empty-state py-3">
+            <div class="mobile-empty-icon text-primary"><i class="bi bi-building"></i></div>
+            <strong class="d-block small text-dark mb-1">No Farm Facilities Registered Yet</strong>
+            <span class="text-muted small d-block mb-3">Register your poultry farm to manage sheds, flocks, and AI insights.</span>
+            <button class="btn btn-sm btn-success rounded-pill" data-bs-toggle="modal" data-bs-target="#addFarmModal">
+              <i class="bi bi-plus-lg me-1"></i> Register Farm Now
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = farms.map(f => `
+        <div class="p-3 bg-light rounded-3 border mb-2">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <strong class="d-block text-dark fs-6"><i class="bi bi-building text-primary me-1"></i>${f.name}</strong>
+              <span class="small text-muted"><i class="bi bi-geo-alt me-1"></i>${f.location || 'Agro Zone'} &bull; ${(parseInt(f.capacity)||0).toLocaleString()} Cap.</span>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="font-size: 0.75rem;">
+            <span class="text-muted">Type: <strong>${f.birdType || 'Broiler'}</strong></span>
+            <div class="d-flex gap-1">
+              <button class="btn btn-sm btn-primary rounded-pill py-0 px-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#addBatchModal" onclick="document.getElementById('mBatchFarmSelect').value='${f.id}'">
+                <i class="bi bi-plus me-1"></i>Batch
+              </button>
+              <button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" onclick="deleteCustomerFarm('${f.id}')"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render active batches with predicted food, water, and temp on dashboard
+    function renderDashboardBatches(batches) {
+      const dashBatchesList = document.getElementById('mobBatchesListContainer');
+      if (!dashBatchesList) return;
+
+      if (batches.length === 0) {
+        dashBatchesList.innerHTML = `
+          <div class="mobile-empty-state py-3">
+            <div class="mobile-empty-icon text-success"><i class="bi bi-grid"></i></div>
+            <strong class="d-block small text-dark mb-1">${I18n.get('noBatchesTitle', 'No Batches Created Yet')}</strong>
+            <span class="text-muted small d-block mb-3">${I18n.get('noBatchesDesc', 'Add your first batch cohort to start tracking flock health.')}</span>
+            <button class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+              <i class="bi bi-plus-lg me-1"></i> ${I18n.get('addBatch', 'Add Batch')}
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      dashBatchesList.innerHTML = batches.map(b => {
+        const ageDays = parseInt(b.ageDays) || 1;
+        const count = parseInt(b.birdCount) || 1000;
+        const pred = AIPredictor.predictByAge(ageDays, count, b.birdType);
+
+        return `
+          <div class="p-3 bg-light rounded-3 border mb-2 shadow-2xs">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <div>
+                <strong class="d-block text-dark fs-6">${b.name}</strong>
+                <span class="small text-muted">${b.birdType} &bull; ${count.toLocaleString()} birds &bull; <strong class="text-primary">${ageDays} days old</strong></span>
+              </div>
+              <span class="badge ${b.riskLevel === 'High' ? 'bg-danger' : b.riskLevel === 'Medium' ? 'bg-warning text-dark' : 'bg-success'} px-2 py-1">${b.riskLevel} Risk</span>
+            </div>
+            
+            <!-- Age-based Requirements Strip (Food, Water, Temp) -->
+            <div class="row g-1 my-2 text-center" style="font-size: 0.72rem;">
+              <div class="col-4">
+                <div class="p-1 bg-white rounded border">
+                  <span class="text-muted d-block">🌾 Feed/Day</span>
+                  <strong class="text-success">${pred.food.dailyKg} kg</strong>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-1 bg-white rounded border">
+                  <span class="text-muted d-block">💧 Water/Day</span>
+                  <strong class="text-primary">${pred.water.dailyLiters} L</strong>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-1 bg-white rounded border">
+                  <span class="text-muted d-block">🌡️ Shed Temp</span>
+                  <strong class="text-danger">${pred.temperature.targetC}°C</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-1 border-top" style="font-size: 0.75rem;">
+              <span class="text-muted">Feed Stage: <strong>${pred.food.stage.split('(')[0].trim()}</strong></span>
+              <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill small fw-semibold" onclick="switchMobileTab('condition'); document.getElementById('mobCondBatchSelect').value='${b.id}'">Log</button>
+                <button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" onclick="deleteCustomerBatch('${b.id}')"><i class="bi bi-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Flock Age Predictor dynamic computation
+    function handleAgePredictorChange() {
+      const ageInput = document.getElementById('mobAgeInput');
+      const slider = document.getElementById('mobAgeSlider');
+      const birdInput = document.getElementById('mobAgeBirdCount');
+      if (!ageInput || !birdInput) return;
+
+      const ageDays = parseInt(ageInput.value) || 1;
+      const birdCount = parseInt(birdInput.value) || 1000;
+      if (slider) slider.value = ageDays;
+
+      const pred = AIPredictor.predictByAge(ageDays, birdCount, 'Broiler');
+
+      const feedKgEl = document.getElementById('resAgeFeedTotalKg');
+      if (feedKgEl) {
+        feedKgEl.textContent = pred.food.dailyKg.toFixed(1);
+        document.getElementById('resAgeFeedPerBird').textContent = pred.food.perBirdGrams;
+        document.getElementById('resAgeFeedBags').textContent = pred.food.bags50kg;
+        document.getElementById('resAgeFeedStage').textContent = pred.food.stage.split('(')[0].trim();
+
+        document.getElementById('resAgeWaterTotalL').textContent = pred.water.dailyLiters.toFixed(1);
+        document.getElementById('resAgeWaterPerBird').textContent = Math.round(pred.water.perBirdMl);
+        document.getElementById('resAgeWaterWeekly').textContent = Math.round(pred.water.weeklyLiters);
+
+        document.getElementById('resAgeTempTarget').textContent = pred.temperature.targetC.toFixed(1);
+        document.getElementById('resAgeTempTargetF').textContent = pred.temperature.targetF;
+        document.getElementById('resAgeTempRange').textContent = `${pred.temperature.minC.toFixed(0)}-${pred.temperature.maxC.toFixed(0)}°C`;
+        document.getElementById('resAgeBroodingStatus').textContent = pred.temperature.broodingStatus;
+        document.getElementById('resAgeClimateAdvice').textContent = pred.temperature.climateAdvice;
+      }
+    }
+
+    function setAgePreset(days) {
+      const ageInput = document.getElementById('mobAgeInput');
+      const slider = document.getElementById('mobAgeSlider');
+      if (ageInput) ageInput.value = days;
+      if (slider) slider.value = days;
+
+      document.querySelectorAll('.age-preset-btn').forEach(btn => btn.classList.remove('btn-success', 'text-white', 'active'));
+      const activeBtn = Array.from(document.querySelectorAll('.age-preset-btn')).find(b => b.textContent.includes(`D${days}`) || b.textContent.includes(`${days}`));
+      if (activeBtn) activeBtn.classList.add('btn-success', 'text-white', 'active');
+
+      handleAgePredictorChange();
+    }
+
+    // Render Recent Scans & History Preview
+    async function renderDashboardRecentScans() {
+      const container = document.getElementById('mobDashRecentScansContainer');
+      const badge = document.getElementById('mobScanHistoryCountBadge');
+      if (!container) return;
+
+      const history = await MockAPI.getScanHistory();
+      if (badge) badge.textContent = history.length;
+
+      if (history.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-3 text-muted small">
+            <i class="bi bi-camera fs-4 d-block mb-1 text-secondary"></i>
+            <span>No previous scans yet.</span>
+            <div class="mt-2"><button class="btn btn-sm btn-outline-success rounded-pill" onclick="switchMobileTab('scan')"><i class="bi bi-camera me-1"></i> Scan Hen Now</button></div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = history.slice(0, 3).map(item => `
+        <div class="p-2 bg-light rounded-3 border mb-2 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            ${item.imageUrl 
+              ? `<img src="${item.imageUrl}" class="rounded border" style="width: 40px; height: 40px; object-fit: cover;">`
+              : `<div class="rounded bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="bi bi-mic-fill"></i></div>`
+            }
+            <div>
+              <strong class="d-block text-dark small text-truncate" style="max-width: 170px;">${item.condition || 'Hen Health Scan'}</strong>
+              <span class="text-muted" style="font-size: 0.7rem;">${item.timestamp} &bull; ${item.riskLevel || 'Analyzed'}</span>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-outline-dark rounded-pill py-0 px-2 fw-semibold small" onclick="openScanHistoryModal()">Details</button>
+        </div>
+      `).join('');
+    }
+
+    // Scan History Modal & Operations
+    async function openScanHistoryModal() {
+      const modalEl = document.getElementById('scanHistoryModal');
+      if (modalEl) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        await renderScanHistory();
+        modal.show();
+      }
+    }
+
+    async function renderScanHistory() {
+      const container = document.getElementById('scanHistoryListContainer');
+      const badge = document.getElementById('mobScanHistoryCountBadge');
+      if (!container) return;
+
+      const history = await MockAPI.getScanHistory();
+      if (badge) badge.textContent = history.length;
+
+      if (history.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-4 text-muted small">
+            <i class="bi bi-clock-history fs-2 d-block mb-2 text-secondary"></i>
+            <strong class="d-block text-dark mb-1">No Scan Records Found</strong>
+            <span>Previously scanned hens and voice symptom analyses will be safely stored and viewable here.</span>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = history.map(item => {
+        const isHigh = item.riskLevel === 'High' || item.riskLevel === 'CRITICAL';
+        const isMed = item.riskLevel === 'Medium';
+        const badgeColor = isHigh ? 'bg-danger' : isMed ? 'bg-warning text-dark' : 'bg-success';
+        const imgHtml = item.imageUrl 
+          ? `<img src="${item.imageUrl}" alt="Hen" class="rounded-3 border" style="width: 65px; height: 65px; object-fit: cover;">`
+          : `<div class="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center fs-3" style="width: 65px; height: 65px;"><i class="bi bi-mic-fill"></i></div>`;
+
+        const precautionsHtml = (item.safetyPrecautions && item.safetyPrecautions.length > 0)
+          ? `<div class="p-2 bg-light rounded-2 border small mt-2">
+              <strong class="d-block text-dark small mb-1"><i class="bi bi-shield-check text-success me-1"></i> Safety & Precautions:</strong>
+              <ul class="mb-0 ps-3 small text-muted">${item.safetyPrecautions.map(p => `<li>${p}</li>`).join('')}</ul>
+             </div>`
+          : (item.guidance ? `<div class="p-2 bg-light rounded-2 border small mt-2"><strong>Guidance:</strong> ${item.guidance}</div>` : '');
+
+        const predictionsHtml = (item.predictions && item.predictions.length > 0)
+          ? `<div class="p-2 bg-primary-subtle rounded-2 border border-primary-subtle small mt-2">
+              <strong class="d-block text-primary small mb-1"><i class="bi bi-graph-up-arrow me-1"></i> AI Predictions & Outlook:</strong>
+              <ul class="mb-0 ps-3 small text-dark">${item.predictions.map(pr => `<li>${pr}</li>`).join('')}</ul>
+             </div>`
+          : '';
+
+        return `
+          <div class="p-3 bg-white rounded-3 border mb-3 shadow-xs">
+            <div class="d-flex gap-3 align-items-start">
+              ${imgHtml}
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-1 mb-1">
+                  <span class="badge ${badgeColor} px-2 py-1 fw-bold">${item.riskLevel || 'Analyzed'}</span>
+                  <span class="small text-muted" style="font-size: 0.73rem;"><i class="bi bi-clock me-1"></i>${item.timestamp}</span>
+                </div>
+                <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.92rem;">${item.condition || item.type || 'Hen Inspection'}</h6>
+                ${item.symptoms ? `<div class="small text-muted mb-1"><strong>Symptoms:</strong> "${item.symptoms}"</div>` : ''}
+                <div class="small text-muted mb-2">${item.aiSummary || ''}</div>
+                ${precautionsHtml}
+                ${predictionsHtml}
+                <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                  <span class="small text-muted" style="font-size: 0.72rem;">Confidence: ${item.confidence || 95}%</span>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-danger border-0 p-1" onclick="deleteScanHistoryItem('${item.id}')" title="Delete record"><i class="bi bi-trash"></i></button>
+                    <a href="https://wa.me/18005550199?text=${encodeURIComponent('Hello Doctor, reviewing scan: ' + (item.condition||'') + ' - ' + (item.symptoms||''))}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill py-0 px-2 fw-semibold" style="font-size: 0.75rem;">
+                      <i class="bi bi-whatsapp me-1"></i> Consult Vet
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function deleteScanHistoryItem(id) {
+      await MockAPI.deleteScanResult(id);
+      await renderScanHistory();
+      await renderDashboardRecentScans();
+      showToast('Scan record removed', 'info');
+    }
+
+    async function clearAllScanHistory() {
+      if (confirm('Clear all past scan and diagnosis history?')) {
+        await MockAPI.clearScanHistory();
+        await renderScanHistory();
+        await renderDashboardRecentScans();
+        showToast('All scan history cleared', 'warning');
+      }
+    }
+
+    function renderFarmsView(farms, batches) {
+      const farmsContainer = document.getElementById('mobFarmsContainer');
+      const batchesContainer = document.getElementById('mobBatchesFullContainer');
+      document.getElementById('mobFarmsBadgeCount').textContent = `${farms.length} Facilities`;
+      document.getElementById('mobBatchesBadgeCount').textContent = `${batches.length} Batches`;
+
+      if (farms.length === 0) {
+        farmsContainer.innerHTML = `<div class="text-center py-3 text-muted small">${I18n.get('noFarmsYet', 'No farms registered yet. Click + Farm to add your facility.')}</div>`;
+      } else {
+        farmsContainer.innerHTML = farms.map(f => `
+          <div class="p-3 bg-light rounded-3 border mb-2 d-flex justify-content-between align-items-center">
+            <div>
+              <strong class="d-block text-dark"><i class="bi bi-building me-1 text-primary"></i>${f.name}</strong>
+              <span class="small text-muted">${f.location} &bull; ${(parseInt(f.capacity)||0).toLocaleString()} Capacity</span>
+            </div>
+            <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteCustomerFarm('${f.id}')"><i class="bi bi-trash"></i></button>
+          </div>
+        `).join('');
+      }
+
+      if (batches.length === 0) {
+        batchesContainer.innerHTML = `<div class="text-center py-3 text-muted small">${I18n.get('noBatchesYet', 'No batches created. Click + Batch to add flock cohorts.')}</div>`;
+      } else {
+        batchesContainer.innerHTML = batches.map(b => `
+          <div class="p-3 bg-light rounded-3 border mb-2 d-flex justify-content-between align-items-center">
+            <div>
+              <strong class="d-block text-dark">${b.name}</strong>
+              <span class="small text-muted">${b.birdType} &bull; ${(parseInt(b.birdCount)||0).toLocaleString()} birds</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge ${b.riskLevel === 'High' ? 'bg-danger' : b.riskLevel === 'Medium' ? 'bg-warning text-dark' : 'bg-success'}">${b.riskLevel}</span>
+              <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteCustomerBatch('${b.id}')"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function populateSelects(farms, batches) {
+      const bFarmSelect = document.getElementById('mBatchFarmSelect');
+      const condBatchSelect = document.getElementById('mobCondBatchSelect');
+      const eggBatchSelect = document.getElementById('eggBatchSelect');
+
+      if (bFarmSelect) {
+        bFarmSelect.innerHTML = farms.length === 0 ? `<option value="F-DEFAULT">Main Facility (Auto)</option>` : farms.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+      }
+
+      if (condBatchSelect) {
+        condBatchSelect.innerHTML = batches.length === 0 ? `<option value="B-DEFAULT">Default Flock Cohort</option>` : batches.map(b => `<option value="${b.id}">${b.name} (${b.birdType})</option>`).join('');
+      }
+
+      if (eggBatchSelect) {
+        eggBatchSelect.innerHTML = batches.length === 0 ? `<option value="B-EGG-1">Layer Flock 1</option>` : batches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+      }
+    }
+
+    // 3. Customer Add Farm & Batch Actions
+    async function handleCustomerAddFarm(e) {
+      e.preventDefault();
+      const newFarm = {
+        name: document.getElementById('mFarmName').value.trim(),
+        location: document.getElementById('mFarmLocation').value.trim(),
+        birdType: document.getElementById('mFarmBreed').value,
+        capacity: parseInt(document.getElementById('mFarmCapacity').value) || 2000,
+        currentBirds: parseInt(document.getElementById('mFarmCurrent').value) || 0
+      };
+      await MockAPI.addFarm(newFarm);
+      bootstrap.Modal.getInstance(document.getElementById('addFarmModal')).hide();
+      document.getElementById('mobAddFarmForm').reset();
+      await refreshAllCustomerViews();
+      showToast('Farm facility registered successfully!', 'success');
+    }
+
+    async function handleCustomerAddBatch(e) {
+      e.preventDefault();
+      const newBatch = {
+        farmId: document.getElementById('mBatchFarmSelect').value,
+        name: document.getElementById('mBatchName').value.trim(),
+        birdCount: parseInt(document.getElementById('mBatchCount').value) || 1000,
+        ageDays: parseInt(document.getElementById('mBatchAge').value) || 1,
+        birdType: document.getElementById('mBatchBreed').value,
+        startDate: new Date().toISOString().split('T')[0]
+      };
+      await MockAPI.addBatch(newBatch);
+      bootstrap.Modal.getInstance(document.getElementById('addBatchModal')).hide();
+      document.getElementById('mobAddBatchForm').reset();
+      await refreshAllCustomerViews();
+      showToast('New batch cohort registered!', 'success');
+    }
+
+    async function deleteCustomerFarm(id) {
+      if (confirm('Delete this farm facility?')) {
+        await MockAPI.deleteFarm(id);
+        await refreshAllCustomerViews();
+        showToast('Farm deleted', 'warning');
+      }
+    }
+
+    async function deleteCustomerBatch(id) {
+      if (confirm('Delete this batch cohort?')) {
+        await MockAPI.deleteBatch(id);
+        await refreshAllCustomerViews();
+        showToast('Batch removed', 'warning');
+      }
+    }
+
+    // 4. Live Camera & Gallery Photo Inspection
+    async function startLiveCameraStream() {
+      const started = await LiveCamera.startCamera('liveCameraStream');
+      if (started) {
+        showToast('Live camera viewfinder started', 'info');
+      }
+    }
+
+    function snapCameraPhoto() {
+      const snappedDataUrl = LiveCamera.captureSnapshot();
+      if (snappedDataUrl) {
+        currentMobileImage = snappedDataUrl;
+        document.getElementById('mobPreviewImg').src = currentMobileImage;
+        document.getElementById('liveCameraContainer').classList.add('d-none');
+        document.getElementById('mobPreviewContainer').classList.remove('d-none');
+        showToast('Bird snapshot captured!', 'success');
+        runMobileImageScan();
+      }
+    }
+
+    function closeCameraStream() {
+      LiveCamera.stopCamera();
+      document.getElementById('mobUploadArea').classList.remove('d-none');
+      document.getElementById('liveCameraContainer').classList.add('d-none');
+    }
+
+    function initMobileImageInput() {
+      const fileInput = document.getElementById('mobImageFileInput');
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            currentMobileImage = ev.target.result;
+            document.getElementById('mobPreviewImg').src = currentMobileImage;
+            document.getElementById('mobUploadArea').classList.add('d-none');
+            document.getElementById('liveCameraContainer').classList.add('d-none');
+            document.getElementById('mobPreviewContainer').classList.remove('d-none');
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        }
+      });
+    }
+
+    function removeMobileImage() {
+      currentMobileImage = '';
+      document.getElementById('mobImageFileInput').value = '';
+      document.getElementById('mobPreviewContainer').classList.add('d-none');
+      document.getElementById('mobUploadArea').classList.remove('d-none');
+      document.getElementById('mobScanResultCard').classList.add('d-none');
+    }
+
+    const SYMPTOM_KEY_NAMES = {
+      cough: { en: 'Coughing / Sneezing', te: 'దగ్గు / తుమ్ములు', hi: 'खांसी / छींक', ta: 'இருமல் / தும்மல்', bn: 'কাশি / হাঁচি', es: 'Tos / Estornudo' },
+      eyes: { en: 'Swollen / Watery Eyes', te: 'కళ్ల వాపు / నీరు', hi: 'सूजी आंखें', ta: 'கண்கள் வீக்கம்', bn: 'ফোলা চোখ', es: 'Ojos hinchados' },
+      diarrhea: { en: 'Diarrhea / Wet Droppings', te: 'విరేచనాలు', hi: 'दस्त / पतला मल', ta: 'கழிச்சல் / பேதி', bn: 'ডায়রিয়া', es: 'Diarrea' },
+      comb: { en: 'Swollen / Pale Comb', te: 'జుట్టు / తల వాపు', hi: 'कलगी सूजन', ta: 'கொண்டை வீக்கம்', bn: 'ঝুঁটি ফোলা', es: 'Cresta hinchada' },
+      lethargic: { en: 'Lethargic / Dullness', te: 'నీరసం / బద్ధకం', hi: 'सुस्ती / कमजोरी', ta: 'சோர்வு / மந்தம்', bn: 'অলসতা', es: 'Letárgico' },
+      feathers: { en: 'Ruffled Feathers', te: 'ఈకలు రాలడం', hi: 'बिखरे पंख', ta: 'சிலிர்த்த இறகுகள்', bn: 'খসখসে পালক', es: 'Plumas erizadas' },
+      appetite: { en: 'Loss of Appetite', te: 'మేత తినకపోవడం', hi: 'कम दाना खाना', ta: 'தீவனம் குறைவு', bn: 'কম খাবার', es: 'Poco apetito' },
+      legs: { en: 'Leg Weakness / Limp', te: 'కాళ్ల బలహీనత / కుంటితనం', hi: 'पैर कमजोरी / लंगड़ाना', ta: 'கால் பலவீனம்', bn: 'পায়ের দুর্বলতা', es: 'Debilidad patas' }
+    };
+
+    function changeScanLanguage(lang) {
+      if (typeof I18n !== 'undefined') {
+        I18n.setLanguage(lang);
+      }
+      updateScanLangButtons(lang);
+      const langNames = { en: 'English', te: 'తెలుగు (Telugu)', hi: 'हिन्दी (Hindi)', ta: 'தமிழ் (Tamil)', bn: 'বাংলা (Bengali)', es: 'Español' };
+      const voicePrompt = (typeof I18n !== 'undefined') ? I18n.get('voiceListeningPrompt', 'Voice will listen in this language') : 'Voice will listen in this language';
+      showToast(`${voicePrompt} [${langNames[lang] || lang}]`, 'info');
+    }
+
+    function updateScanLangButtons(lang) {
+      const activeLang = lang || localStorage.getItem('smart_poultry_lang') || 'te';
+      document.querySelectorAll('.scan-lang-btn').forEach(btn => {
+        if (btn.getAttribute('data-lang') === activeLang) {
+          btn.classList.add('active', 'btn-success', 'text-white');
+          btn.classList.remove('btn-outline-success');
+        } else {
+          btn.classList.remove('active', 'btn-success', 'text-white');
+          btn.classList.add('btn-outline-success');
+        }
+      });
+    }
+
+    window.addEventListener('languageChanged', (e) => {
+      const lang = (e.detail && e.detail.lang) || localStorage.getItem('smart_poultry_lang') || 'te';
+      updateScanLangButtons(lang);
+    });
+
+    function toggleScanSymptomChip(btn, symptomKey) {
+      const input = document.getElementById('mobScanSymptomsInput');
+      if (!input) return;
+
+      const currentLang = localStorage.getItem('smart_poultry_lang') || 'en';
+      const map = SYMPTOM_KEY_NAMES[symptomKey];
+      const localizedName = map ? (map[currentLang] || map['en']) : symptomKey;
+
+      let currentVal = input.value.trim();
+      let parts = currentVal ? currentVal.split(',').map(s => s.trim()).filter(Boolean) : [];
+      
+      // Check if any variation of this symptom is already present
+      const allVariations = map ? Object.values(map).map(v => v.toLowerCase()) : [symptomKey.toLowerCase()];
+      const index = parts.findIndex(p => allVariations.includes(p.toLowerCase()));
+
+      if (index >= 0) {
+        parts.splice(index, 1);
+        btn.classList.remove('btn-success', 'text-white');
+        btn.classList.add('btn-light', 'border');
+      } else {
+        parts.push(localizedName);
+        btn.classList.remove('btn-light', 'border');
+        btn.classList.add('btn-success', 'text-white');
+      }
+      input.value = parts.join(', ');
+    }
+
+    function clearScanSymptoms() {
+      const input = document.getElementById('mobScanSymptomsInput');
+      if (input) input.value = '';
+      document.querySelectorAll('#mobScanQuickSymptomChips .mob-symptom-chip').forEach(btn => {
+        btn.classList.remove('btn-success', 'text-white');
+        btn.classList.add('btn-light', 'border');
+      });
+    }
+
+    function shareScanWithVet() {
+      const symptoms = document.getElementById('mobScanSymptomsInput') ? document.getElementById('mobScanSymptomsInput').value.trim() : '';
+      switchMobileTab('support');
+      const supMsg = document.getElementById('supMessage');
+      if (supMsg) {
+        supMsg.value = `[AI Bird Image & Symptoms Scan]\nReported Symptoms of Hen: ${symptoms || 'Visual photo submitted'}\nPlease provide veterinary diagnosis and treatment instructions.`;
+      }
+      showToast('Scan details transferred to Vet Support!', 'info');
+    }
+
+    function runMobileImageScan() {
+      const laser = document.getElementById('mobScannerLaser');
+      if (laser) laser.style.display = 'block';
+
+      setTimeout(async () => {
+        if (laser) laser.style.display = 'none';
+        const symptoms = document.getElementById('mobScanSymptomsInput') ? document.getElementById('mobScanSymptomsInput').value.trim() : '';
+        const analysis = await AIPredictor.analyzeImage(currentMobileImage, null, symptoms);
+        
+        const card = document.getElementById('mobScanResultCard');
+        card.className = `prediction-result-card ${analysis.riskLevel === 'High' ? 'risk-high' : analysis.riskLevel === 'Medium' ? 'risk-medium' : 'risk-low'} mb-3 shadow-sm`;
+        
+        const badge = document.getElementById('mobScanRiskBadge');
+        badge.className = `badge ${analysis.riskLevel === 'High' ? 'bg-danger' : analysis.riskLevel === 'Medium' ? 'bg-warning text-dark' : 'bg-success'} px-3 py-1 fw-bold fs-6`;
+        badge.textContent = `${analysis.riskLevel} Risk`;
+
+        document.getElementById('mobScanConfidence').textContent = `${analysis.confidence}% Conf.`;
+        document.getElementById('mobScanTitle').textContent = analysis.visualCondition;
+        document.getElementById('mobScanSummary').textContent = analysis.aiSummary;
+
+        // Render Safety & Precautions list
+        const safetyListEl = document.getElementById('mobScanSafetyList');
+        if (safetyListEl) {
+          const precautions = analysis.safetyPrecautions || [
+            'Maintain strict shed biosecurity and fresh sanitized drinker water.',
+            'Ensure clean footbaths with disinfectant at shed doors.'
+          ];
+          safetyListEl.innerHTML = precautions.map(p => `<li>${p}</li>`).join('');
+        }
+
+        // Render AI Predictions list
+        const predListEl = document.getElementById('mobScanPredictionsList');
+        if (predListEl) {
+          const preds = analysis.predictions || [
+            'Flock exhibits standard growth and feeding behavior under current conditions.'
+          ];
+          predListEl.innerHTML = preds.map(p => `<li>${p}</li>`).join('');
+        }
+
+        // Render Treatment Protocol
+        const guidanceEl = document.getElementById('mobScanGuidance');
+        if (guidanceEl) {
+          if (analysis.treatments && analysis.treatments.length > 0) {
+            guidanceEl.innerHTML = `<ul class="mb-0 ps-3">${analysis.treatments.map(t => `<li>${t}</li>`).join('')}</ul>`;
+          } else {
+            guidanceEl.textContent = analysis.recommendedActions || 'Maintain standard baseline sanitation.';
+          }
+        }
+
+        // Symptoms text box
+        const symptomsBox = document.getElementById('mobScanReportedSymptomsBox');
+        const symptomsTextEl = document.getElementById('mobScanReportedSymptomsText');
+        if (symptomsBox && symptomsTextEl) {
+          if (analysis.reportedSymptoms) {
+            symptomsTextEl.textContent = analysis.reportedSymptoms;
+            symptomsBox.classList.remove('d-none');
+          } else {
+            symptomsBox.classList.add('d-none');
+          }
+        }
+
+        card.classList.remove('d-none');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Auto-save scan result to History
+        await MockAPI.saveScanResult({
+          type: 'Camera & Image Scan',
+          imageUrl: currentMobileImage,
+          condition: analysis.visualCondition,
+          riskLevel: analysis.riskLevel,
+          confidence: analysis.confidence,
+          symptoms: symptoms,
+          aiSummary: analysis.aiSummary,
+          safetyPrecautions: analysis.safetyPrecautions || [],
+          predictions: analysis.predictions || [],
+          treatments: analysis.treatments || [],
+          recommendedActions: analysis.recommendedActions
+        });
+
+        // Update Scan History Count & Dashboard Recent Scans
+        const history = await MockAPI.getScanHistory();
+        const histBadge = document.getElementById('mobScanHistoryCountBadge');
+        if (histBadge) histBadge.textContent = history.length;
+        await renderDashboardRecentScans();
+
+        showToast(`Image scan completed: ${analysis.riskLevel} Risk`, analysis.riskLevel === 'High' ? 'danger' : 'success');
+      }, 900);
+    }
+
+    // 5. Customer Condition Submit (Text & Voice Input)
+    async function handleCustomerConditionSubmit(e) {
+      e.preventDefault();
+      const symptoms = [];
+      document.querySelectorAll('.mob-sym-chk:checked').forEach(c => symptoms.push(c.value));
+      const actEl = document.querySelector('input[name="mobAct"]:checked');
+      const voiceText = document.getElementById('condSymptomVoiceText').value.trim();
+
+      const conditionData = {
+        batchId: document.getElementById('mobCondBatchSelect').value,
+        temperature: document.getElementById('mobCondTemp').value,
+        humidity: document.getElementById('mobCondHum').value,
+        feedConsumption: document.getElementById('mobCondFeed').value,
+        waterConsumption: document.getElementById('mobCondWater').value || '0',
+        mortality: document.getElementById('mobCondMortality').value,
+        activityLevel: actEl ? actEl.value : 'Normal',
+        symptoms: symptoms,
+        voiceNotes: voiceText
+      };
+
+      const evalResult = AIPredictor.calculateConditionRisk(conditionData);
+      conditionData.riskLevel = evalResult.riskLevel;
+      conditionData.confidence = evalResult.confidence;
+
+      await MockAPI.saveCondition(conditionData);
+      await refreshAllCustomerViews();
+      showToast(`Condition recorded! Risk: ${evalResult.riskLevel}`, evalResult.riskLevel === 'High' ? 'danger' : 'success');
+      document.getElementById('mobConditionForm').reset();
+      document.getElementById('condSymptomVoiceText').value = '';
+      switchMobileTab('dashboard');
+    }
+
+    // 6. Egg Production & Direct Marketing Handlers
+    function calcEggTrayPreview() {
+      const total = parseInt(document.getElementById('eggTotalInput').value) || 0;
+      const trays = (total / 30).toFixed(1);
+      document.getElementById('previewTraysCount').textContent = `${trays} Trays (${total} eggs)`;
+    }
+
+    async function handleCustomerAddEgg(e) {
+      e.preventDefault();
+      const log = {
+        batchId: document.getElementById('eggBatchSelect').value,
+        totalCollected: document.getElementById('eggTotalInput').value,
+        damagedCracked: document.getElementById('eggDamagedInput').value || 0,
+        notes: document.getElementById('eggNotesInput').value.trim()
+      };
+      await MockAPI.addEggLog(log);
+      bootstrap.Modal.getInstance(document.getElementById('addEggModal')).hide();
+      document.getElementById('mobAddEggForm').reset();
+      document.getElementById('previewTraysCount').textContent = '0 Trays';
+      await loadEggAndMarketViews();
+      showToast('Daily egg harvest logged successfully!', 'success');
+    }
+
+    async function handleCustomerAddMarket(e) {
+      e.preventDefault();
+      const item = {
+        title: document.getElementById('mktTitle').value.trim(),
+        category: document.getElementById('mktCategory').value,
+        pricePerUnit: document.getElementById('mktPrice').value,
+        unit: document.getElementById('mktUnit').value.trim(),
+        availableQty: document.getElementById('mktQty').value,
+        contactPhone: document.getElementById('mktPhone').value.trim(),
+        farmLocation: document.getElementById('mktLocation').value.trim()
+      };
+      await MockAPI.addMarketListing(item);
+      bootstrap.Modal.getInstance(document.getElementById('addMarketModal')).hide();
+      document.getElementById('mobAddMarketForm').reset();
+      await loadEggAndMarketViews();
+      showToast('Direct sale listing published!', 'success');
+    }
+
+    async function loadEggAndMarketViews() {
+      const summary = await MockAPI.getEggSummary();
+      const listings = await MockAPI.getMarketListings();
+
+      document.getElementById('eggTotalCount').textContent = summary.totalEggs.toLocaleString();
+      document.getElementById('eggTrayCount').textContent = `${summary.totalTrays} Trays (30/tray)`;
+      document.getElementById('eggDamagedCount').textContent = summary.totalDamaged.toLocaleString();
+
+      const logsBox = document.getElementById('eggLogsContainer');
+      if (summary.totalLogs === 0) {
+        logsBox.innerHTML = `<div class="text-center py-3 text-muted small">No egg collections logged yet. Tap <strong>+ Log Eggs</strong> to record harvest.</div>`;
+      } else {
+        logsBox.innerHTML = summary.recentLogs.map(l => `
+          <div class="p-2 bg-light rounded-3 border mb-2 d-flex justify-content-between align-items-center">
+            <div>
+              <strong class="d-block small text-dark">${l.date} &bull; ${l.totalCollected} Eggs</strong>
+              <span class="text-muted" style="font-size:0.72rem;">${l.trays} standard trays &bull; ${l.damagedCracked} damaged</span>
+            </div>
+            <span class="badge bg-warning text-dark border">${l.goodEggs} Grade A</span>
+          </div>
+        `).join('');
+      }
+
+      const mktBox = document.getElementById('marketListingsContainer');
+      document.getElementById('marketListingsCount').textContent = `${listings.length} Active`;
+      if (listings.length === 0) {
+        mktBox.innerHTML = `<div class="text-center py-3 text-muted small">No active market listings. Tap <strong>Sell</strong> to list eggs, live birds, or manure directly.</div>`;
+      } else {
+        mktBox.innerHTML = listings.map(m => `
+          <div class="p-3 bg-light rounded-3 border mb-2">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <div>
+                <strong class="d-block text-dark">${m.title}</strong>
+                <span class="badge bg-success-subtle text-success small">${m.category}</span>
+              </div>
+              <strong class="text-success fs-6">$${m.pricePerUnit} <span class="small text-muted">/ ${m.unit}</span></strong>
+            </div>
+            <div class="small text-muted mb-2">Stock: <strong>${m.availableQty} available</strong> &bull; ${m.farmLocation}</div>
+            <div class="d-flex gap-2">
+              <a href="https://wa.me/${m.contactPhone.replace(/[^0-9]/g, '')}?text=Hello,%20I%20am%20interested%20in%20buying%20${encodeURIComponent(m.title)}%20from%20your%20farm." target="_blank" class="btn btn-sm btn-success rounded-pill flex-fill">
+                <i class="bi bi-whatsapp me-1"></i> Buy via WhatsApp
+              </a>
+              <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteListing('${m.id}')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function deleteListing(id) {
+      if (confirm('Remove this sale listing?')) {
+        await MockAPI.deleteMarketListing(id);
+        await loadEggAndMarketViews();
+        showToast('Listing removed', 'info');
+      }
+    }
+
+    // 7. Cleanliness & Hygiene Details Handlers
+    async function loadHygieneView() {
+      const res = await MockAPI.getLatestHygieneScore();
+      document.getElementById('hygieneScoreDisplay').textContent = `${res.score}%`;
+      document.getElementById('hygieneRatingBadge').textContent = `${res.rating} Biosecurity Status`;
+    }
+
+    async function handleHygieneAuditSubmit(e) {
+      e.preventDefault();
+      const audit = {
+        waterFlushed: document.getElementById('hygWater').checked,
+        dryLitter: document.getElementById('hygLitter').checked,
+        footbathChanged: document.getElementById('hygFootbath').checked,
+        pestControlActive: document.getElementById('hygPest').checked,
+        deadBirdDisposed: document.getElementById('hygDisposal').checked,
+        wallLimewash: document.getElementById('hygLimewash').checked
+      };
+      const result = await MockAPI.saveHygieneAudit(audit);
+      await loadHygieneView();
+      showToast(`Cleanliness audit recorded! Score: ${result.score}% (${result.rating})`, 'success');
+      switchMobileTab('dashboard');
+    }
+
+    // 8. Farm Geographical & Shed Structure Handlers
+    function detectFarmGpsLocation() {
+      const display = document.getElementById('displayGpsLocation');
+      display.innerHTML = '<span class="text-primary"><i class="bi bi-hourglass-split me-1"></i> Acquiring GPS satellite fix...</span>';
+
+      if (!navigator.geolocation) {
+        display.textContent = 'Geolocation not supported on this browser';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lon = pos.coords.longitude.toFixed(6);
+          const acc = Math.round(pos.coords.accuracy);
+          display.innerHTML = `<strong>${lat}, ${lon}</strong> <span class="text-muted">(Accuracy: &plusmn;${acc}m)</span>`;
+          showToast('GPS coordinates locked!', 'success');
+        },
+        (err) => {
+          display.textContent = `GPS error: ${err.message}. Enter address manually below.`;
+          showToast('Could not fetch GPS. Please enter address manually.', 'warning');
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    function calculateShedCapacity() {
+      const l = parseFloat(document.getElementById('geoLength').value) || 0;
+      const w = parseFloat(document.getElementById('geoWidth').value) || 0;
+      const area = l * w;
+      const birds = Math.floor(area / 1.2);
+      document.getElementById('displayFloorArea').textContent = `${area.toLocaleString()} sq.ft`;
+      document.getElementById('displayStockingCapacity').textContent = `${birds.toLocaleString()} Broilers`;
+    }
+
+    async function handleFarmGeoSubmit(e) {
+      e.preventDefault();
+      const geo = {
+        address: document.getElementById('geoAddress').value.trim(),
+        orientation: document.getElementById('geoOrientation').value,
+        ventilationType: document.getElementById('geoVentilation').value,
+        lengthFt: document.getElementById('geoLength').value,
+        widthFt: document.getElementById('geoWidth').value,
+        heightFt: document.getElementById('geoHeight').value,
+        nearestFarmDistanceKm: document.getElementById('geoBufferDistance').value
+      };
+      await MockAPI.saveFarmGeo('F-001', geo);
+      showToast('Farm structural blueprint and geo data saved!', 'success');
+      switchMobileTab('dashboard');
+    }
+
+    async function loadGeoStructureView() {
+      calculateShedCapacity();
+      const geo = await MockAPI.getFarmGeo('F-001');
+      if (geo) {
+        if (geo.address) document.getElementById('geoAddress').value = geo.address;
+        if (geo.lengthFt) document.getElementById('geoLength').value = geo.lengthFt;
+        if (geo.widthFt) document.getElementById('geoWidth').value = geo.widthFt;
+        if (geo.heightFt) document.getElementById('geoHeight').value = geo.heightFt;
+        if (geo.orientation) document.getElementById('geoOrientation').value = geo.orientation;
+        if (geo.ventilationType) document.getElementById('geoVentilation').value = geo.ventilationType;
+        if (geo.nearestFarmDistanceKm) document.getElementById('geoBufferDistance').value = geo.nearestFarmDistanceKm;
+        calculateShedCapacity();
+      }
+    }
+
+    // 9. Mobile & OTP / Password Authentication Handlers
+    let currentAuthMode = 'password';
+
+    function switchAuthMode(mode) {
+      currentAuthMode = mode;
+      document.getElementById('tabBtnOtp')?.classList.toggle('active', mode === 'otp');
+      document.getElementById('tabBtnPassword')?.classList.toggle('active', mode === 'password');
+      document.getElementById('tabBtnRegister')?.classList.toggle('active', mode === 'register');
+
+      document.getElementById('authModeOtp')?.classList.toggle('d-none', mode !== 'otp');
+      document.getElementById('authModePassword')?.classList.toggle('d-none', mode !== 'password');
+      document.getElementById('authModeRegister')?.classList.toggle('d-none', mode !== 'register');
+    }
+
+    function toggleModalPassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'bi bi-eye';
+      }
+    }
+
+    function updateAuthModalView() {
+      const user = MobileAuth.getLoggedInUser();
+      const authTabs = document.getElementById('authTabs');
+      const authModeOtp = document.getElementById('authModeOtp');
+      const authModePass = document.getElementById('authModePassword');
+      const authModeReg = document.getElementById('authModeRegister');
+      const stepProfile = document.getElementById('authStepProfile');
+
+      if (user) {
+        authTabs?.classList.add('d-none');
+        authModeOtp?.classList.add('d-none');
+        authModePass?.classList.add('d-none');
+        authModeReg?.classList.add('d-none');
+        stepProfile?.classList.remove('d-none');
+      } else {
+        authTabs?.classList.remove('d-none');
+        stepProfile?.classList.add('d-none');
+        switchAuthMode(currentAuthMode || 'otp');
+      }
+    }
+
+    async function handleSendOtp() {
+      const code = document.getElementById('countryCodeSelect').value;
+      const num = document.getElementById('mobileNumberInput').value.trim();
+      const btn = document.getElementById('btnModalSendOtp');
+
+      if (!num || num.length < 10) {
+        showToast('Please enter a valid 10-digit mobile number', 'warning');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending OTP...';
+      }
+
+      const res = await MobileAuth.sendOtpForLogin(num, code);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-check me-1"></i> <span>Send OTP</span>';
+      }
+
+      if (res.success) {
+        document.getElementById('displayPendingMobile').textContent = `${code} ${num}`;
+        document.getElementById('authStepPhone').classList.add('d-none');
+        document.getElementById('authStepOtp').classList.remove('d-none');
+        showToast('OTP code dispatched via SMS!', 'success');
+      } else {
+        showToast(res.message || 'Failed to dispatch OTP SMS', 'danger');
+      }
+    }
+
+    async function handleResendOtp() {
+      const code = document.getElementById('countryCodeSelect').value;
+      const num = document.getElementById('mobileNumberInput').value.trim();
+      const res = await MobileAuth.sendOtpForLogin(num, code);
+      if (res.success) {
+        showToast('New OTP dispatched via SMS!', 'info');
+      } else {
+        showToast(res.message || 'Could not resend OTP', 'warning');
+      }
+    }
+
+    function resetAuthStep() {
+      document.getElementById('authStepOtp').classList.add('d-none');
+      document.getElementById('authStepPhone').classList.remove('d-none');
+    }
+
+    async function handleVerifyOtp() {
+      const otp = document.getElementById('otpInput').value.trim();
+      const btn = document.getElementById('btnModalVerifyOtp');
+
+      if (!otp || otp.length < 6) {
+        showToast('Please enter the 6-digit OTP code', 'warning');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
+      }
+
+      const res = await MobileAuth.verifyOtpAndLogin(otp);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Verify & Sign In</span>';
+      }
+
+      if (res.success) {
+        showToast(`Welcome! Signed in as ${res.user.phone || res.user.name}`, 'success');
+        updateAuthModalView();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
+        if (modal) modal.hide();
+      } else {
+        showToast(res.message || 'Incorrect OTP code', 'danger');
+      }
+    }
+
+    async function handleModalPasswordLogin() {
+      const code = document.getElementById('modalPassCountryCode')?.value || '+91';
+      const rawId = document.getElementById('modalPassIdentifier')?.value.trim();
+      const password = document.getElementById('modalPassPassword')?.value;
+      const btn = document.getElementById('btnModalPassLogin');
+
+      if (!rawId) {
+        showToast('Please enter your mobile number or email', 'warning');
+        return;
+      }
+      if (!password) {
+        showToast('Please enter your password', 'warning');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Signing in...';
+      }
+
+      const cleanNum = rawId.replace(/\D/g, '');
+      const fullIdentifier = (cleanNum.length === 10) ? `${code}${cleanNum}` : rawId;
+
+      const res = await MobileAuth.loginWithPassword(fullIdentifier, password);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard';
+      }
+
+      if (res.success) {
+        showToast(`Welcome back, ${res.user.name || res.user.phone}!`, 'success');
+        updateAuthModalView();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
+        if (modal) modal.hide();
+      } else {
+        showToast(res.message || 'Invalid mobile number or password', 'danger');
+      }
+    }
+
+    async function handleModalRegister() {
+      const name = document.getElementById('regFullName')?.value.trim();
+      const farmName = document.getElementById('regFarmName')?.value.trim();
+      const code = document.getElementById('regCountryCode')?.value || '+91';
+      const phone = document.getElementById('regMobileInput')?.value.trim();
+      const password = document.getElementById('regPasswordInput')?.value;
+      const btn = document.getElementById('btnModalRegister');
+
+      if (!name) {
+        showToast('Please enter your full name', 'warning');
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        showToast('Please enter a valid 10-digit mobile number', 'warning');
+        return;
+      }
+      if (!password || password.length < 6) {
+        showToast('Password must be at least 6 characters', 'warning');
+        return;
+      }
+
+      const clean10 = phone.replace(/\D/g, '').slice(-10);
+      const fullPhone = `${code} ${clean10}`;
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Registering...';
+      }
+
+      const res = await MobileAuth.registerWithPassword({
+        fullName: name,
+        farmName: farmName || 'My Poultry Farm',
+        phone: fullPhone,
+        password: password,
+        location: 'Agro Sector'
+      });
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-building-add me-1"></i> Create Farm Account';
+      }
+
+      if (res.success) {
+        showToast('Account created successfully! Logged in.', 'success');
+        updateAuthModalView();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
+        if (modal) modal.hide();
+      } else {
+        showToast(res.message || 'Registration failed', 'danger');
+      }
+    }
+
+    function handleUserLogout() {
+      MobileAuth.logout();
+      updateAuthModalView();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
+      if (modal) modal.hide();
+      showToast('Logged out successfully', 'info');
+    }
+
+    // 10. Customer Support Query Submit
+    function handleSupportQuerySubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('supName').value.trim();
+      const phone = document.getElementById('supPhone').value.trim();
+      const urgency = document.getElementById('supUrgency').value;
+      const msg = document.getElementById('supMessage').value.trim();
+
+      showToast(`Support case submitted! Our veterinary team will contact ${phone} shortly.`, 'success', 'Query Dispatched');
+      document.getElementById('customerSupportForm').reset();
+    }
+
+    function clearAllCustomerData() {
+      if (confirm('Clear all your stored farms, batches, and health logs to start fresh?')) {
+        MockAPI.clearAllUserData();
+        refreshAllCustomerViews();
+        loadEggAndMarketViews();
+        loadHygieneView();
+        showToast('All customer data cleared!', 'info');
+      }
+    }
+  </script>
+</body>
+</html>

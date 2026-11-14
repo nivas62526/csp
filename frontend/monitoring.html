@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health & Environment Monitoring &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="overview.html" class="nav-link-item"><i class="bi bi-layout-text-window-reverse"></i><span>Project Overview</span></a></li>
+          <li class="nav-item-custom"><a href="dashboard.html" class="nav-link-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="farms.html" class="nav-link-item"><i class="bi bi-building"></i><span>Farm Management</span></a></li>
+          <li class="nav-item-custom"><a href="batches.html" class="nav-link-item"><i class="bi bi-grid-fill"></i><span>Batches</span></a></li>
+          <li class="nav-item-custom"><a href="conditions.html" class="nav-link-item"><i class="bi bi-clipboard2-pulse"></i><span>Bird Conditions</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="image-prediction.html" class="nav-link-item"><i class="bi bi-camera"></i><span>Image Prediction</span><span class="badge bg-primary nav-badge">CV</span></a></li>
+          <li class="nav-item-custom"><a href="predictions.html" class="nav-link-item"><i class="bi bi-cpu-fill"></i><span>AI Predictions</span><span class="badge bg-success nav-badge">Combined</span></a></li>
+          <li class="nav-item-custom"><a href="monitoring.html" class="nav-link-item active"><i class="bi bi-activity"></i><span>Health Monitoring</span></a></li>
+          <li class="nav-item-custom"><a href="recommendations.html" class="nav-link-item"><i class="bi bi-lightbulb-fill"></i><span>Recommendations</span></a></li>
+          <li class="nav-item-custom"><a href="alerts.html" class="nav-link-item"><i class="bi bi-bell-fill"></i><span>Alerts</span></a></li>
+          <li class="nav-item-custom"><a href="vaccinations.html" class="nav-link-item"><i class="bi bi-shield-plus"></i><span>Vaccinations</span></a></li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom"><a href="reports.html" class="nav-link-item"><i class="bi bi-graph-up-arrow"></i><span>Reports & Analytics</span></a></li>
+          <li class="nav-item-custom"><a href="admin.html" class="nav-link-item"><i class="bi bi-shield-lock"></i><span>Admin Dashboard</span></a></li>
+          <li class="nav-item-custom"><a href="profile.html" class="nav-link-item"><i class="bi bi-gear-fill"></i><span>Settings & Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">GreenValley Broiler Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn"><i class="bi bi-list"></i></button>
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown"><i class="bi bi-bell"></i><span class="badge-ping" id="topbarNotifBadge"></span></button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header"><span class="fw-bold">Notifications</span></div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <!-- Header with Timeframe Filters -->
+        <div class="page-header-title">
+          <div>
+            <h1 class="page-title">Health & Microclimate Telemetry</h1>
+            <p class="page-subtitle">Real-time IoT environmental telemetry and longitudinal flock health curves</p>
+          </div>
+          <!-- Timeframe Filter Buttons -->
+          <div class="btn-group shadow-xs" role="group">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="setTimeframe('today', this)">Today</button>
+            <button type="button" class="btn btn-sm btn-primary active" onclick="setTimeframe('7d', this)">7 Days</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="setTimeframe('30d', this)">30 Days</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="setTimeframe('3m', this)">3 Months</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showToast('Custom date picker opened (Mock)', 'info')"><i class="bi bi-calendar3"></i> Custom</button>
+          </div>
+        </div>
+
+        <!-- 8 Live Health & Sensor Metric Tiles -->
+        <div class="row g-3 mb-4">
+          <!-- 1. Temp -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Temperature</span>
+                <div class="kpi-icon-pill bg-warning-subtle text-warning"><i class="bi bi-thermometer-sun"></i></div>
+              </div>
+              <div class="kpi-value text-dark">26.5 <small class="fs-6 text-muted">°C</small></div>
+              <div class="kpi-trend trend-up-bad"><i class="bi bi-arrow-up-short"></i> +2.0°C vs Target</div>
+            </div>
+          </div>
+
+          <!-- 2. Humidity -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Humidity</span>
+                <div class="kpi-icon-pill bg-primary-subtle text-primary"><i class="bi bi-droplet-half"></i></div>
+              </div>
+              <div class="kpi-value text-dark">62.0 <small class="fs-6 text-muted">%</small></div>
+              <div class="kpi-trend trend-up-good"><i class="bi bi-check2"></i> Optimal Band</div>
+            </div>
+          </div>
+
+          <!-- 3. Feed Consumption -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Daily Feed</span>
+                <div class="kpi-icon-pill bg-success-subtle text-success"><i class="bi bi-basket3"></i></div>
+              </div>
+              <div class="kpi-value text-dark">450 <small class="fs-6 text-muted">kg</small></div>
+              <div class="kpi-trend trend-up-good"><i class="bi bi-arrow-up-short"></i> Normal Intake</div>
+            </div>
+          </div>
+
+          <!-- 4. Water Intake -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Water Intake</span>
+                <div class="kpi-icon-pill bg-info-subtle text-info"><i class="bi bi-cup-straw"></i></div>
+              </div>
+              <div class="kpi-value text-dark">850 <small class="fs-6 text-muted">L</small></div>
+              <div class="kpi-trend trend-neutral"><i class="bi bi-activity"></i> Ratio 1.88 L/kg</div>
+            </div>
+          </div>
+
+          <!-- 5. Mortality -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Mortality Count</span>
+                <div class="kpi-icon-pill bg-danger-subtle text-danger"><i class="bi bi-heartbreak"></i></div>
+              </div>
+              <div class="kpi-value text-danger">5 <small class="fs-6 text-muted">birds</small></div>
+              <div class="kpi-trend trend-up-bad"><i class="bi bi-arrow-up-short"></i> Alert Level</div>
+            </div>
+          </div>
+
+          <!-- 6. Average Weight -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Average Weight</span>
+                <div class="kpi-icon-pill bg-primary-subtle text-primary"><i class="bi bi-speedometer2"></i></div>
+              </div>
+              <div class="kpi-value text-dark">1.68 <small class="fs-6 text-muted">kg</small></div>
+              <div class="kpi-trend trend-up-good"><i class="bi bi-check2"></i> Cobb 500 Track</div>
+            </div>
+          </div>
+
+          <!-- 7. Activity Level -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Activity Level</span>
+                <div class="kpi-icon-pill bg-warning-subtle text-warning"><i class="bi bi-pause-circle"></i></div>
+              </div>
+              <div class="kpi-value text-warning">Low</div>
+              <div class="kpi-trend trend-up-bad"><i class="bi bi-dash-circle"></i> Reduced Mobility</div>
+            </div>
+          </div>
+
+          <!-- 8. Health Risk -->
+          <div class="col-6 col-md-3">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Disease Risk</span>
+                <div class="kpi-icon-pill bg-warning-subtle text-warning"><i class="bi bi-shield-exclamation"></i></div>
+              </div>
+              <div class="kpi-value text-warning">Medium</div>
+              <div class="kpi-trend trend-up-bad"><i class="bi bi-bell"></i> Surveillance Active</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comprehensive Chart.js Graphs (4 Charts) -->
+        <div class="row g-4 mb-4">
+          <!-- 1. Temp & Humidity Trends -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title"><i class="bi bi-thermometer-half text-primary"></i> Microclimate Stability (7-Day Trend)</h5>
+                <span class="badge bg-light text-dark border">Temp & Target</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div style="height: 260px;">
+                  <canvas id="monitoringEnvTrendChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Feed & Water Consumption Intake -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title"><i class="bi bi-basket3-fill text-success"></i> Feed & Water Daily Consumption</h5>
+                <span class="badge bg-light text-dark border">Feed vs Water</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div style="height: 260px;">
+                  <canvas id="monitoringIntakeChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Weight Growth Curve vs Benchmark -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title"><i class="bi bi-graph-up text-primary"></i> Flock Growth Curve vs Breed Benchmark</h5>
+                <span class="badge bg-success-subtle text-success">Cobb 500 Standard</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div style="height: 260px;">
+                  <canvas id="monitoringWeightGrowthChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Daily Mortality Trend -->
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title"><i class="bi bi-heartbreak-fill text-danger"></i> Daily Mortality Trend (7 Days)</h5>
+                <span class="badge bg-danger-subtle text-danger">Threshold: &lt; 3 / day</span>
+              </div>
+              <div class="dashboard-card-body">
+                <div style="height: 260px;">
+                  <canvas id="monitoringMortalityChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/charts.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      PoultryCharts.initMonitoringCharts();
+    });
+
+    function setTimeframe(tf, btn) {
+      document.querySelectorAll('.page-header-title .btn-group .btn').forEach(b => {
+        b.classList.remove('active', 'btn-primary');
+        b.classList.add('btn-outline-primary');
+      });
+      btn.classList.add('active', 'btn-primary');
+      btn.classList.remove('btn-outline-primary');
+      showToast(`Telemetry charts updated for timeframe: ${tf.toUpperCase()}`, 'info');
+    }
+  </script>
+</body>
+</html>

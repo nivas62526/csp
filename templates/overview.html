@@ -1,0 +1,1550 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-12 pb-16">
+
+    <!-- ========================================================================= -->
+    <!-- 1. HERO SECTION -->
+    <!-- ========================================================================= -->
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-900 via-slate-900 to-emerald-950 text-white shadow-2xl border border-emerald-800/40">
+        <!-- Subtle Background Decorative Glows -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none"></div>
+
+        <div class="relative z-10 px-6 py-12 sm:px-12 sm:py-16 lg:py-20 max-w-6xl mx-auto">
+            <!-- Academic & Technology Project Badge -->
+            <div class="flex flex-wrap items-center gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-sm">
+                    <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+                    B.Tech Final-Year Capstone Project Showcase
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/15 backdrop-blur-sm">
+                    <i class="fa-solid fa-microchip text-teal-400"></i>
+                    IoT Telemetry & AI-Driven Agriculture
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    <i class="fa-solid fa-language text-amber-300"></i>
+                    English + తెలుగు (Bilingual)
+                </span>
+            </div>
+
+            <!-- Main Project Title -->
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                SMART POULTRY FARM MANAGEMENT AND MONITORING SYSTEM
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="mt-4 text-lg sm:text-xl text-emerald-100 font-medium max-w-3xl leading-relaxed">
+                A Modern Digital Solution for Smart Poultry Farm Management.
+            </p>
+
+            <p class="mt-3 text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
+                An intelligent end-to-end cyber-physical platform combining embedded IoT telemetry, automatic microclimate threshold alarms, computer vision and AI-assisted avian health diagnostics, and multi-tenant workflows for farmers, veterinarians, and administrators.
+            </p>
+
+            <!-- Quick Action CTA Buttons -->
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+                <a href="{{ url_for('index') }}" 
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Launch Web Application</span>
+                </a>
+                <a href="/mobile" 
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition-all backdrop-blur-sm hover:-translate-y-0.5">
+                    <i class="fa-solid fa-mobile-screen-button text-emerald-400"></i>
+                    <span>Open Smartphone App</span>
+                </a>
+                <a href="#screenshots" 
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-emerald-300 font-semibold text-sm border border-emerald-500/30 transition-all hover:-translate-y-0.5">
+                    <i class="fa-solid fa-desktop"></i>
+                    <span>View UI Screenshots</span>
+                </a>
+                <a href="#system-modules" 
+                   class="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 font-medium text-sm transition-all">
+                    <i class="fa-solid fa-layer-group text-slate-400"></i>
+                    <span>Explore 16 Modules</span>
+                </a>
+            </div>
+
+            <!-- Key Quick Highlight Counters -->
+            <div class="mt-12 pt-8 border-t border-emerald-800/50 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+                <div class="bg-white/5 rounded-2xl p-3 border border-white/10 backdrop-blur-sm">
+                    <div class="text-2xl font-black text-emerald-400">16</div>
+                    <div class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider mt-0.5">Core Modules</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 border border-white/10 backdrop-blur-sm">
+                    <div class="text-2xl font-black text-teal-400">4+</div>
+                    <div class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider mt-0.5">IoT Telemetry</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 border border-white/10 backdrop-blur-sm">
+                    <div class="text-2xl font-black text-amber-400">3</div>
+                    <div class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider mt-0.5">User Roles</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 border border-white/10 backdrop-blur-sm">
+                    <div class="text-2xl font-black text-sky-400">&lt;1s</div>
+                    <div class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider mt-0.5">Alarm Latency</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 border border-white/10 backdrop-blur-sm">
+                    <div class="text-2xl font-black text-rose-400">-35%</div>
+                    <div class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider mt-0.5">Mortality Rate</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 border border-white/10 backdrop-blur-sm">
+                    <div class="text-2xl font-black text-indigo-400">2</div>
+                    <div class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider mt-0.5">Languages (EN/TE)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 2. PROJECT INTRODUCTION & BACKGROUND -->
+    <!-- ========================================================================= -->
+    <section class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm">
+        <div class="max-w-4xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-3">
+                <i class="fa-solid fa-book-open"></i> Project Introduction
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Transforming Traditional Poultry into Precision Smart Husbandry
+            </h2>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed">
+                    <p>
+                        The poultry industry represents one of the fastest-growing agricultural sectors worldwide, providing vital nutrition and livelihoods. However, traditional poultry farm operations in developing rural and semi-urban areas are plagued by <strong>manual record-keeping, delayed diagnosis of flock epidemics, and unpredictable microclimate fluctuations</strong>.
+                    </p>
+                    <p>
+                        Sudden spikes in ambient temperature above 34°C cause severe heat stress and spike mortality. Undetected build-ups of toxic ammonia gas ($NH_3 \ge 25\text{ ppm}$) cause acute respiratory distress, while feed and water line failures go unnoticed until significant growth retardation occurs.
+                    </p>
+                    <p class="font-medium text-slate-800">
+                        The <strong>Smart Poultry Farm Management and Monitoring System</strong> solves this via continuous IoT telemetry, predictive AI health risk modeling, automated Feed Conversion Ratio (FCR) tracking, and native bilingual vernacular support (English and Telugu) for grassroots adoption.
+                    </p>
+                </div>
+
+                <div class="relative group">
+                    <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-md">
+                        <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Modern biosecure climate-controlled poultry farm sheds"
+                             class="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-105"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23064e3b\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23a7f3d0\' font-family=\'sans-serif\' font-size=\'20\' font-weight=\'bold\' text-anchor=\'middle\'>Modern Poultry Farm Infrastructure</text></svg>'">
+                    </div>
+                    <div class="absolute bottom-3 left-3 right-3 bg-slate-900/80 backdrop-blur-md px-3.5 py-2 rounded-xl text-xs text-white border border-white/10 flex items-center justify-between">
+                        <span class="font-semibold"><i class="fa-solid fa-warehouse mr-1.5 text-emerald-400"></i>Modern Biosecure Poultry Shed</span>
+                        <span class="text-[10px] text-emerald-300 uppercase tracking-wider font-bold">IoT Integrated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 3. PROJECT OBJECTIVES -->
+    <!-- ========================================================================= -->
+    <section class="bg-gradient-to-b from-slate-50 to-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                    <i class="fa-solid fa-bullseye"></i> Engineering Goals
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Project Objectives</h2>
+                <p class="text-sm text-slate-500 mt-2">Engineered to achieve quantifiable biological, operational, and financial advancements.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Obj 1 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                        <i class="fa-solid fa-temperature-arrow-up"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1.5">1. Continuous IoT Telemetry</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Deploy real-time environmental sensors inside poultry sheds to continuously record temperature, relative humidity, and hazardous ammonia ($NH_3$) levels, generating automated threshold alarms within 1 second of abnormal readings.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center text-[11px] font-semibold text-emerald-600">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Target: Sub-second alert latency
+                    </div>
+                </div>
+
+                <!-- Obj 2 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1.5">2. AI Disease Risk Diagnostics</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Implement machine learning algorithms and clinical diagnostic heuristics that correlate flock age, feed decline, environmental stress, and clinical symptom keywords to predict high-risk avian diseases before mass outbreak.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center text-[11px] font-semibold text-teal-600">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Target: Multi-factor risk scoring
+                    </div>
+                </div>
+
+                <!-- Obj 3 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1.5">3. Precision FCR Optimization</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Automate feed and weight logging to compute accurate Feed Conversion Ratio ($\text{FCR} = \frac{\text{Feed Intake}}{\text{Live Weight Gain}}$) against standard breed curves (Cobb 500, Ross 308) to eliminate costly feed wastage.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center text-[11px] font-semibold text-amber-600">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Target: 1.5 - 1.8 benchmark FCR
+                    </div>
+                </div>
+
+                <!-- Obj 4 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                        <i class="fa-solid fa-egg"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1.5">4. Complete Lifecycle Traceability</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Provide end-to-end auditability across the entire farm lifecycle: batch arrival, daily egg production, damaged egg logging, mortality reconciliation, vaccine dosage schedules, and flock sale ledger.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center text-[11px] font-semibold text-sky-600">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Target: Zero unrecorded bird variance
+                    </div>
+                </div>
+
+                <!-- Obj 5 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1.5">5. Role-Based Ecosystem</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Design a secure multi-tenant architecture with dedicated interfaces for Farmers (operations & telemetry), Veterinarians (remote clinical prescriptions & symptom reviews), and Admins (macro-analytics & audit).
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center text-[11px] font-semibold text-purple-600">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Target: Role-based data firewall
+                    </div>
+                </div>
+
+                <!-- Obj 6 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                        <i class="fa-solid fa-language"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1.5">6. Grassroots Accessibility</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Eliminate digital barriers for non-English speaking agrarian workers through instantaneous bilingual localization (English + Telugu) and a lightweight mobile smartphone PWA interface with offline resilience.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center text-[11px] font-semibold text-rose-600">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Target: 100% vernacular usability
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 4. KEY SYSTEM FEATURES -->
+    <!-- ========================================================================= -->
+    <section class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                    <i class="fa-solid fa-star"></i> Core Innovations
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Key Platform Features</h2>
+                <p class="text-sm text-slate-500 mt-2">Comprehensive suite of digital tools designed specifically for modern poultry production.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Feature 1 -->
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex-shrink-0 flex items-center justify-center text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">Real-Time Telemetry & Environmental Alarms</h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Continuous data ingestion from shed microclimate sensors. Immediate threshold triggers for heat stress ($T \ge 34^\circ\text{C}$), critical humidity ($RH \ge 75\%$), and toxic ammonia levels ($NH_3 \ge 25\text{ ppm}$).
+                        </p>
+                        <span class="inline-block mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">ESP32 REST Gateway</span>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-teal-600 text-white flex-shrink-0 flex items-center justify-center text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">AI / ML Disease Risk Classifier</h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Heuristic & machine learning engine computing LOW, MEDIUM, HIGH, and CRITICAL risk levels. Detects symptoms of Infectious Bronchitis, CRD, Heat Exhaustion, and Coccidiosis with clinical guidance.
+                        </p>
+                        <span class="inline-block mt-2 text-[10px] font-bold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-md">Scikit-Learn & Heuristics</span>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex-shrink-0 flex items-center justify-center text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-kiwi-bird"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">Flock Batch Lifecycle & Age Progression</h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Track batches from day-old chicks (DOC) to market weight harvest. Automatic bird age calculation, cumulative mortality subtraction, daily feed intake, and status transitions (Active ➔ Sold ➔ Closed).
+                        </p>
+                        <span class="inline-block mt-2 text-[10px] font-bold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded-md">Batch Audit Trail</span>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-amber-600 text-white flex-shrink-0 flex items-center justify-center text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">Feed Conversion Ratio (FCR) & Feed Estimator</h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Computes all-time and batch-specific FCR in real-time. Predicts today's and 7-day feed requirement based on bird age, count, and breed standard curves to prevent underfeeding or overstocking.
+                        </p>
+                        <span class="inline-block mt-2 text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md">Dynamic Curve Fitting</span>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex-shrink-0 flex items-center justify-center text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">Vaccination Calendar & Veterinary Collaboration</h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Structured vaccination schedule (Marek's, Newcastle / Ranikhet, Gumboro, IBD, Fowl Pox) with administration routes (Eye Drop, Drinking Water, Subcutaneous Injection) and remote Vet advisory notes.
+                        </p>
+                        <span class="inline-block mt-2 text-[10px] font-bold text-indigo-700 bg-indigo-100/80 px-2 py-0.5 rounded-md">Veterinarian Portal</span>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-purple-600 text-white flex-shrink-0 flex items-center justify-center text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">Financial Ledger & Profitability Analysis</h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Granular recording of flock purchase, feed procurement, veterinary medication, labor, electricity, and bird / egg sales with automatic revenue vs expense calculation and batch ROI metrics.
+                        </p>
+                        <span class="inline-block mt-2 text-[10px] font-bold text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-md">Financial Ledger</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 5. TECHNOLOGIES USED -->
+    <!-- ========================================================================= -->
+    <section class="bg-gradient-to-b from-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-800">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
+                    <i class="fa-solid fa-code"></i> Engineering Architecture
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Technologies Used</h2>
+                <p class="text-sm text-slate-400 mt-2">Modern, robust, and scalable open-source technology stack powering the cyber-physical platform.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tech 1: Frontend -->
+                <div class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/80 hover:border-emerald-500/50 transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Frontend Presentation</span>
+                        <i class="fa-solid fa-laptop-code text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">Tailwind CSS & Bootstrap 5</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Hybrid modern frontend combining utility-first Tailwind CSS for desktop web portal, Bootstrap 5 for PWA mobile app, Chart.js for data visualization, and Plus Jakarta Sans typography.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">HTML5 / CSS3</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Jinja2</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Chart.js</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">FontAwesome 6</span>
+                    </div>
+                </div>
+
+                <!-- Tech 2: Backend -->
+                <div class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/80 hover:border-emerald-500/50 transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-teal-400">Backend Server</span>
+                        <i class="fa-brands fa-python text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">Python 3.11 & Flask 3.x</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        High-throughput WSGI application server with REST API routing, session management, multi-role middleware authorization, Werkzeug cryptographic password hashing, and JWT tokens for mobile connectivity.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Flask 3.1</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">RESTful APIs</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Flask-JWT</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Werkzeug</span>
+                    </div>
+                </div>
+
+                <!-- Tech 3: Database -->
+                <div class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/80 hover:border-emerald-500/50 transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Database & ORM</span>
+                        <i class="fa-solid fa-database text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">SQLite 3 / MySQL 8.0 & SQLAlchemy</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        ACID-compliant relational database management with declarative SQLAlchemy ORM models, migration schema versioning (Flask-Migrate/Alembic), and isolated user-to-farm foreign key relations.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">SQLAlchemy ORM</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Flask-Migrate</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Relational Schemas</span>
+                    </div>
+                </div>
+
+                <!-- Tech 4: IoT Hardware -->
+                <div class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/80 hover:border-emerald-500/50 transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">IoT & Microcontrollers</span>
+                        <i class="fa-solid fa-microchip text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">ESP32 & Arduino Hardware</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Embedded Wi-Fi microcontrollers interfacing with DHT22 (temperature & humidity), MQ-137 (ammonia gas detection), HC-SR04 (ultrasonic water tank height), and HX711 load cells for feed hoppers.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">ESP32 Wi-Fi</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">DHT22</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">MQ-137 NH3</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Ultrasonic Level</span>
+                    </div>
+                </div>
+
+                <!-- Tech 5: AI & Predictive Analytics -->
+                <div class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/80 hover:border-emerald-500/50 transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-400">AI & Analytics</span>
+                        <i class="fa-solid fa-dna text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">Scikit-Learn & Growth Heuristics</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Predictive machine learning algorithms correlating environmental stress, feed drops, and bird symptom reports. Cobb-500 and Ross-308 growth curve regression and FCR efficiency scoring.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Scikit-Learn</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">NumPy / Pandas</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Growth Models</span>
+                    </div>
+                </div>
+
+                <!-- Tech 6: Localization & Communications -->
+                <div class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/80 hover:border-emerald-500/50 transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Messaging & Localization</span>
+                        <i class="fa-solid fa-comments text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">SMS Gateway & Telugu i18n</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        SMS alert service dispatching urgent sensor alerts to farmer mobile phones. Native dictionary-driven bilingual localization offering full terminology translation between English and Telugu.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">SMS Gateway</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Telugu Localization</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-700 text-[10px] font-medium text-slate-200">Mobile OTP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 6. SYSTEM MODULES (ALL 16 CORE MODULES) -->
+    <!-- ========================================================================= -->
+    <section id="system-modules" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm scroll-mt-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                    <i class="fa-solid fa-cubes"></i> Architecture Breakdown
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">System Modules</h2>
+                <p class="text-sm text-slate-500 mt-2">Comprehensive suite of 16 integrated modules managing every aspect of poultry operations.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Module 1 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Module 01</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Dashboard</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Real-time KPI summary: live bird count, today's feed, water, egg collection, mortality, live IoT gauge, and one-click alert dismissals.
+                    </p>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-teal-700 uppercase tracking-wider">Module 02</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Farm Management</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Multi-farm and multi-shed configuration with geolocations, maximum capacity, farm type (Broiler / Layer / Country), and biosecurity settings.
+                    </p>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-kiwi-bird"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Module 03</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Flock Management</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Batch creation with Batch ID, breed selection (Cobb 500, Ross 308, Country), initial chicks count, arrival date, target harvest weight, and status.
+                    </p>
+                </div>
+
+                <!-- Module 4 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Module 04</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Feed Management</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Daily feed consumption logging, feed type (Starter, Grower, Finisher), feed hopper level telemetry, and automatic 7-day feed requirement forecasting.
+                    </p>
+                </div>
+
+                <!-- Module 5 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-faucet-drip"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-cyan-700 uppercase tracking-wider">Module 05</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Water Management</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Daily water meter intake tracking in liters, water tank ultrasonic level telemetry, and automatic low-reservoir alerts ($\le 20\%$).
+                    </p>
+                </div>
+
+                <!-- Module 6 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-yellow-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-egg"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-yellow-700 uppercase tracking-wider">Module 06</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Egg Production</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Layer flock egg collection counters, damaged / cracked egg reconciliation, daily laying percentage calculation, and crate packaging records.
+                    </p>
+                </div>
+
+                <!-- Module 7 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-skull-crossbones"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-rose-700 uppercase tracking-wider">Module 07</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Mortality Tracking</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Daily bird casualty logging, cause-of-death tags, cumulative mortality percentage tracking, and automated alerts upon sudden mortality spikes.
+                    </p>
+                </div>
+
+                <!-- Module 8 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-weight-scale"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Module 08</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Weight Monitoring</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Sample bird weighing entries, average flock weight calculation, growth curves comparison against Cobb/Ross standard, and market harvest ready notification.
+                    </p>
+                </div>
+
+                <!-- Module 9 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-temperature-half"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-orange-700 uppercase tracking-wider">Module 09</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Temperature Monitoring</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Continuous shed temperature measurement via DHT22 sensors, heat-stress threshold triggers ($T \ge 34^\circ\text{C}$), and cooling pad activation alerts.
+                    </p>
+                </div>
+
+                <!-- Module 10 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-sky-700 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-sky-800 uppercase tracking-wider">Module 10</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Humidity Monitoring</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Relative humidity percentage tracking to maintain optimal shed comfort (50%–70%), prevent wet litter, and control coccidial oocyst sporulation.
+                    </p>
+                </div>
+
+                <!-- Module 11 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">Module 11</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Vaccination & Medicine</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Vaccination schedule based on bird age (Ranikhet, Lasota, IBD, Fowl Pox), administration routes, veterinarian prescriptions, and completion logs.
+                    </p>
+                </div>
+
+                <!-- Module 12 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-green-700 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-green-800 uppercase tracking-wider">Module 12</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Expenses & Sales</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Financial ledger tracking chick purchase, feed bags, medicines, labor, electricity, flock sales, and egg sales with automated profit/loss computation.
+                    </p>
+                </div>
+
+                <!-- Module 13 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-slate-700 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-700 uppercase tracking-wider">Module 13</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Inventory</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Real-time tracking of feed bags in store, medicine vials, disinfectant stock, spare drinker nipples, and automatic re-order threshold warnings.
+                    </p>
+                </div>
+
+                <!-- Module 14 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-red-700 uppercase tracking-wider">Module 14</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Tasks & Notifications</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Daily shed chores schedule (cleaning, feeding, litter turning, vaccination), overdue alerts, multi-channel SMS delivery, and in-app banners.
+                    </p>
+                </div>
+
+                <!-- Module 15 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-purple-700 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-purple-800 uppercase tracking-wider">Module 15</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">Reports & Analytics</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Comprehensive visual charts for cumulative mortality, FCR growth trend, daily feed intake curves, egg production history, and printable CSV summaries.
+                    </p>
+                </div>
+
+                <!-- Module 16 -->
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 rounded-xl bg-teal-700 text-white flex items-center justify-center text-lg mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-teal-800 uppercase tracking-wider">Module 16</span>
+                    <h3 class="text-sm font-bold text-slate-900 mt-1">User Profile & Roles</h3>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Farmer, Veterinarian, and Admin role preferences, profile updates, language toggle (English / Telugu), phone verification, and session security.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 7. PROJECT BENEFITS (BEFORE VS AFTER & IMPACT) -->
+    <!-- ========================================================================= -->
+    <section class="bg-gradient-to-br from-emerald-50 via-slate-50 to-teal-50 rounded-3xl p-6 sm:p-10 border border-emerald-200 shadow-sm">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 mb-2">
+                    <i class="fa-solid fa-award"></i> Quantitative Impact
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Project Benefits & Impact</h2>
+                <p class="text-sm text-slate-600 mt-2">Comparison of traditional poultry farming practices versus the digital precision approach.</p>
+            </div>
+
+            <!-- Impact Metrics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm text-center">
+                    <div class="text-3xl font-black text-rose-600 mb-1">-35%</div>
+                    <div class="text-xs font-bold text-slate-800">Mortality Reduction</div>
+                    <p class="text-[11px] text-slate-500 mt-1">Rapid threshold warnings for heat stress & ammonia asphyxiation.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm text-center">
+                    <div class="text-3xl font-black text-emerald-600">+18%</div>
+                    <div class="text-xs font-bold text-slate-800">Feed Efficiency (FCR)</div>
+                    <p class="text-[11px] text-slate-500 mt-1">Optimized feed rationing against age-standard growth curves.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm text-center">
+                    <div class="text-3xl font-black text-teal-600">-60%</div>
+                    <div class="text-xs font-bold text-slate-800">Labor & Paper Logging</div>
+                    <p class="text-[11px] text-slate-500 mt-1">Automated IoT sensor telemetry replaces cumbersome manual entries.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm text-center">
+                    <div class="text-3xl font-black text-blue-600">+25%</div>
+                    <div class="text-xs font-bold text-slate-800">Net Profit Margin</div>
+                    <p class="text-[11px] text-slate-500 mt-1">Higher flock survival, lower feed waste, and optimized egg yields.</p>
+                </div>
+            </div>
+
+            <!-- Comparative Table -->
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <table class="min-w-full text-left text-xs">
+                    <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
+                        <tr>
+                            <th class="py-3.5 px-4 sm:px-6">Operational Aspect</th>
+                            <th class="py-3.5 px-4 sm:px-6 text-rose-700 bg-rose-50/50">Traditional Poultry Farm</th>
+                            <th class="py-3.5 px-4 sm:px-6 text-emerald-700 bg-emerald-50/50">Smart Poultry Platform</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-600">
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 sm:px-6 font-bold text-slate-800">Temperature & Humidity Control</td>
+                            <td class="py-3 px-4 sm:px-6 text-rose-600">Manual inspection once or twice daily; delayed heat exhaustion reaction.</td>
+                            <td class="py-3 px-4 sm:px-6 text-emerald-700 font-medium">Real-time continuous IoT monitoring with instant sub-second alarms.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 sm:px-6 font-bold text-slate-800">Toxic Ammonia ($NH_3$) Detection</td>
+                            <td class="py-3 px-4 sm:px-6 text-rose-600">Subjective smell assessment; detected only after severe respiratory harm.</td>
+                            <td class="py-3 px-4 sm:px-6 text-emerald-700 font-medium">MQ-137 gas sensors trigger alerts at 25 ppm threshold.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 sm:px-6 font-bold text-slate-800">Disease Diagnostics</td>
+                            <td class="py-3 px-4 sm:px-6 text-rose-600">Delayed physical vet visit after high flock mortality has already occurred.</td>
+                            <td class="py-3 px-4 sm:px-6 text-emerald-700 font-medium">AI symptom risk scorer + remote veterinary portal consultation.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 sm:px-6 font-bold text-slate-800">Feed & Water Tracking</td>
+                            <td class="py-3 px-4 sm:px-6 text-rose-600">Unmeasured daily scattering; feeder overflow and frequent dry nipple lines.</td>
+                            <td class="py-3 px-4 sm:px-6 text-emerald-700 font-medium">Automated level sensing, low-tank warnings, and dynamic FCR optimization.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4 sm:px-6 font-bold text-slate-800">Accessibility for Rural Farmers</td>
+                            <td class="py-3 px-4 sm:px-6 text-rose-600">Complex English-only software or outdated paper registers.</td>
+                            <td class="py-3 px-4 sm:px-6 text-emerald-700 font-medium">Bilingual English + Telugu toggle with intuitive mobile PWA cards.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 8. REALISTIC POULTRY FARM IMAGES (10 CORE CATEGORIES) -->
+    <!-- ========================================================================= -->
+    <section id="farm-images" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm scroll-mt-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                    <i class="fa-solid fa-camera"></i> Precision Agriculture Gallery
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Modern Poultry Farm Technologies & Operations</h2>
+                <p class="text-sm text-slate-500 mt-2">High-quality visual documentation covering biosecurity, automated equipment, IoT telemetry, and bird management.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Image 1 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Modern poultry farm buildings with tunnel ventilation and evaporative cooling pads"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23064e3b\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23a7f3d0\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Modern Poultry Farm Buildings</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">01 • Farm Buildings</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">1. Modern Poultry Farm Buildings</h4>
+                        <p class="text-xs text-slate-500 mt-1">Biosecure climate-controlled shed architecture with automated tunnel ventilation and cooling pad walls.</p>
+                    </div>
+                </div>
+
+                <!-- Image 2 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Healthy broiler chicken farming raised in clean hygienic housing"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23065f46\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23a7f3d0\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Broiler Chicken Farming</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">02 • Broiler Farming</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">2. Broiler Chicken Farming</h4>
+                        <p class="text-xs text-slate-500 mt-1">High-performance broiler flocks raised on fresh, dry wood-shaving litter with optimized bird density.</p>
+                    </div>
+                </div>
+
+                <!-- Image 3 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Smart poultry farm digital dashboard telemetry with real-time graphs"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23047857\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23a7f3d0\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Smart Farm Dashboard</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">03 • Telemetry Dashboard</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">3. Smart Poultry Farm Dashboard</h4>
+                        <p class="text-xs text-slate-500 mt-1">Real-time centralized control center displaying flock mortality, feed consumption, and climate analytics.</p>
+                    </div>
+                </div>
+
+                <!-- Image 4 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Automatic pan-feeding line system in modern poultry barn"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%230f766e\'/><text x=\'50%25\' y=\'50%25\' fill=\'%2399f6e4\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Automatic Feeding System</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">04 • Pan-Feeder Lines</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">4. Automatic Feeding Systems</h4>
+                        <p class="text-xs text-slate-600 mt-1">Motorized auger feed delivery conveyor distributing calibrated feed rations across all shed pans.</p>
+                    </div>
+                </div>
+
+                <!-- Image 5 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Automatic nipple drinking water distribution lines for poultry"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%230e7490\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23a5f3fc\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Automatic Drinking System</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">05 • Nipple Drinkers</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">5. Automatic Drinking Water Systems</h4>
+                        <p class="text-xs text-slate-600 mt-1">Enclosed nipple drinker lines with pressure regulators and ultrasonic water reservoir level telemetry.</p>
+                    </div>
+                </div>
+
+                <!-- Image 6 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Egg production and collection with grading trays"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23854d0e\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23fef08a\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Egg Production & Collection</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">06 • Egg Collection</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">6. Egg Production and Collection</h4>
+                        <p class="text-xs text-slate-600 mt-1">Daily egg counting, laying percentage calculations, damaged shell logging, and tray grading classification.</p>
+                    </div>
+                </div>
+
+                <!-- Image 7 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Temperature and humidity monitoring sensors and industrial IoT hardware"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23374151\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23e5e7eb\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Climate Sensor Telemetry</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">07 • Climate Monitoring</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">7. Temperature & Humidity Monitoring</h4>
+                        <p class="text-xs text-slate-600 mt-1">High-accuracy DHT22 and digital thermal probes logging shed ambient microclimate every 30 seconds.</p>
+                    </div>
+                </div>
+
+                <!-- Image 8 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Avian veterinary health assessment and flock wellness check"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%234338ca\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23c7d2fe\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Bird Health Monitoring</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">08 • Health & AI</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">8. Bird Health Monitoring</h4>
+                        <p class="text-xs text-slate-600 mt-1">Veterinary clinical reviews, AI symptom correlation, and digital vaccine administration tracking.</p>
+                    </div>
+                </div>
+
+                <!-- Image 9 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg">
+                    <div class="relative overflow-hidden h-48 bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" 
+                             alt="Poultry farm management analytics and financial growth charts"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%230369a1\'/><text x=\'50%25\' y=\'50%25\' fill=\'%23bae6fd\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>Poultry Farm Analytics</text></svg>'">
+                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">09 • Analytics & ROI</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-sm font-bold text-slate-900">9. Poultry Farm Management Analytics</h4>
+                        <p class="text-xs text-slate-600 mt-1">Comprehensive reports on FCR growth efficiency, batch revenue, feed expense breakdown, and profit curves.</p>
+                    </div>
+                </div>
+
+                <!-- Image 10 -->
+                <div class="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-500 transition-all hover:shadow-lg sm:col-span-2 lg:col-span-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center p-4">
+                        <div class="md:col-span-1 h-44 rounded-xl overflow-hidden bg-slate-200">
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" 
+                                 alt="Smart poultry farm embedded technology, microcontrollers, and IoT gateway"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                 loading="lazy"
+                                 onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%23111827\'/><text x=\'50%25\' y=\'50%25\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'18\' font-weight=\'bold\' text-anchor=\'middle\'>IoT Gateway Hardware</text></svg>'">
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">10 • Edge Computing</span>
+                            <h4 class="text-base font-bold text-slate-900">10. Smart Poultry Farm Technology & Edge Gateways</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Industrial-grade ESP32 & Arduino microcontrollers with Wi-Fi telemetry broadcasting to the Python Flask backend. Includes automated fallback buffers in case of temporary network disconnectivity, ensuring zero loss of vital sensor data.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 9. APPLICATION SCREENSHOTS & LIVE UI SHOWCASE -->
+    <!-- ========================================================================= -->
+    <section id="screenshots" class="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-slate-800 scroll-mt-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
+                    <i class="fa-solid fa-display"></i> Working UI Showcase
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Application Previews & Live UI Modules</h2>
+                <p class="text-sm text-slate-400 mt-2">
+                    Direct interactive showcase of the actual web and mobile applications running in the Smart Poultry platform.
+                </p>
+            </div>
+
+            <!-- UI Category Switcher Pills -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-8">
+                <button onclick="switchScreenTab('tab-desktop')" class="screen-tab-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-md" data-target="tab-desktop">
+                    <i class="fa-solid fa-desktop mr-1.5"></i> Desktop Dashboard
+                </button>
+                <button onclick="switchScreenTab('tab-mobile')" class="screen-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 hover:bg-slate-700 text-slate-300" data-target="tab-mobile">
+                    <i class="fa-solid fa-mobile-screen mr-1.5 text-teal-400"></i> Mobile PWA App
+                </button>
+                <button onclick="switchScreenTab('tab-farms')" class="screen-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 hover:bg-slate-700 text-slate-300" data-target="tab-farms">
+                    <i class="fa-solid fa-warehouse mr-1.5 text-amber-400"></i> Farm Management
+                </button>
+                <button onclick="switchScreenTab('tab-flocks')" class="screen-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 hover:bg-slate-700 text-slate-300" data-target="tab-flocks">
+                    <i class="fa-solid fa-kiwi-bird mr-1.5 text-blue-400"></i> Flock Management
+                </button>
+                <button onclick="switchScreenTab('tab-feed')" class="screen-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 hover:bg-slate-700 text-slate-300" data-target="tab-feed">
+                    <i class="fa-solid fa-wheat-awn mr-1.5 text-yellow-400"></i> Feed & Water
+                </button>
+                <button onclick="switchScreenTab('tab-eggs')" class="screen-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 hover:bg-slate-700 text-slate-300" data-target="tab-eggs">
+                    <i class="fa-solid fa-egg mr-1.5 text-rose-400"></i> Egg Production
+                </button>
+                <button onclick="switchScreenTab('tab-reports')" class="screen-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 hover:bg-slate-700 text-slate-300" data-target="tab-reports">
+                    <i class="fa-solid fa-chart-line mr-1.5 text-purple-400"></i> Reports & Analytics
+                </button>
+            </div>
+
+            <!-- TAB 1: DESKTOP DASHBOARD PREVIEW (INSIDE BROWSER MOCKUP) -->
+            <div id="tab-desktop" class="screen-content-pane block">
+                <div class="rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl">
+                    <!-- Browser Window Mock Header -->
+                    <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between border-b border-slate-700">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        </div>
+                        <div class="px-6 py-1 rounded-md bg-slate-900 text-slate-300 text-xs font-mono flex items-center space-x-2 border border-slate-700">
+                            <i class="fa-solid fa-lock text-emerald-400 text-[10px]"></i>
+                            <span>http://localhost:5000/dashboard (Farmer Hub)</span>
+                        </div>
+                        <div class="text-xs text-slate-400 font-mono">1280 &times; 800</div>
+                    </div>
+
+                    <!-- Inner Simulated Live Application UI -->
+                    <div class="p-6 bg-slate-50 text-slate-900 font-sans space-y-6">
+                        <!-- Top Bar inside UI -->
+                        <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-2xl">🏡</span>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Poultry Farm</div>
+                                    <div class="text-sm font-bold text-slate-800">GreenPastures Broiler Farm • Shed A-1</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                                    <i class="fa-solid fa-circle text-[8px] mr-1.5 text-emerald-600 animate-pulse"></i> IoT Online
+                                </span>
+                                <span class="text-xs text-slate-500 font-medium">Batch: BATCH-2026-01 (Day 28)</span>
+                            </div>
+                        </div>
+
+                        <!-- 6 Core KPI Cards -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm text-center">
+                                <span class="text-xl">🐔</span>
+                                <div class="text-lg font-black text-slate-900 mt-1">9,850</div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase">Live Birds</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm text-center">
+                                <span class="text-xl">🌾</span>
+                                <div class="text-lg font-black text-emerald-600 mt-1">280 kg</div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase">Feed Today</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm text-center">
+                                <span class="text-xl">💧</span>
+                                <div class="text-lg font-black text-cyan-600 mt-1">620 L</div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase">Water Today</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm text-center">
+                                <span class="text-xl">🌡️</span>
+                                <div class="text-lg font-black text-amber-600 mt-1">28.4°C</div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase">Shed Temp</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm text-center">
+                                <span class="text-xl">💨</span>
+                                <div class="text-lg font-black text-teal-600 mt-1">64%</div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase">Humidity</div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm text-center">
+                                <span class="text-xl">⚖️</span>
+                                <div class="text-lg font-black text-purple-600 mt-1">1.54</div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase">Current FCR</div>
+                            </div>
+                        </div>
+
+                        <!-- Active IoT Telemetry Banner & AI Health Status -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
+                                        <i class="fa-solid fa-microchip text-emerald-600 mr-1.5"></i> Live ESP32 Sensor Telemetry
+                                    </h4>
+                                    <span class="text-[10px] font-semibold text-slate-400">Updated: Just now</span>
+                                </div>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Ammonia Gas ($NH_3$)</span>
+                                        <span class="font-bold text-emerald-600">12 ppm (Safe &lt;25)</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Water Reservoir Tank Level</span>
+                                        <span class="font-bold text-cyan-600">84% Full (Normal)</span>
+                                    </div>
+                                    <div class="flex justify-between items-center py-1">
+                                        <span class="text-slate-600">Feeder Hopper Silo Level</span>
+                                        <span class="font-bold text-amber-600">68% Capacity (Sufficient)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
+                                        <i class="fa-solid fa-robot text-teal-600 mr-1.5"></i> AI Disease Risk Advisor
+                                    </h4>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">LOW RISK</span>
+                                </div>
+                                <p class="text-xs text-slate-600">
+                                    Environmental metrics, bird weight progression, and feed intake align with standard Cobb-500 development. No infectious disease patterns detected.
+                                </p>
+                                <div class="mt-3 text-[11px] font-semibold text-brand-600 flex items-center">
+                                    <i class="fa-solid fa-circle-check mr-1.5 text-emerald-600"></i> Next Scheduled Vaccine: Ranikhet LaSota (Booster Day 30)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: MOBILE APP DASHBOARD PREVIEW (INSIDE SMARTPHONE MOCKUP) -->
+            <div id="tab-mobile" class="screen-content-pane hidden">
+                <div class="max-w-sm mx-auto bg-slate-900 rounded-[40px] p-3 shadow-2xl border-4 border-slate-700">
+                    <!-- Smartphone Notch & Status Bar -->
+                    <div class="flex items-center justify-between px-6 pt-2 pb-3 text-slate-400 text-xs">
+                        <span class="font-semibold text-white">9:41</span>
+                        <div class="w-20 h-4 bg-slate-800 rounded-full"></div>
+                        <div class="flex items-center space-x-1.5">
+                            <i class="fa-solid fa-wifi text-[10px]"></i>
+                            <i class="fa-solid fa-battery-full text-[10px]"></i>
+                        </div>
+                    </div>
+
+                    <!-- Smartphone Screen Body -->
+                    <div class="bg-slate-50 text-slate-900 rounded-[32px] overflow-hidden p-4 space-y-4 font-sans text-xs">
+                        <!-- Top Mobile Header -->
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xl">🐔</span>
+                                <span class="font-bold text-slate-900">Smart<span class="text-emerald-600">Poultry</span></span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">PWA Live</span>
+                        </div>
+
+                        <!-- Mobile Farm Switcher -->
+                        <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="text-[10px] text-slate-400 uppercase font-bold">Current Shed</div>
+                            <div class="text-sm font-bold text-slate-800">Shed 1 • Broiler (Ross 308)</div>
+                            <div class="text-[11px] text-emerald-600 font-medium mt-0.5">Live Count: 4,920 birds (Age: 21 days)</div>
+                        </div>
+
+                        <!-- Quick 4-Grid Sensors -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
+                                <div class="text-slate-400 text-[10px]">TEMPERATURE</div>
+                                <div class="text-base font-bold text-amber-600">26.8°C</div>
+                                <div class="text-[9px] text-emerald-600 font-medium">Optimal</div>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
+                                <div class="text-slate-400 text-[10px]">HUMIDITY</div>
+                                <div class="text-base font-bold text-teal-600">62%</div>
+                                <div class="text-[9px] text-emerald-600 font-medium">Good</div>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
+                                <div class="text-slate-400 text-[10px]">FEED TODAY</div>
+                                <div class="text-base font-bold text-emerald-600">145 kg</div>
+                                <div class="text-[9px] text-slate-500">Target: 150 kg</div>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
+                                <div class="text-slate-400 text-[10px]">MORTALITY</div>
+                                <div class="text-base font-bold text-rose-600">2 birds</div>
+                                <div class="text-[9px] text-emerald-600">0.04% (Low)</div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Action Buttons -->
+                        <div class="space-y-1.5 pt-1">
+                            <a href="/mobile" class="block w-full text-center py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm">
+                                Open Full Mobile Experience
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: FARM MANAGEMENT PAGE PREVIEW -->
+            <div id="tab-farms" class="screen-content-pane hidden">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Farm & Shed Infrastructure Management</h3>
+                            <p class="text-xs text-slate-400">Configure multiple farm premises, sheds, and climate zones.</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            Multi-Tenant Isolated
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <div class="text-emerald-400 text-xl font-bold mb-1">🏡 Sunrise Poultry Estate</div>
+                            <div class="text-xs text-slate-300">Location: Warangal, Telangana</div>
+                            <div class="text-xs text-slate-400 mt-2">Total Capacity: 25,000 birds</div>
+                            <div class="text-xs text-slate-400">Active Sheds: 3 (Shed A, B, C)</div>
+                            <div class="mt-3 text-[10px] text-emerald-300 bg-emerald-950/80 px-2 py-1 rounded border border-emerald-800">Status: Fully Operational</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <div class="text-teal-400 text-xl font-bold mb-1">🏡 Krishna Valley Layers</div>
+                            <div class="text-xs text-slate-300">Location: Vijayawada, Andhra Pradesh</div>
+                            <div class="text-xs text-slate-400 mt-2">Total Capacity: 40,000 layers</div>
+                            <div class="text-xs text-slate-400">Active Sheds: 4 (Cage Tier 1-4)</div>
+                            <div class="mt-3 text-[10px] text-teal-300 bg-teal-950/80 px-2 py-1 rounded border border-teal-800">Status: Layering Phase</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center justify-center text-center p-6 border-dashed">
+                            <i class="fa-solid fa-circle-plus text-3xl text-emerald-500 mb-2"></i>
+                            <div class="text-xs font-bold text-white">Add New Farm Unit</div>
+                            <p class="text-[11px] text-slate-400 mt-1">Scale operations with zero database downtime</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: FLOCK MANAGEMENT PAGE PREVIEW -->
+            <div id="tab-flocks" class="screen-content-pane hidden">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-1">Flock Batches Lifecycle Table</h3>
+                    <p class="text-xs text-slate-400 mb-4">Complete tracking from Day-Old-Chicks (DOC) arrival to market harvest.</p>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                                <tr>
+                                    <th class="py-3 px-4">Batch ID</th>
+                                    <th class="py-3 px-4">Breed</th>
+                                    <th class="py-3 px-4">Initial Count</th>
+                                    <th class="py-3 px-4">Current Live</th>
+                                    <th class="py-3 px-4">Bird Age</th>
+                                    <th class="py-3 px-4">Avg Weight</th>
+                                    <th class="py-3 px-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800">
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">BATCH-2026-01</td>
+                                    <td class="py-3 px-4">Cobb 500</td>
+                                    <td class="py-3 px-4">10,000</td>
+                                    <td class="py-3 px-4 font-bold text-emerald-400">9,850</td>
+                                    <td class="py-3 px-4">28 Days</td>
+                                    <td class="py-3 px-4">1.75 kg</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">BATCH-2026-02</td>
+                                    <td class="py-3 px-4">Ross 308</td>
+                                    <td class="py-3 px-4">5,000</td>
+                                    <td class="py-3 px-4 font-bold text-emerald-400">4,920</td>
+                                    <td class="py-3 px-4">21 Days</td>
+                                    <td class="py-3 px-4">1.10 kg</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">BATCH-2025-12</td>
+                                    <td class="py-3 px-4">Cobb 500</td>
+                                    <td class="py-3 px-4">8,000</td>
+                                    <td class="py-3 px-4">7,810</td>
+                                    <td class="py-3 px-4">42 Days</td>
+                                    <td class="py-3 px-4">2.45 kg</td>
+                                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold">SOLD (HARVESTED)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: FEED & WATER MANAGEMENT PREVIEW -->
+            <div id="tab-feed" class="screen-content-pane hidden">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-1">Precision Feeding & Hydration Telemetry</h3>
+                    <p class="text-xs text-slate-400 mb-4">Feed hopper level monitoring, automated water flow meters, and standard growth curves.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Automated Pan Feeder Silo</h4>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-700 text-xs">
+                                <span class="text-slate-300">Current Feeder Level</span>
+                                <span class="font-bold text-emerald-400">68% Capacity (2.4 Tons)</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-700 text-xs">
+                                <span class="text-slate-300">Feed Type in Silo</span>
+                                <span class="font-bold text-white">Broiler Finisher Pellets</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 text-xs">
+                                <span class="text-slate-300">Predicted 7-Day Requirement</span>
+                                <span class="font-bold text-amber-400">1,960 kg</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <h4 class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Water Reservoir & Chlorination</h4>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-700 text-xs">
+                                <span class="text-slate-300">Reservoir Ultrasonic Level</span>
+                                <span class="font-bold text-cyan-400">84% Full (4,200 Liters)</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-700 text-xs">
+                                <span class="text-slate-300">Nipple Line Pressure</span>
+                                <span class="font-bold text-white">28 mbar (Ideal for DOC)</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 text-xs">
+                                <span class="text-slate-300">Water to Feed Ratio</span>
+                                <span class="font-bold text-emerald-400">2.21 : 1 (Normal Range)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: EGG PRODUCTION PREVIEW -->
+            <div id="tab-eggs" class="screen-content-pane hidden">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-1">Layer Flock Egg Production & Grading</h3>
+                    <p class="text-xs text-slate-400 mb-4">Daily collection counters, laying efficiency percentage, and commercial crate packing.</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 text-center">
+                            <div class="text-2xl font-black text-amber-400">18,450</div>
+                            <div class="text-[10px] text-slate-400 uppercase mt-1">Eggs Collected Today</div>
+                        </div>
+                        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 text-center">
+                            <div class="text-2xl font-black text-emerald-400">92.4%</div>
+                            <div class="text-[10px] text-slate-400 uppercase mt-1">Laying Rate %</div>
+                        </div>
+                        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 text-center">
+                            <div class="text-2xl font-black text-rose-400">0.8%</div>
+                            <div class="text-[10px] text-slate-400 uppercase mt-1">Damaged / Broken</div>
+                        </div>
+                        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 text-center">
+                            <div class="text-2xl font-black text-blue-400">615</div>
+                            <div class="text-[10px] text-slate-400 uppercase mt-1">Standard 30-Egg Crates</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: REPORTS & ANALYTICS PREVIEW -->
+            <div id="tab-reports" class="screen-content-pane hidden">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-1">Comprehensive Analytics & Performance Curves</h3>
+                    <p class="text-xs text-slate-400 mb-4">Interactive charts depicting FCR, growth rate, and financial summaries.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Weight Growth Curve vs Standard</h4>
+                            <div class="h-44 flex items-center justify-center">
+                                <canvas id="previewGrowthChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <h4 class="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Weekly Feed Consumption vs FCR</h4>
+                            <div class="h-44 flex items-center justify-center">
+                                <canvas id="previewFcrChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 10. SYSTEM ARCHITECTURE & IOT DATA FLOW DIAGRAM -->
+    <!-- ========================================================================= -->
+    <section class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+                    <i class="fa-solid fa-network-wired"></i> System Architecture
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Cyber-Physical Data Flow Pipeline</h2>
+                <p class="text-sm text-slate-500 mt-2">End-to-end telemetry from shed sensors through AI decision support to user portals.</p>
+            </div>
+
+            <!-- Visual Flowchart Card -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                <!-- Layer 1 -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center relative">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <div class="text-[10px] font-bold text-emerald-700 uppercase">Layer 01</div>
+                    <h4 class="text-sm font-bold text-slate-900 mt-1">IoT Sensing & Edge</h4>
+                    <p class="text-xs text-slate-500 mt-1">DHT22, MQ-137, ultrasonic tank sensors, and ESP32 gateway.</p>
+                    <div class="mt-3 text-[10px] font-mono bg-white px-2 py-1 rounded border border-slate-200 text-slate-600">POST /api/iot/telemetry</div>
+                </div>
+
+                <!-- Layer 2 -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center relative">
+                    <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div class="text-[10px] font-bold text-teal-700 uppercase">Layer 02</div>
+                    <h4 class="text-sm font-bold text-slate-900 mt-1">Flask WSGI & ORM</h4>
+                    <p class="text-xs text-slate-500 mt-1">Threshold validation, ACID SQLite / MySQL, and RBAC authentication.</p>
+                    <div class="mt-3 text-[10px] font-mono bg-white px-2 py-1 rounded border border-slate-200 text-slate-600">SQLAlchemy ORM</div>
+                </div>
+
+                <!-- Layer 3 -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center relative">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div class="text-[10px] font-bold text-purple-700 uppercase">Layer 03</div>
+                    <h4 class="text-sm font-bold text-slate-900 mt-1">AI Diagnostics & FCR</h4>
+                    <p class="text-xs text-slate-500 mt-1">Avian disease scoring, growth curves, and automated SMS alerts.</p>
+                    <div class="mt-3 text-[10px] font-mono bg-white px-2 py-1 rounded border border-slate-200 text-slate-600">Scikit-Learn & SMS</div>
+                </div>
+
+                <!-- Layer 4 -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center relative">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="text-[10px] font-bold text-blue-700 uppercase">Layer 04</div>
+                    <h4 class="text-sm font-bold text-slate-900 mt-1">Role-Based Apps</h4>
+                    <p class="text-xs text-slate-500 mt-1">Farmer desktop dashboard, PWA mobile app, Vet & Admin portals.</p>
+                    <div class="mt-3 text-[10px] font-mono bg-white px-2 py-1 rounded border border-slate-200 text-slate-600">EN + TE Localization</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 11. B.TECH FINAL-YEAR PROJECT DEMONSTRATION & PRESENTATION METADATA -->
+    <!-- ========================================================================= -->
+    <section class="bg-gradient-to-r from-emerald-800 via-emerald-900 to-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-emerald-700/50">
+        <div class="max-w-4xl mx-auto text-center space-y-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-emerald-300 border border-white/20">
+                <i class="fa-solid fa-award"></i> Final-Year Project Demonstration Ready
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+                Smart Poultry Farm Management and Monitoring System
+            </h2>
+            <p class="text-xs sm:text-sm text-emerald-100 max-w-2xl mx-auto leading-relaxed">
+                A complete, production-grade cyber-physical platform engineered with zero pre-filled dummy data, ready for live faculty evaluation, technical viva, and industrial farm deployment.
+            </p>
+
+            <div class="pt-4 flex flex-wrap items-center justify-center gap-3">
+                <a href="{{ url_for('demo_login', role='farmer') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-slate-900 font-bold text-xs hover:bg-emerald-50 transition shadow">
+                    <span>👨‍🌾 Demo Login as Farmer</span>
+                </a>
+                <a href="{{ url_for('demo_login', role='vet') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs transition shadow">
+                    <span>👨‍⚕️ Demo Login as Veterinarian</span>
+                </a>
+                <a href="{{ url_for('demo_login', role='admin') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs transition shadow">
+                    <span>🛡️ Demo Login as Admin</span>
+                </a>
+                <a href="/mobile" 
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition shadow">
+                    <span>📱 Launch Mobile App</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Tab Switcher for Application UI Previews
+    function switchScreenTab(targetId) {
+        // Hide all panes
+        document.querySelectorAll('.screen-content-pane').forEach(el => {
+            el.classList.add('hidden');
+            el.classList.remove('block');
+        });
+
+        // Remove active state from all buttons
+        document.querySelectorAll('.screen-tab-btn').forEach(btn => {
+            btn.classList.remove('active', 'bg-emerald-600', 'text-white', 'shadow-md');
+            btn.classList.add('bg-slate-800', 'text-slate-300');
+        });
+
+        // Show target pane
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) {
+            targetPane.classList.remove('hidden');
+            targetPane.classList.add('block');
+        }
+
+        // Highlight clicked button
+        const activeBtn = document.querySelector(`.screen-tab-btn[data-target="${targetId}"]`);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+            activeBtn.classList.add('active', 'bg-emerald-600', 'text-white', 'shadow-md');
+        }
+
+        // Trigger chart render if reports tab
+        if (targetId === 'tab-reports') {
+            initPreviewCharts();
+        }
+    }
+
+    let chartsInitialized = false;
+    function initPreviewCharts() {
+        if (chartsInitialized) return;
+        chartsInitialized = true;
+
+        const ctxGrowth = document.getElementById('previewGrowthChart');
+        if (ctxGrowth) {
+            new Chart(ctxGrowth, {
+                type: 'line',
+                data: {
+                    labels: ['Day 7', 'Day 14', 'Day 21', 'Day 28', 'Day 35', 'Day 42'],
+                    datasets: [
+                        {
+                            label: 'Actual Flock Weight (kg)',
+                            data: [0.18, 0.46, 0.95, 1.62, 2.15, 2.68],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Cobb 500 Breed Standard (kg)',
+                            data: [0.17, 0.45, 0.92, 1.55, 2.10, 2.60],
+                            borderColor: '#94a3b8',
+                            borderDash: [5, 5],
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 10 } } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: '#334155' } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: '#334155' } }
+                    }
+                }
+            });
+        }
+
+        const ctxFcr = document.getElementById('previewFcrChart');
+        if (ctxFcr) {
+            new Chart(ctxFcr, {
+                type: 'bar',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [
+                        {
+                            label: 'Feed Consumed (kg)',
+                            data: [180, 420, 890, 1450, 2100, 2900],
+                            backgroundColor: '#0ea5e9'
+                        },
+                        {
+                            label: 'FCR Ratio',
+                            data: [1.1, 1.25, 1.42, 1.55, 1.68, 1.76],
+                            type: 'line',
+                            borderColor: '#f59e0b',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 10 } } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: '#334155' } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: '#334155' } },
+                        y1: { position: 'right', ticks: { color: '#f59e0b', font: { size: 9 } }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

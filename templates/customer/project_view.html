@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }} | Project Room | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- Project Header -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 uppercase">{{ project.category }}</span>
+                <span class="text-xs font-bold text-slate-400">#PRJ-{{ project.id }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
+                    {% if project.status == 'completed' %}bg-emerald-100 text-emerald-800
+                    {% elif project.status == 'in_review' %}bg-amber-100 text-amber-800
+                    {% elif project.status == 'revision_requested' %}bg-rose-100 text-rose-800
+                    {% else %}bg-indigo-100 text-indigo-800{% endif %}">
+                    {{ project.status|replace('_', ' ') }}
+                </span>
+            </div>
+            <h1 class="text-2xl font-black text-slate-900">{{ project.title }}</h1>
+            <p class="text-xs text-slate-500">
+                Created on {{ project.created_at }} &bull; Budget: <strong class="text-slate-900">${{ "{:,.0f}".format(project.budget) }}</strong>
+            </p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('messages_inbox', user=project.creator_id) }}" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center space-x-2">
+                <i class="fa-regular fa-comment-dots text-indigo-600"></i>
+                <span>Direct Message</span>
+            </a>
+            <a href="{{ url_for('creator_profile_view', creator_id=project.creator_id) }}" class="flex items-center space-x-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+                <img src="{{ project.creator_avatar or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80' }}" class="w-7 h-7 rounded-full object-cover">
+                <div class="text-left">
+                    <span class="text-xs font-bold text-slate-800 block">{{ project.creator_name }}</span>
+                    <span class="text-[9px] text-indigo-600 block">Assigned Creator</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 9-Stage Visual Lifecycle Stepper -->
+    <div class="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-800 space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Milestone Engine</span>
+                <h2 class="text-lg font-extrabold text-white">9-Stage Advertisement Pipeline</h2>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-indigo-400">Current Stage: {{ project.stage }} / 9</span>
+            </div>
+        </div>
+
+        <!-- 9 Steps Grid -->
+        <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+            <!-- Stage 1 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 1 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 1 %}bg-emerald-500 text-white{% elif project.stage == 1 %}bg-indigo-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 1 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}1{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Requirement</h4>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 2 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 2 %}bg-emerald-500 text-white{% elif project.stage == 2 %}bg-indigo-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 2 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}2{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Booking</h4>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 3 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 3 %}bg-emerald-500 text-white{% elif project.stage == 3 %}bg-indigo-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 3 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}3{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Discussion</h4>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 4 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 4 %}bg-emerald-500 text-white{% elif project.stage == 4 %}bg-indigo-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 4 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}4{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Started</h4>
+            </div>
+
+            <!-- Stage 5 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 5 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 5 %}bg-emerald-500 text-white{% elif project.stage == 5 %}bg-indigo-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 5 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}5{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Draft</h4>
+            </div>
+
+            <!-- Stage 6 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 6 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 6 %}bg-emerald-500 text-white{% elif project.stage == 6 %}bg-amber-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 6 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}6{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Feedback</h4>
+            </div>
+
+            <!-- Stage 7 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 7 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 7 %}bg-emerald-500 text-white{% elif project.stage == 7 %}bg-rose-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 7 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}7{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Revision</h4>
+            </div>
+
+            <!-- Stage 8 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage >= 8 %}bg-indigo-950/60 border-indigo-500 text-indigo-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage > 8 %}bg-emerald-500 text-white{% elif project.stage == 8 %}bg-indigo-500 text-white pipeline-step active-stage{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage > 8 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}8{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Final Video</h4>
+            </div>
+
+            <!-- Stage 9 -->
+            <div class="p-3 rounded-xl text-center border {% if project.stage == 9 %}bg-emerald-950/60 border-emerald-500 text-emerald-300{% else %}bg-slate-800/40 border-slate-800 text-slate-500{% endif %}">
+                <div class="w-6 h-6 rounded-full {% if project.stage == 9 %}bg-emerald-500 text-white{% else %}bg-slate-800 text-slate-500{% endif %} font-bold text-[10px] flex items-center justify-center mx-auto mb-1">
+                    {% if project.stage == 9 %}<i class="fa-solid fa-check text-[9px]"></i>{% else %}9{% endif %}
+                </div>
+                <h4 class="text-[11px] font-bold">Completed</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content 2 Columns -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left 2 Cols: Interactive Deliverables & Feedback Studio -->
+        <div class="lg:col-span-2 space-y-8">
+
+            <!-- 1. STAGE 5 & 6: DRAFT VIDEO REVIEW & FEEDBACK -->
+            {% if project.stage >= 5 and project.stage < 8 %}
+                <div class="bg-white p-6 rounded-3xl border-2 border-indigo-500 shadow-md space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-800">Stage 5 / 6 &bull; Draft Review</span>
+                            <h3 class="text-lg font-black text-slate-900 mt-1">Creator Draft Video Submission</h3>
+                        </div>
+                        <span class="text-xs font-bold text-amber-600"><i class="fa-solid fa-bell mr-1"></i>Action Required</span>
+                    </div>
+
+                    <!-- Video Player for Draft -->
+                    <div class="aspect-video bg-black rounded-2xl overflow-hidden shadow-inner relative">
+                        <video controls class="w-full h-full object-contain">
+                            <source src="{{ project.draft_video_url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    {% if project.draft_notes %}
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Creator Release Notes:</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">{{ project.draft_notes }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if project.revision_notes and project.stage == 7 %}
+                        <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 text-rose-800">
+                            <h4 class="text-xs font-bold uppercase tracking-wider mb-1">Your Pending Revision Request:</h4>
+                            <p class="text-xs leading-relaxed">{{ project.revision_notes }}</p>
+                            <p class="text-[11px] font-semibold mt-2">Creator is currently rendering the revised cut.</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Customer Feedback Action Buttons -->
+                    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <button onclick="document.getElementById('revision-form-container').classList.toggle('hidden')"
+                                class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-rose-300 text-rose-700 hover:bg-rose-50 text-xs font-bold transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Request Revisions</span>
+                        </button>
+
+                        <form method="POST" action="{{ url_for('submit_customer_feedback', project_id=project.id) }}" class="w-full sm:w-auto">
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="w-full px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-500/20 transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-check-double"></i>
+                                <span>Approve Draft & Request Final Render</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Hidden Revision Request Textarea Form -->
+                    <div id="revision-form-container" class="hidden pt-4 border-t border-slate-100">
+                        <form method="POST" action="{{ url_for('submit_customer_feedback', project_id=project.id) }}" class="space-y-3">
+                            <input type="hidden" name="action" value="revision">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Specify Revision Feedback for Creator:</label>
+                            <textarea name="revision_notes" rows="3" required placeholder="Please adjust camera pan speed at 0:12, brighten brand logo, and sync audio beat with final transition..."
+                                      class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500"></textarea>
+                            <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow transition">
+                                Submit Revision Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- 2. STAGE 8 & 9: FINAL DELIVERABLE & COMPLETION -->
+            {% if project.stage >= 8 %}
+                <div class="bg-white p-6 rounded-3xl border-2 border-emerald-500 shadow-md space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800">Stage 8 &bull; Final Master Advertisement</span>
+                            <h3 class="text-lg font-black text-slate-900 mt-1">4K High-Res Final Deliverable Ready</h3>
+                        </div>
+                        <a href="{{ project.final_video_url }}" target="_blank" download class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download Master File</span>
+                        </a>
+                    </div>
+
+                    <!-- Final Video Player -->
+                    <div class="aspect-video bg-black rounded-2xl overflow-hidden shadow-inner relative">
+                        <video controls class="w-full h-full object-contain">
+                            <source src="{{ project.final_video_url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    {% if project.final_notes %}
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                            <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">Final Delivery Notes:</h4>
+                            <p class="text-xs text-emerald-800 leading-relaxed">{{ project.final_notes }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if project.stage == 8 %}
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
+                            <form method="POST" action="{{ url_for('accept_final_video', project_id=project.id) }}">
+                                <button type="submit" class="px-6 py-3 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/25 transition transform hover:-translate-y-0.5 flex items-center space-x-2">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>Accept Final Video & Complete Project (Stage 9)</span>
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- 3. STAGE 9: RATING & REVIEW FORM -->
+            {% if project.stage == 9 %}
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-100 text-purple-800">Stage 9 &bull; Rating & Review</span>
+                            <h3 class="text-lg font-black text-slate-900 mt-1">Creator Performance Rating</h3>
+                        </div>
+                    </div>
+
+                    {% if review %}
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-700">Your Submitted Review:</span>
+                                <div class="flex items-center space-x-1 text-amber-400 text-sm">
+                                    {% for i in range(review.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">{{ review.review_text }}</p>
+                            <span class="text-[10px] text-slate-400 block pt-1">{{ review.created_at }}</span>
+                        </div>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('submit_review', project_id=project.id) }}" class="space-y-4">
+                            <div class="star-rating-input space-y-1">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Select Star Rating (1 to 5):</label>
+                                <input type="hidden" name="rating" value="5">
+                                <div class="flex items-center space-x-2 text-2xl cursor-pointer">
+                                    <i class="fa-solid fa-star star-btn text-amber-400"></i>
+                                    <i class="fa-solid fa-star star-btn text-amber-400"></i>
+                                    <i class="fa-solid fa-star star-btn text-amber-400"></i>
+                                    <i class="fa-solid fa-star star-btn text-amber-400"></i>
+                                    <i class="fa-solid fa-star star-btn text-amber-400"></i>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Your Written Review Feedback:</label>
+                                <textarea name="review_text" rows="3" required placeholder="Share your experience working with this creator on communication, quality, turnaround speed..."
+                                          class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow transition">
+                                Publish Review
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- 4. Project Discussion & Collaboration Thread -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Project Discussion & Activity Log</h3>
+                        <p class="text-xs text-slate-500">Collaborate, share asset updates, and discuss cuts</p>
+                    </div>
+                    <span class="text-xs font-bold text-slate-400">{{ discussions|length }} Messages</span>
+                </div>
+
+                <!-- Messages Feed -->
+                <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    {% for d in discussions %}
+                        <div class="flex items-start space-x-3 {% if d.sender_id == g.user.id %}flex-row-reverse space-x-reverse{% endif %}">
+                            <img src="{{ d.sender_avatar or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80' }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                            <div class="max-w-md space-y-1">
+                                <div class="flex items-center space-x-2 text-[10px] text-slate-400 {% if d.sender_id == g.user.id %}justify-end{% endif %}">
+                                    <span class="font-bold text-slate-700">{{ d.sender_name }}</span>
+                                    <span>&bull;</span>
+                                    <span>{{ d.created_at }}</span>
+                                </div>
+                                <div class="p-3 text-xs {% if d.sender_id == g.user.id %}chat-bubble-sent{% else %}chat-bubble-received{% endif %}">
+                                    {{ d.message }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Post Comment Form -->
+                <form method="POST" action="{{ url_for('project_discuss_post', project_id=project.id) }}" enctype="multipart/form-data" class="pt-4 border-t border-slate-100 flex gap-2">
+                    <input type="text" name="message" required placeholder="Type a message or milestone update..."
+                           class="flex-grow px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow transition flex items-center space-x-1.5 flex-shrink-0">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Col: Project Brief & Reference Assets -->
+        <div class="space-y-6">
+            <!-- Project Brief Card -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-base font-extrabold text-slate-900">Project Brief & Details</h3>
+
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <span class="font-bold text-slate-400 uppercase text-[10px] block">Service Package</span>
+                        <p class="font-bold text-slate-900">{{ project.service_tier|capitalize }} Package</p>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-slate-400 uppercase text-[10px] block">Target Deadline</span>
+                        <p class="font-semibold text-slate-800">{{ project.delivery_deadline or 'Flexible' }}</p>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-slate-400 uppercase text-[10px] block">Creative Brief</span>
+                        <p class="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl mt-1">{{ project.requirement_brief }}</p>
+                    </div>
+
+                    {% if project.reference_urls %}
+                        <div>
+                            <span class="font-bold text-slate-400 uppercase text-[10px] block">Reference Links</span>
+                            <a href="{{ project.reference_urls }}" target="_blank" class="text-indigo-600 hover:underline break-all block mt-0.5">{{ project.reference_urls }}</a>
+                        </div>
+                    {% endif %}
+
+                    {% if project.attachment_url %}
+                        <div>
+                            <span class="font-bold text-slate-400 uppercase text-[10px] block">Attached Brief Asset</span>
+                            <a href="{{ project.attachment_url }}" target="_blank" class="inline-flex items-center space-x-1 text-indigo-600 font-bold hover:underline mt-1">
+                                <i class="fa-solid fa-paperclip"></i>
+                                <span>Download Attached File</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Creator Contact Card -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-base font-extrabold text-slate-900">Creator Contact Info</h3>
+                <div class="flex items-center space-x-3">
+                    <img src="{{ project.creator_avatar or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100' }}" class="w-12 h-12 rounded-2xl object-cover">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">{{ project.creator_name }}</h4>
+                        <p class="text-[11px] text-indigo-600">{{ project.creator_tagline }}</p>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-slate-100 text-xs space-y-1.5 text-slate-600">
+                    <p><i class="fa-solid fa-envelope mr-2 text-slate-400"></i>{{ project.creator_email }}</p>
+                    {% if project.creator_phone %}<p><i class="fa-solid fa-phone mr-2 text-slate-400"></i>{{ project.creator_phone }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

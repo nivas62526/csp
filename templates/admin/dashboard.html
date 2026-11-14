@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Executive Dashboard | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- Admin Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-800">
+        <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Governance & Operations</span>
+            <h1 class="text-3xl font-black tracking-tight mt-1">ADCONNECT Admin Panel</h1>
+            <p class="text-xs text-slate-400 mt-1">Oversee marketplace users, creator verifications, video assets, order volumes, and financial flows</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ url_for('admin_creators') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700 transition">
+                <i class="fa-solid fa-video mr-1"></i> Verify Creators
+            </a>
+            <a href="{{ url_for('admin_videos') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-pink-400 border border-slate-700 transition">
+                <i class="fa-solid fa-film mr-1"></i> Moderate Videos
+            </a>
+            <a href="{{ url_for('admin_reports') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-white gradient-brand shadow transition">
+                <i class="fa-solid fa-chart-line mr-1"></i> Analytics & Reports
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin KPI Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Customers</span>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ total_customers }}</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Creators</span>
+            <p class="text-2xl font-black text-indigo-600 mt-1">{{ total_creators }}</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Active Projects</span>
+            <p class="text-2xl font-black text-amber-600 mt-1">{{ active_projects }}</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Completed Ads</span>
+            <p class="text-2xl font-black text-emerald-600 mt-1">{{ completed_projects }}</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Gross Volume (GMV)</span>
+            <p class="text-2xl font-black text-slate-900 mt-1">${{ "{:,.0f}".format(total_volume) }}</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">Platform Fee (15%)</span>
+            <p class="text-2xl font-black text-emerald-600 mt-1">${{ "{:,.0f}".format(platform_revenue) }}</p>
+        </div>
+    </div>
+
+    <!-- Admin Quick Navigation Tabs -->
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+        <a href="{{ url_for('admin_dashboard') }}" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm">Dashboard Overview</a>
+        <a href="{{ url_for('admin_customers') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">Customers ({{ total_customers }})</a>
+        <a href="{{ url_for('admin_creators') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">Creators ({{ total_creators }})</a>
+        <a href="{{ url_for('admin_videos') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">All Video Assets</a>
+        <a href="{{ url_for('admin_bookings') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">Bookings & Projects</a>
+        <a href="{{ url_for('admin_reviews') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">Reviews Moderation</a>
+        <a href="{{ url_for('admin_reports') }}" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">Financial Reports & Charts</a>
+    </div>
+
+    <!-- Recent Bookings Table -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Recent Platform Bookings</h3>
+                <p class="text-xs text-slate-500">Live feed of orders placed across customer and creator accounts</p>
+            </div>
+            <a href="{{ url_for('admin_bookings') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700">View All</a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-3">ID / Title</th>
+                        <th class="px-6 py-3">Customer</th>
+                        <th class="px-6 py-3">Creator</th>
+                        <th class="px-6 py-3">Category</th>
+                        <th class="px-6 py-3">Budget</th>
+                        <th class="px-6 py-3">Status</th>
+                        <th class="px-6 py-3">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                    {% for b in recent_bookings %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 font-bold text-slate-900">#BK-{{ b.id }} &bull; {{ b.project_title }}</td>
+                            <td class="px-6 py-4">{{ b.customer_name }}</td>
+                            <td class="px-6 py-4">{{ b.creator_name }}</td>
+                            <td class="px-6 py-4"><span class="px-2 py-0.5 rounded bg-slate-100 font-semibold">{{ b.category }}</span></td>
+                            <td class="px-6 py-4 font-extrabold text-emerald-600">${{ "{:,.0f}".format(b.budget) }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                                    {% if b.status == 'completed' %}bg-emerald-100 text-emerald-800
+                                    {% elif b.status == 'in_progress' or b.status == 'accepted' %}bg-indigo-100 text-indigo-800
+                                    {% elif b.status == 'pending' %}bg-amber-100 text-amber-800
+                                    {% else %}bg-rose-100 text-rose-800{% endif %}">
+                                    {{ b.status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-slate-400">{{ b.created_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Users Table -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Platform Users & Roles</h3>
+                <p class="text-xs text-slate-500">Recently registered accounts</p>
+            </div>
+            <a href="{{ url_for('admin_creators') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700">Manage Creators</a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-3">User</th>
+                        <th class="px-6 py-3">Role</th>
+                        <th class="px-6 py-3">Company / Tagline</th>
+                        <th class="px-6 py-3">Location</th>
+                        <th class="px-6 py-3">Status</th>
+                        <th class="px-6 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                    {% for u in recent_users %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 flex items-center space-x-3">
+                                <img src="{{ u.avatar_url or 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80' }}" class="w-8 h-8 rounded-full object-cover">
+                                <div>
+                                    <span class="font-bold text-slate-900 block">{{ u.full_name }}</span>
+                                    <span class="text-[10px] text-slate-400 block">{{ u.email }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                                    {% if u.role == 'admin' %}bg-amber-100 text-amber-800
+                                    {% elif u.role == 'creator' %}bg-indigo-100 text-indigo-800
+                                    {% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                                    {{ u.role }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">{{ u.company_name or 'Independent' }}</td>
+                            <td class="px-6 py-4">{{ u.location }}</td>
+                            <td class="px-6 py-4">
+                                {% if u.is_active %}
+                                    <span class="text-emerald-600 font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Active</span>
+                                {% else %}
+                                    <span class="text-rose-600 font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Suspended</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <form method="POST" action="{{ url_for('admin_toggle_user', user_id=u.id) }}">
+                                    <input type="hidden" name="action" value="toggle_active">
+                                    <button type="submit" class="text-xs font-bold text-slate-600 hover:text-indigo-600">
+                                        {{ 'Suspend' if u.is_active else 'Activate' }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Portfolio Videos | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">Portfolio Video Showcase</h1>
+            <p class="text-xs text-slate-500">Upload and curate your video commercial showcase to attract high-paying brand clients</p>
+        </div>
+        <button onclick="document.getElementById('upload-video-card').classList.toggle('hidden')" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow transition flex items-center space-x-2 self-start sm:self-auto">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>Upload New Video Ad</span>
+        </button>
+    </div>
+
+    <!-- Upload Video Form Card (Collapsible) -->
+    <div id="upload-video-card" class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Add Video to Portfolio</h3>
+                <p class="text-xs text-slate-500">Upload a video file (MP4/WebM) or provide an external video stream link</p>
+            </div>
+            <button onclick="document.getElementById('upload-video-card').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form method="POST" action="{{ url_for('creator_portfolio') }}" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="action" value="add">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Video Title *</label>
+                    <input type="text" name="title" required placeholder="e.g. Apex Smartwatch - 3D Hologram Ad"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Category *</label>
+                    <select name="category" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="3D Animation">3D Animation</option>
+                        <option value="UGC">TikTok & UGC Ad</option>
+                        <option value="Tech">Tech Commercial</option>
+                        <option value="Fashion & Beauty">Fashion & Beauty</option>
+                        <option value="Food & Beverage">Food & Beverage</option>
+                        <option value="Corporate">Corporate / SaaS</option>
+                        <option value="VFX">VFX & Motion Graphics</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Upload Video File (.mp4, .webm)</label>
+                    <input type="file" name="video_file" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">OR Video URL (Direct MP4 / Stream)</label>
+                    <input type="url" name="video_url" placeholder="https://.../video.mp4"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Upload Thumbnail Image</label>
+                    <input type="file" name="thumbnail_file" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Duration (e.g. 0:30)</label>
+                    <input type="text" name="duration" value="0:30" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Description & Campaign Highlights</label>
+                <textarea name="description" rows="2" placeholder="Briefly describe the visual techniques, software used, and client conversion results..."
+                          class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold text-white gradient-brand hover:opacity-95 shadow transition">
+                    Publish to Portfolio
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Current Portfolio Videos Grid -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <h2 class="text-base font-black text-slate-900">Your Current Portfolio Videos ({{ videos|length }})</h2>
+
+        {% if videos %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for v in videos %}
+                    <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50 video-card-hover group flex flex-col justify-between">
+                        <div class="relative aspect-video bg-slate-900 cursor-pointer"
+                             onclick="playVideoModal('{{ v.video_url }}', '{{ v.title }}', '{{ g.user.full_name }}')">
+                            <img src="{{ v.thumbnail_url or 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=500' }}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center play-overlay">
+                                <div class="w-10 h-10 rounded-full bg-white/90 text-indigo-600 flex items-center justify-center shadow">
+                                    <i class="fa-solid fa-play ml-0.5 text-sm"></i>
+                                </div>
+                            </div>
+                            <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-black/80 text-white">{{ v.duration }}</span>
+                            <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-600 text-white uppercase">{{ v.category }}</span>
+                        </div>
+
+                        <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900 line-clamp-1">{{ v.title }}</h4>
+                                <p class="text-[11px] text-slate-500 line-clamp-2 mt-0.5">{{ v.description }}</p>
+                            </div>
+
+                            <div class="pt-3 border-t border-slate-200 flex items-center justify-between">
+                                <span class="text-[11px] text-slate-400"><i class="fa-regular fa-eye mr-1"></i>{{ v.views_count }} views</span>
+                                <form method="POST" action="{{ url_for('creator_portfolio') }}" onsubmit="return confirm('Delete this video from your portfolio?');">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="video_id" value="{{ v.id }}">
+                                    <button type="submit" class="text-xs text-rose-500 hover:text-rose-700 font-bold transition">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-xs text-slate-400 py-6 text-center">No portfolio videos uploaded yet. Click "Upload New Video Ad" above to get started!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

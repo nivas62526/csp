@@ -1,0 +1,367 @@
+/* ==========================================================================
+   SMART POULTRY - MINI MOBILE WEB APP DESIGN SYSTEM
+   Mobile-First, Touch-Optimized, Customer-Focused UI
+   ========================================================================== */
+
+:root {
+  --app-primary: #10b981;
+  --app-primary-dark: #059669;
+  --app-primary-light: #d1fae5;
+  --app-primary-subtle: rgba(16, 185, 129, 0.1);
+  
+  --app-bg: #f1f5f9;
+  --app-card-bg: #ffffff;
+  --app-text: #0f172a;
+  --app-text-muted: #64748b;
+  --app-border: #e2e8f0;
+  
+  --bottom-nav-height: 68px;
+  --mobile-max-width: 480px;
+}
+
+body.mobile-app-body {
+  background-color: #0f172a;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--app-text);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+/* Mobile Frame Container */
+.mobile-app-shell {
+  width: 100%;
+  max-width: var(--mobile-max-width);
+  min-height: 100vh;
+  background-color: var(--app-bg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  padding-bottom: calc(var(--bottom-nav-height) + 20px);
+}
+
+/* Header */
+.mobile-header {
+  background: #ffffff;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--app-border);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.mobile-brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+/* Content View Sections */
+.app-view {
+  display: none;
+  padding: 16px;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.app-view.active-view {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Cards */
+.mobile-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--app-border);
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.mobile-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.mobile-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mini KPI Grid */
+.mini-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mini-kpi-box {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--app-border);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--app-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.mini-kpi-val {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+/* Modern Bottom Navigation Bar */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--mobile-max-width);
+  height: var(--bottom-nav-height);
+  background: #ffffff;
+  border-top: 1px solid var(--app-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1040;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  flex: 1;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.bottom-nav-item i {
+  font-size: 1.35rem;
+  margin-bottom: 3px;
+  transition: all 0.2s ease;
+}
+
+.bottom-nav-item.active {
+  color: #10b981;
+}
+
+.bottom-nav-item.active i {
+  transform: scale(1.15);
+  color: #10b981;
+}
+
+.bottom-nav-item.scan-item {
+  position: relative;
+  top: -12px;
+}
+
+.bottom-nav-item.scan-item .scan-btn-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  margin-bottom: 2px;
+}
+
+/* Live Camera Viewfinder Styles */
+.live-camera-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.camera-video-stream {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.camera-reticle-overlay {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  right: 15%;
+  bottom: 25%;
+  border: 2px dashed rgba(16, 185, 129, 0.8);
+  border-radius: 16px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+}
+
+.camera-reticle-text {
+  background: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.camera-controls-bar {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.snap-photo-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #10b981;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.snap-photo-btn:active {
+  transform: scale(0.92);
+}
+
+.camera-aux-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Customer Support Components */
+.support-action-tile {
+  background: #ffffff;
+  border: 1px solid var(--app-border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+  text-decoration: none;
+  color: var(--app-text);
+  transition: all 0.2s ease;
+}
+
+.support-action-tile:hover, .support-action-tile:active {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.support-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.support-icon.whatsapp { background: #dcfce7; color: #16a34a; }
+.support-icon.call { background: #e0f2fe; color: #0284c7; }
+.support-icon.ticket { background: #fef3c7; color: #d97706; }
+.support-icon.guide { background: #f3e8ff; color: #9333ea; }
+
+/* Empty State */
+.mobile-empty-state {
+  text-align: center;
+  padding: 36px 16px;
+}
+
+.mobile-empty-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 12px;
+}

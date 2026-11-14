@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-4">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8">
+        <!-- Logo & Header -->
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-emerald-100 text-brand-600 rounded-3xl flex items-center justify-center mx-auto text-3xl shadow-inner mb-3">
+                📋
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800">{{ t('register') }}</h2>
+            <p class="text-xs text-slate-500 mt-1">
+                {{ 'ఖాతా నమోదు చేయండి - పాస్‌వర్డ్‌తో నేరుగా లాగిన్ అవ్వండి' if current_lang == 'te' else 'Create your farm account with Mobile & Password' }}
+            </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('register_page') }}" class="space-y-3.5" id="webRegisterForm">
+            <!-- Role Selection -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    {{ 'ఖాతా రకం (User Type)' if current_lang == 'te' else 'Select User Type / Role' }}
+                </label>
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="cursor-pointer border rounded-2xl p-2 text-center flex flex-col items-center justify-center hover:border-slate-400 transition" id="label-farmer">
+                        <input type="radio" name="role" value="farmer" checked class="sr-only" onchange="toggleSpecialization(this.value)">
+                        <span class="text-xl mb-1">👨‍🌾</span>
+                        <span class="text-xs font-bold text-slate-700">{{ t('role_farmer') }}</span>
+                    </label>
+                    <label class="cursor-pointer border rounded-2xl p-2 text-center flex flex-col items-center justify-center hover:border-slate-400 transition" id="label-vet">
+                        <input type="radio" name="role" value="veterinarian" class="sr-only" onchange="toggleSpecialization(this.value)">
+                        <span class="text-xl mb-1">👨‍⚕️</span>
+                        <span class="text-xs font-bold text-slate-700">{{ t('role_vet') }}</span>
+                    </label>
+                    <label class="cursor-pointer border rounded-2xl p-2 text-center flex flex-col items-center justify-center hover:border-slate-400 transition" id="label-admin">
+                        <input type="radio" name="role" value="admin" class="sr-only" onchange="toggleSpecialization(this.value)">
+                        <span class="text-xl mb-1">🛡️</span>
+                        <span class="text-xs font-bold text-slate-700">{{ t('role_admin') }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Full Name -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    {{ 'పూర్తి పేరు (Full Name)' if current_lang == 'te' else 'Full Name' }} <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="name" required placeholder="{{ 'ఉదా: వెంకటేశ్వర రావు' if current_lang == 'te' else 'e.g. Ramesh Patel' }}"
+                       class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+            </div>
+
+            <!-- Mobile Number with Country Code -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    {{ 'మొబైల్ నంబర్ (Mobile Phone with Country Code)' if current_lang == 'te' else 'Mobile Number' }} <span class="text-red-500">*</span>
+                </label>
+                <div class="flex space-x-2">
+                    <select name="country_code" class="w-28 px-2 py-2.5 rounded-xl border border-slate-300 text-xs bg-slate-50 focus:ring-2 focus:ring-brand-500">
+                        <option value="+91" selected>🇮🇳 +91</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+971">🇦🇪 +971</option>
+                        <option value="+880">🇧🇩 +880</option>
+                    </select>
+                    <input type="tel" name="phone" required placeholder="9876543210" maxlength="12"
+                           class="flex-1 px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                </div>
+                <span class="text-[10px] text-slate-400 mt-0.5 block">
+                    {{ 'ఈ నంబర్ మరియు పాస్‌వర్డ్‌తో నేరుగా లాగిన్ అవ్వవచ్చు' if current_lang == 'te' else 'You will use this mobile number and password to log in' }}
+                </span>
+            </div>
+
+            <!-- Optional Email -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    {{ 'ఇమెయిల్ (Email - ఐచ్ఛికం)' if current_lang == 'te' else 'Email Address (Optional)' }}
+                </label>
+                <input type="email" name="email" placeholder="farmer@example.com"
+                       class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+            </div>
+
+            <!-- Password and Confirm Password -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        {{ 'పాస్‌వర్డ్' if current_lang == 'te' else 'Password' }} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" name="password" id="regPassword" required placeholder="••••••••" minlength="6"
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        {{ 'నిర్ధారించండి' if current_lang == 'te' else 'Confirm Password' }} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" name="confirm_password" id="regConfirmPassword" required placeholder="••••••••" minlength="6"
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                </div>
+            </div>
+
+            <!-- Language Preference -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    {{ 'భాషా ఎంపిక (Preferred Language)' if current_lang == 'te' else 'Preferred Language' }}
+                </label>
+                <select name="language" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+                    <option value="en" {% if current_lang == 'en' %}selected{% endif %}>English</option>
+                    <option value="te" {% if current_lang == 'te' %}selected{% endif %}>తెలుగు (Telugu)</option>
+                </select>
+            </div>
+
+            <!-- Vet Specialization Field (Conditional) -->
+            <div id="vet-field" class="hidden">
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    {{ 'పశువైద్య అర్హత / స్పెషలైజేషన్' if current_lang == 'te' else 'Veterinary Degree / Specialization' }}
+                </label>
+                <input type="text" name="specialization" placeholder="B.V.Sc & A.H. / Avian Health Specialist"
+                       class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs">
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl transition duration-150 shadow-md flex items-center justify-center space-x-2 mt-2">
+                <span>{{ 'OTP పంపండి & నమోదు చేయండి' if current_lang == 'te' else 'Send OTP & Register' }}</span>
+                <i class="fa-solid fa-paper-plane text-sm"></i>
+            </button>
+        </form>
+
+        <div class="mt-4 pt-4 border-t border-slate-100 text-center">
+            <span class="text-xs text-slate-500">{{ 'ఖాతా ఉందా?' if current_lang == 'te' else 'Already have an account?' }}</span>
+            <a href="{{ url_for('login_page') }}" class="text-xs font-bold text-brand-600 hover:text-brand-700 ml-1">
+                {{ t('login') }}
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleSpecialization(role) {
+        const vetField = document.getElementById('vet-field');
+        const labels = ['farmer', 'vet', 'admin'];
+        labels.forEach(l => {
+            const el = document.getElementById('label-' + l);
+            if (l === role || (l === 'vet' && role === 'veterinarian')) {
+                el.classList.add('border-brand-600', 'bg-emerald-50', 'ring-2', 'ring-brand-400');
+            } else {
+                el.classList.remove('border-brand-600', 'bg-emerald-50', 'ring-2', 'ring-brand-400');
+            }
+        });
+
+        if (role === 'veterinarian') {
+            vetField.classList.remove('hidden');
+        } else {
+            vetField.classList.add('hidden');
+        }
+    }
+    toggleSpecialization('farmer');
+
+    document.getElementById('webRegisterForm').addEventListener('submit', function(e) {
+        const p1 = document.getElementById('regPassword').value;
+        const p2 = document.getElementById('regConfirmPassword').value;
+        if (p1 !== p2) {
+            e.preventDefault();
+            alert('Passwords do not match. Please verify your passwords.');
+        }
+    });
+</script>
+{% endblock %}

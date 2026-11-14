@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Admin Header Banner -->
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-3xl p-6 shadow-md flex items-center justify-between">
+        <div>
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold mb-2">
+                <span>🛡️</span>
+                <span>System Administration</span>
+            </div>
+            <h2 class="text-2xl font-black">Admin Oversight Center</h2>
+            <p class="text-xs text-slate-400 mt-1">Platform metrics, user management, and system-wide IoT surveillance</p>
+        </div>
+        <div class="text-right">
+            <span class="text-xs text-slate-400 uppercase font-semibold">Total Platform Birds</span>
+            <div class="text-3xl font-black text-emerald-400">{{ "{:,}".format(total_birds) }}</div>
+        </div>
+    </div>
+
+    <!-- KPI Summary Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Total Users</span>
+            <p class="text-2xl font-black text-slate-800 mt-1">{{ total_users }}</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Farmers</span>
+            <p class="text-2xl font-black text-emerald-600 mt-1">{{ total_farmers }}</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Veterinarians</span>
+            <p class="text-2xl font-black text-blue-600 mt-1">{{ total_vets }}</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Active Farms</span>
+            <p class="text-2xl font-black text-amber-600 mt-1">{{ total_farms }}</p>
+        </div>
+    </div>
+
+    <!-- Registered Accounts -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 class="font-bold text-slate-800 text-sm">User Directory</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase">
+                    <tr>
+                        <th class="p-3">User ID</th>
+                        <th class="p-3">Name</th>
+                        <th class="p-3">Phone</th>
+                        <th class="p-3">Email</th>
+                        <th class="p-3">Role</th>
+                        <th class="p-3">Language</th>
+                        <th class="p-3">Registered At</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium">
+                    {% for u in all_users %}
+                    <tr>
+                        <td class="p-3 text-slate-400">#{{ u.id }}</td>
+                        <td class="p-3 font-bold text-slate-800">{{ u.name }}</td>
+                        <td class="p-3 text-slate-600">{{ u.phone or '-' }}</td>
+                        <td class="p-3 text-slate-600">{{ u.email or '-' }}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold 
+                                {% if u.role == 'farmer' %}bg-green-100 text-green-800
+                                {% elif u.role == 'veterinarian' %}bg-blue-100 text-blue-800
+                                {% else %}bg-purple-100 text-purple-800{% endif %}">
+                                {{ u.role.upper() }}
+                            </span>
+                        </td>
+                        <td class="p-3 uppercase text-slate-500 font-bold">{{ u.language }}</td>
+                        <td class="p-3 text-slate-400">{{ u.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Global Alert Log -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-200">
+            <h3 class="font-bold text-slate-800 text-sm">Recent Platform IoT Alerts</h3>
+        </div>
+        <div class="divide-y divide-slate-100 text-xs">
+            {% for a in all_alerts %}
+                <div class="p-3.5 flex items-center justify-between">
+                    <div>
+                        <span class="font-bold text-slate-800">[{{ a.farm_name }}]</span>
+                        <span class="text-slate-600 ml-1">{{ a.message_en }}</span>
+                    </div>
+                    <span class="text-slate-400 text-[10px]">{{ a.created_at }}</span>
+                </div>
+            {% else %}
+                <div class="p-6 text-center text-slate-400 text-xs">No alerts generated yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

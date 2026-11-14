@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Moderate Reviews | Admin Panel | ADCONNECT{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">Moderate Client Reviews & Ratings</h1>
+            <p class="text-xs text-slate-500">Ensure all marketplace feedback aligns with community guidelines and quality standards</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-3">Project / Review</th>
+                        <th class="px-6 py-3">Reviewer (Customer)</th>
+                        <th class="px-6 py-3">Creator</th>
+                        <th class="px-6 py-3">Rating</th>
+                        <th class="px-6 py-3">Date</th>
+                        <th class="px-6 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                    {% for r in reviews %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 max-w-sm">
+                                <span class="font-bold text-slate-900 block">{{ r.project_title or 'Completed Project' }}</span>
+                                <p class="text-slate-600 line-clamp-2 mt-1 italic">"{{ r.review_text }}"</p>
+                            </td>
+                            <td class="px-6 py-4 font-semibold text-slate-800">{{ r.customer_name }}</td>
+                            <td class="px-6 py-4 font-semibold text-slate-800">{{ r.creator_name }}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-1 text-amber-400 font-bold">
+                                    {% for i in range(r.rating) %}<i class="fa-solid fa-star text-xs"></i>{% endfor %}
+                                    <span class="text-slate-900 ml-1">({{ r.rating }}★)</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-slate-400">{{ r.created_at }}</td>
+                            <td class="px-6 py-4">
+                                <form method="POST" action="{{ url_for('admin_delete_review', review_id=r.id) }}" onsubmit="return confirm('Delete this review and recalculate creator rating?');">
+                                    <button type="submit" class="px-2.5 py-1 rounded text-[11px] font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 transition">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>Delete Review
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

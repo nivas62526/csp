@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Dashboard &bull; SmartPoultry System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Mobile Drawer Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Collapsible Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html">
+          <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+          <span>Smart<span class="text-primary-gradient">Poultry</span></span>
+        </a>
+        <span class="brand-badge">SaaS</span>
+      </div>
+
+      <div class="sidebar-menu-wrapper">
+        <div class="sidebar-category">Core Monitoring</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom">
+            <a href="/overview" class="nav-link-item">
+              <i class="bi bi-layout-text-window-reverse"></i>
+              <span>Project Overview</span>
+              <span class="badge bg-success nav-badge">Showcase</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="dashboard.html" class="nav-link-item active">
+              <i class="bi bi-speedometer2"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="farms.html" class="nav-link-item">
+              <i class="bi bi-building"></i>
+              <span>Farm Management</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="batches.html" class="nav-link-item">
+              <i class="bi bi-grid-fill"></i>
+              <span>Batches</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="conditions.html" class="nav-link-item">
+              <i class="bi bi-clipboard2-pulse"></i>
+              <span>Bird Conditions</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-category">AI & Health Intelligence</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom">
+            <a href="image-prediction.html" class="nav-link-item">
+              <i class="bi bi-camera"></i>
+              <span>Image Prediction</span>
+              <span class="badge bg-primary nav-badge">CV</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="predictions.html" class="nav-link-item">
+              <i class="bi bi-cpu-fill"></i>
+              <span>AI Predictions</span>
+              <span class="badge bg-success nav-badge">Combined</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="monitoring.html" class="nav-link-item">
+              <i class="bi bi-activity"></i>
+              <span>Health Monitoring</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="recommendations.html" class="nav-link-item">
+              <i class="bi bi-lightbulb-fill"></i>
+              <span>Recommendations</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="alerts.html" class="nav-link-item">
+              <i class="bi bi-bell-fill"></i>
+              <span>Alerts</span>
+              <span class="badge bg-danger nav-badge" id="sidebarAlertCount" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="vaccinations.html" class="nav-link-item">
+              <i class="bi bi-shield-plus"></i>
+              <span>Vaccinations</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-category">Analytics & Admin</div>
+        <ul class="sidebar-nav">
+          <li class="nav-item-custom">
+            <a href="reports.html" class="nav-link-item">
+              <i class="bi bi-graph-up-arrow"></i>
+              <span>Reports & Analytics</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="admin.html" class="nav-link-item">
+              <i class="bi bi-shield-lock"></i>
+              <span>Admin Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item-custom">
+            <a href="profile.html" class="nav-link-item">
+              <i class="bi bi-gear-fill"></i>
+              <span>Settings & Profile</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-quick-profile">
+          <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="user-info-text">
+            <div class="user-name sync-user-name">Robert Sterling</div>
+            <div class="user-role sync-user-farm">My Poultry Farm</div>
+          </div>
+          <a href="login.html" class="text-danger ps-2" title="Logout"><i class="bi bi-box-arrow-right fs-5"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <!-- Topbar Header -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar">
+            <i class="bi bi-list"></i>
+          </button>
+          
+          <div class="global-search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="topbarSearchInput" placeholder="Search farms, batches, predictions, alerts...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Quick Data Tools (Start Fresh / Load Sample) -->
+          <div class="btn-group btn-group-sm me-2 d-none d-md-inline-flex">
+            <button type="button" class="btn btn-outline-secondary" onclick="handleClearData()" title="Wipe all data and start empty">
+              <i class="bi bi-trash3 me-1"></i> Clear Data
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="handleLoadDemoData()" title="Populate realistic demo sample">
+              <i class="bi bi-magic me-1"></i> Load Demo Data
+            </button>
+          </div>
+
+          <!-- Farm Switcher Dropdown -->
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-building text-primary fs-5 d-none d-md-inline"></i>
+            <select class="form-select farm-switcher-select" id="topbarFarmSelect"></select>
+          </div>
+
+          <!-- Notifications Bell Dropdown -->
+          <div class="dropdown">
+            <button class="topbar-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+              <i class="bi bi-bell"></i>
+              <span class="badge-ping" id="topbarNotifBadge" style="display:none;"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown-menu">
+              <div class="notif-header">
+                <span class="fw-bold"><i class="bi bi-bell me-2"></i>Recent Alerts & Updates</span>
+                <button class="btn btn-link btn-sm text-primary p-0 text-decoration-none" id="markAllNotifsReadBtn">Mark all read</button>
+              </div>
+              <div class="notif-list" id="topbarNotificationsList"></div>
+              <div class="p-2 text-center bg-light border-top">
+                <a href="alerts.html" class="small fw-bold text-primary text-decoration-none">Open Full Alerts Center &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div class="dropdown">
+            <button class="btn p-0 border-0 d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+              <div class="user-avatar" style="width:36px; height:36px;"><i class="bi bi-person-fill"></i></div>
+              <div class="d-none d-md-block text-start">
+                <div class="fw-bold small line-clamp-1 sync-user-name">Farmer User</div>
+                <div class="text-muted" style="font-size: 0.75rem;">Farm Operator</div>
+              </div>
+              <i class="bi bi-chevron-down text-muted small"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border">
+              <li><a class="dropdown-item" href="farms.html"><i class="bi bi-building me-2"></i>Manage Farms</a></li>
+              <li><a class="dropdown-item" href="batches.html"><i class="bi bi-grid me-2"></i>Manage Batches</a></li>
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Body Content -->
+      <div class="app-content">
+        <!-- Page Title & Quick Action Toolbar -->
+        <div class="page-header-title">
+          <div>
+            <h1 class="page-title">Farmer Overview Dashboard</h1>
+            <p class="page-subtitle">Real-time health surveillance, microclimate metrics, and AI disease-risk prediction</p>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="farms.html" class="btn btn-outline-primary shadow-xs">
+              <i class="bi bi-building-add"></i> Add Farm
+            </a>
+            <a href="batches.html" class="btn btn-outline-primary shadow-xs">
+              <i class="bi bi-plus-circle"></i> Add Batch
+            </a>
+            <a href="conditions.html" class="btn btn-primary shadow-xs">
+              <i class="bi bi-clipboard2-plus"></i> Log Bird Condition
+            </a>
+          </div>
+        </div>
+
+        <!-- AI Early Warning Safety Banner -->
+        <div class="ai-disclaimer-box mb-4">
+          <i class="bi bi-shield-check"></i>
+          <div>
+            <strong>AI Safety Notice:</strong> AI predictions generated by this platform are early-warning diagnostic aids and should not be treated as confirmed veterinary diagnoses. Always consult a licensed poultry veterinarian for clinical confirmation.
+          </div>
+        </div>
+
+        <!-- Top KPI Metric Cards (6 Cards - Computed Dynamically) -->
+        <div class="row g-3 mb-4">
+          <!-- 1. Total Birds -->
+          <div class="col-6 col-md-4 col-xl-2">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Total Birds</span>
+                <div class="kpi-icon-pill bg-primary-subtle text-primary"><i class="bi bi-egg-fried"></i></div>
+              </div>
+              <div class="kpi-value" id="dashTotalBirds">0</div>
+              <div class="kpi-trend trend-neutral" id="dashFarmsSubtext">
+                <i class="bi bi-building"></i> <span id="dashActiveFarmsCount">0 Farms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Active Batches -->
+          <div class="col-6 col-md-4 col-xl-2">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Active Batches</span>
+                <div class="kpi-icon-pill bg-info-subtle text-info"><i class="bi bi-grid"></i></div>
+              </div>
+              <div class="kpi-value" id="dashActiveBatches">0</div>
+              <div class="kpi-trend trend-neutral">
+                <i class="bi bi-clock-history"></i> <span id="dashBatchesSubtext">0 Active Sheds</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Current Health Risk -->
+          <div class="col-6 col-md-4 col-xl-2">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Health Risk</span>
+                <div class="kpi-icon-pill bg-success-subtle text-success" id="dashRiskIcon"><i class="bi bi-shield-check"></i></div>
+              </div>
+              <div class="kpi-value text-success" id="dashCurrentRisk">Low</div>
+              <div class="kpi-trend trend-up-good" id="dashRiskSubtext">
+                <i class="bi bi-check2"></i> <span>Normal Limits</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Mortality Rate -->
+          <div class="col-6 col-md-4 col-xl-2">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Mortality Rate</span>
+                <div class="kpi-icon-pill bg-danger-subtle text-danger"><i class="bi bi-heartbreak"></i></div>
+              </div>
+              <div class="kpi-value" id="dashMortalityRate">0.00%</div>
+              <div class="kpi-trend trend-neutral">
+                <i class="bi bi-activity"></i> <span id="dashMortalityCountText">0 Deaths Total</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Feed Consumption -->
+          <div class="col-6 col-md-4 col-xl-2">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Feed Consumed</span>
+                <div class="kpi-icon-pill bg-success-subtle text-success"><i class="bi bi-basket3"></i></div>
+              </div>
+              <div class="kpi-value" id="dashFeedConsumption">0 kg</div>
+              <div class="kpi-trend trend-neutral">
+                <i class="bi bi-check2"></i> <span>Daily Flock Total</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Water Consumption -->
+          <div class="col-6 col-md-4 col-xl-2">
+            <div class="kpi-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Water Intake</span>
+                <div class="kpi-icon-pill bg-primary-subtle text-primary"><i class="bi bi-droplet-half"></i></div>
+              </div>
+              <div class="kpi-value" id="dashWaterConsumption">0 L</div>
+              <div class="kpi-trend trend-neutral">
+                <i class="bi bi-activity"></i> <span>Daily Intake</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overall Farm Health Score & Environment Telemetry Row -->
+        <div class="row g-4 mb-4">
+          <!-- Overall Farm Health Gauge Card -->
+          <div class="col-lg-5">
+            <div class="health-score-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge bg-success px-3 py-2 fw-bold" id="dashHealthBadge">
+                    <i class="bi bi-shield-fill-check me-1"></i> Flock Status: Optimal
+                  </span>
+                  <span class="small text-white-50"><i class="bi bi-cpu me-1"></i> AI Health Index</span>
+                </div>
+                <h4 class="text-white fw-bold mb-2">Overall Farm Health Score</h4>
+                <p class="text-white-50 small mb-4">
+                  Composite index synthesized from your registered flock cohorts, daily feed/water intake ratios, mortality logs, and visual condition analyses.
+                </p>
+              </div>
+
+              <div class="row align-items-center my-3">
+                <div class="col-sm-5 text-center">
+                  <div class="score-gauge-wrapper">
+                    <svg viewBox="0 0 36 36" class="w-100 h-100" style="transform: rotate(-90deg);">
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3.5" />
+                      <path id="dashGaugeCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3.5" stroke-dasharray="100, 100" stroke-linecap="round" />
+                    </svg>
+                    <div class="score-number-inside">
+                      <div class="score-val" id="dashScoreValue">100</div>
+                      <div class="score-max">/ 100</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-7">
+                  <div class="bg-black bg-opacity-30 p-3 rounded-3 border border-white border-opacity-10">
+                    <strong class="d-block text-success small mb-1" id="dashHealthAssessmentTitle"><i class="bi bi-info-circle me-1"></i> Health Assessment:</strong>
+                    <span class="small text-white-50" id="dashHealthAssessmentDesc">All active batches and microclimate telemetry parameters are within optimal limits. Enter daily observations in the Bird Conditions tab to maintain automated surveillance.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center pt-3 border-top border-white border-opacity-10">
+                <span class="small text-white-50">Surveillance Status: Active</span>
+                <a href="recommendations.html" class="btn btn-sm btn-light fw-bold text-dark">View Actions &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Environment Monitoring Mini Cards & Chart -->
+          <div class="col-lg-7">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">
+                  <i class="bi bi-thermometer-sun text-primary"></i> Microclimate & Environment Telemetry
+                </h5>
+                <a href="monitoring.html" class="small fw-bold text-primary text-decoration-none">Detailed Telemetry &rarr;</a>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="row g-3 mb-3">
+                  <!-- Temp -->
+                  <div class="col-6 col-sm-3">
+                    <div class="env-sensor-card">
+                      <div class="sensor-header">
+                        <span class="sensor-name">Temperature</span>
+                        <span class="badge bg-success-subtle text-success">Optimal</span>
+                      </div>
+                      <div class="sensor-val">24.2 <small class="fs-6 text-muted">°C</small></div>
+                      <div class="small text-muted">Opt: 22-25°C</div>
+                    </div>
+                  </div>
+                  <!-- Humidity -->
+                  <div class="col-6 col-sm-3">
+                    <div class="env-sensor-card">
+                      <div class="sensor-header">
+                        <span class="sensor-name">Humidity</span>
+                        <span class="badge bg-success-subtle text-success">Normal</span>
+                      </div>
+                      <div class="sensor-val">60.5 <small class="fs-6 text-muted">%</small></div>
+                      <div class="small text-muted">Opt: 55-65%</div>
+                    </div>
+                  </div>
+                  <!-- Air Quality Ammonia -->
+                  <div class="col-6 col-sm-3">
+                    <div class="env-sensor-card">
+                      <div class="sensor-header">
+                        <span class="sensor-name">Air (NH3)</span>
+                        <span class="badge bg-success-subtle text-success">Good</span>
+                      </div>
+                      <div class="sensor-val">12 <small class="fs-6 text-muted">ppm</small></div>
+                      <div class="small text-muted">Safe &lt; 20 ppm</div>
+                    </div>
+                  </div>
+                  <!-- Ventilation -->
+                  <div class="col-6 col-sm-3">
+                    <div class="env-sensor-card">
+                      <div class="sensor-header">
+                        <span class="sensor-name">Ventilation</span>
+                        <span class="badge bg-primary-subtle text-primary">80%</span>
+                      </div>
+                      <div class="sensor-val">3.8 <small class="fs-6 text-muted">m/s</small></div>
+                      <div class="small text-muted">Fans: Active</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 24h Temperature & Humidity Trend Line Chart -->
+                <div style="height: 180px;">
+                  <canvas id="dashboardEnvChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registered Farms & Facilities Section (Requirement 1) -->
+        <div class="row g-4 mb-4">
+          <div class="col-12">
+            <div class="dashboard-card mb-0">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">
+                  <i class="bi bi-building-fill-check text-primary"></i> Registered Farm Facilities
+                </h5>
+                <a href="farms.html" class="btn btn-sm btn-outline-primary"><i class="bi bi-building-add me-1"></i> Register New Farm</a>
+              </div>
+              <div class="p-3">
+                <div class="row g-3" id="dashboardFarmsCardsContainer">
+                  <!-- Populated dynamically with registered farms -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flock Age AI Intake & Climate Predictor (Requirement 6) -->
+        <div class="row g-4 mb-4">
+          <div class="col-12">
+            <div class="dashboard-card mb-0" style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);">
+              <div class="dashboard-card-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-primary px-2 py-1"><i class="bi bi-cpu-fill me-1"></i> AI Predictor</span>
+                  <h5 class="dashboard-card-title mb-0">Hen Age Intake & Climate AI Predictor</h5>
+                </div>
+                <span class="badge bg-light text-dark border">Feed, Water & Temp Curves</span>
+              </div>
+              <div class="p-3">
+                <p class="small text-muted mb-3">
+                  Calculate required daily feed quantity, water volume, and optimal shed temperature according to bird age.
+                </p>
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-md-5">
+                    <label class="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+                      <span><i class="bi bi-calendar3 me-1 text-primary"></i> Flock Age: <span id="desktopAgeDisplay" class="text-primary fw-bold">21 Days</span></span>
+                      <span class="text-muted fw-normal" id="desktopAgeWeekDisplay">(Week 3)</span>
+                    </label>
+                    <input type="range" class="form-range" id="desktopAgeSlider" min="1" max="50" value="21" oninput="updateDesktopAgePrediction(this.value)">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                      <span>Day 1 (Chicks)</span>
+                      <span>Day 14</span>
+                      <span>Day 28</span>
+                      <span>Day 42 (Market)</span>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-dark mb-1"><i class="bi bi-egg-fried me-1 text-primary"></i> Flock Bird Count</label>
+                    <input type="number" class="form-control form-control-sm" id="desktopBirdCountInput" value="5000" min="10" step="500" onchange="updateDesktopAgePrediction()">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-dark mb-1">Quick Age Presets</label>
+                    <div class="d-flex flex-wrap gap-1">
+                      <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="setDesktopAgePreset(1)">D1 Brooder</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="setDesktopAgePreset(7)">D7 Starter</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="setDesktopAgePreset(21)">D21 Grower</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="setDesktopAgePreset(35)">D35 Finisher</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="setDesktopAgePreset(42)">D42 Market</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3 Predicted Output Cards: Food, Water, Temp -->
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <div class="p-3 bg-white rounded-3 border shadow-sm h-100">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small text-muted fw-bold text-uppercase"><i class="bi bi-basket3-fill text-warning me-1"></i> Daily Food Quantity</span>
+                        <span class="badge bg-warning-subtle text-warning-emphasis" id="desktopPredFeedStage">Grower Feed</span>
+                      </div>
+                      <div class="fs-4 fw-bold text-dark" id="desktopPredFeedTotal">400 kg <small class="fs-6 text-muted">/day</small></div>
+                      <div class="small text-muted mt-1" id="desktopPredFeedPerBird">80.0 g / bird &bull; ~8.0 bags (50kg)</div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 bg-white rounded-3 border shadow-sm h-100">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small text-muted fw-bold text-uppercase"><i class="bi bi-droplet-half text-primary me-1"></i> Daily Water Volume</span>
+                        <span class="badge bg-primary-subtle text-primary" id="desktopPredWaterRatio">2.0x feed ratio</span>
+                      </div>
+                      <div class="fs-4 fw-bold text-primary" id="desktopPredWaterTotal">800 L <small class="fs-6 text-muted">/day</small></div>
+                      <div class="small text-muted mt-1" id="desktopPredWaterPerBird">160.0 ml / bird clean drinking water</div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 bg-white rounded-3 border shadow-sm h-100">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small text-muted fw-bold text-uppercase"><i class="bi bi-thermometer-half text-danger me-1"></i> Optimal Shed Temp</span>
+                        <span class="badge bg-success-subtle text-success" id="desktopPredTempStatus">Target Comfort</span>
+                      </div>
+                      <div class="fs-4 fw-bold text-danger" id="desktopPredTempTarget">26.0°C <small class="fs-6 text-muted">/ 78.8°F</small></div>
+                      <div class="small text-muted mt-1" id="desktopPredTempAdvice">Range: 24.5 - 27.5°C &bull; Target shed comfort</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Batches & Recent Alerts Tables Row -->
+        <div class="row g-4">
+          <!-- Active Batches Status -->
+          <div class="col-lg-7">
+            <div class="dashboard-card mb-0 h-100">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">
+                  <i class="bi bi-grid-3x3-gap-fill text-primary"></i> Active Batch Health & Requirements
+                </h5>
+                <a href="batches.html" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-lg me-1"></i> Add Batch</a>
+              </div>
+              <div class="table-responsive">
+                <table class="table custom-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>Batch</th>
+                      <th>Breed</th>
+                      <th>Birds</th>
+                      <th>Age</th>
+                      <th>Food & Water / Day</th>
+                      <th>Optimal Temp</th>
+                      <th>Health</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardBatchesTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Alerts Center -->
+          <div class="col-lg-5">
+            <div class="dashboard-card mb-0 h-100">
+              <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">
+                  <i class="bi bi-bell-fill text-danger"></i> Recent Farm Alerts
+                </h5>
+                <a href="alerts.html" class="small fw-bold text-danger text-decoration-none">View All &rarr;</a>
+              </div>
+              <div class="p-3">
+                <div class="list-group list-group-flush" id="dashboardRecentAlertsList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Global Quick Search Modal -->
+  <div class="modal fade" id="globalSearchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <div class="input-group input-group-lg">
+            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-primary"></i></span>
+            <input type="text" class="form-control border-0 shadow-none" id="modalSearchInput" placeholder="Search farms, batches, symptoms, vaccinations, alerts...">
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-2">
+          <div class="list-group list-group-flush" id="modalSearchResults">
+            <div class="text-center text-muted py-4 small">Type keywords above to search all platform modules...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/prediction.js"></script>
+  <script src="assets/js/charts.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      PoultryCharts.initDashboardEnvChart('dashboardEnvChart');
+      await renderDynamicDashboard();
+      updateDesktopAgePrediction(21);
+    });
+
+    async function renderDynamicDashboard() {
+      const summary = await MockAPI.getDashboardSummary();
+      const farms = await MockAPI.getFarms();
+      const batches = await MockAPI.getBatches();
+      const alerts = await MockAPI.getAlerts();
+
+      // Render KPIs
+      document.getElementById('dashTotalBirds').textContent = summary.totalBirds.toLocaleString();
+      document.getElementById('dashActiveFarmsCount').textContent = `${summary.farmsCount} Farm${summary.farmsCount === 1 ? '' : 's'}`;
+      document.getElementById('dashActiveBatches').textContent = summary.activeBatchesCount;
+      document.getElementById('dashBatchesSubtext').textContent = `${summary.activeBatchesCount} Active Shed${summary.activeBatchesCount === 1 ? '' : 's'}`;
+      document.getElementById('dashMortalityRate').textContent = `${summary.mortalityRate}%`;
+      document.getElementById('dashMortalityCountText').textContent = `${summary.totalMortality} Deaths Total`;
+      document.getElementById('dashFeedConsumption').textContent = `${summary.totalDailyFeed.toLocaleString()} kg`;
+      document.getElementById('dashWaterConsumption').textContent = `${summary.totalDailyWater.toLocaleString()} L`;
+
+      // Health Risk & Score
+      const riskEl = document.getElementById('dashCurrentRisk');
+      const riskIcon = document.getElementById('dashRiskIcon');
+      const healthBadge = document.getElementById('dashHealthBadge');
+      const gaugeCircle = document.getElementById('dashGaugeCircle');
+      const scoreVal = document.getElementById('dashScoreValue');
+
+      scoreVal.textContent = summary.healthScore;
+      gaugeCircle.setAttribute('stroke-dasharray', `${summary.healthScore}, 100`);
+
+      if (summary.riskLevel === 'High') {
+        riskEl.textContent = 'High';
+        riskEl.className = 'kpi-value text-danger';
+        riskIcon.className = 'kpi-icon-pill bg-danger-subtle text-danger';
+        healthBadge.className = 'badge bg-danger px-3 py-2 fw-bold';
+        healthBadge.innerHTML = '<i class="bi bi-exclamation-octagon-fill me-1"></i> High Disease Risk';
+        gaugeCircle.setAttribute('stroke', '#ef4444');
+        document.getElementById('dashHealthAssessmentTitle').className = 'd-block text-danger small mb-1';
+        document.getElementById('dashHealthAssessmentTitle').innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i> High Risk Warning:';
+        document.getElementById('dashHealthAssessmentDesc').textContent = 'Elevated mortality or severe stress symptoms detected in active flocks. Quarantine and veterinary assessment recommended.';
+      } else if (summary.riskLevel === 'Medium') {
+        riskEl.textContent = 'Medium';
+        riskEl.className = 'kpi-value text-warning';
+        riskIcon.className = 'kpi-icon-pill bg-warning-subtle text-warning';
+        healthBadge.className = 'badge bg-warning text-dark px-3 py-2 fw-bold';
+        healthBadge.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Medium Risk Attention';
+        gaugeCircle.setAttribute('stroke', '#f59e0b');
+        document.getElementById('dashHealthAssessmentTitle').className = 'd-block text-warning small mb-1';
+        document.getElementById('dashHealthAssessmentTitle').innerHTML = '<i class="bi bi-info-circle me-1"></i> Attention Notice:';
+        document.getElementById('dashHealthAssessmentDesc').textContent = 'Moderate temperature fluctuations or slight feed consumption dip detected. Increase ventilation and monitor flock alertness.';
+      } else {
+        riskEl.textContent = 'Low';
+        riskEl.className = 'kpi-value text-success';
+        riskIcon.className = 'kpi-icon-pill bg-success-subtle text-success';
+        healthBadge.className = 'badge bg-success px-3 py-2 fw-bold';
+        healthBadge.innerHTML = '<i class="bi bi-shield-fill-check me-1"></i> Status: Optimal';
+        gaugeCircle.setAttribute('stroke', '#10b981');
+      }
+
+      // Render Registered Farms Cards (Requirement 1)
+      const farmsContainer = document.getElementById('dashboardFarmsCardsContainer');
+      if (farmsContainer) {
+        if (!farms || farms.length === 0) {
+          farmsContainer.innerHTML = `
+            <div class="col-12 text-center py-4 text-muted">
+              <i class="bi bi-building-slash fs-2 d-block mb-2 text-secondary"></i>
+              <h6 class="fw-bold">No Farm Facilities Registered Yet</h6>
+              <p class="small mb-3">Register your poultry farm location, sheds, and bird housing to activate automated monitoring.</p>
+              <a href="farms.html" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i> Register Your First Farm</a>
+            </div>
+          `;
+        } else {
+          farmsContainer.innerHTML = farms.map(f => {
+            const birdCount = parseInt(f.currentBirds) || 0;
+            const capacity = parseInt(f.capacity) || 0;
+            const shedCount = f.sheds || f.shedCount || 1;
+            const capPercent = capacity > 0 ? Math.min(100, Math.round((birdCount / capacity) * 100)) : 0;
+
+            return `
+              <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border shadow-sm rounded-3">
+                  <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="p-2 rounded bg-primary-subtle text-primary">
+                          <i class="bi bi-building fs-5"></i>
+                        </div>
+                        <div>
+                          <h6 class="fw-bold mb-0 text-dark">${f.name}</h6>
+                          <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>${f.location || 'Local Shed Facility'}</span>
+                        </div>
+                      </div>
+                      <span class="badge bg-success-subtle text-success fw-bold">Active</span>
+                    </div>
+
+                    <div class="row g-2 mt-2 pt-2 border-top text-center">
+                      <div class="col-4">
+                        <span class="text-muted d-block" style="font-size: 0.72rem;">Current Birds</span>
+                        <strong class="text-dark small">${birdCount.toLocaleString()}</strong>
+                      </div>
+                      <div class="col-4">
+                        <span class="text-muted d-block" style="font-size: 0.72rem;">Capacity</span>
+                        <strong class="text-secondary small">${capacity.toLocaleString()}</strong>
+                      </div>
+                      <div class="col-4">
+                        <span class="text-muted d-block" style="font-size: 0.72rem;">Sheds</span>
+                        <strong class="text-primary small">${shedCount} Units</strong>
+                      </div>
+                    </div>
+
+                    <div class="mt-2">
+                      <div class="d-flex justify-content-between text-muted" style="font-size: 0.7rem;">
+                        <span>Housing Utilization</span>
+                        <span>${capPercent}%</span>
+                      </div>
+                      <div class="progress" style="height: 5px;">
+                        <div class="progress-bar bg-primary" style="width: ${capPercent}%;"></div>
+                      </div>
+                    </div>
+
+                    <div class="mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
+                      <span class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-qr-code me-1"></i> ID: ${f.id}</span>
+                      <a href="farms.html" class="btn btn-sm btn-outline-primary py-0 px-2 fw-semibold" style="font-size: 0.78rem;">
+                        Manage <i class="bi bi-arrow-right ms-1"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Batches Table with Age-Predicted Requirements (Requirement 1 & 6)
+      const tbody = document.getElementById('dashboardBatchesTableBody');
+      if (tbody) {
+        if (batches.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">
+                <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+                <span>No active batches created yet.</span>
+                <div class="mt-2"><a href="batches.html" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add Your First Batch</a></div>
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = batches.slice(0, 6).map(b => {
+            const age = parseInt(b.ageDays) || 1;
+            const count = parseInt(b.birdCount) || 1000;
+            const breed = b.birdType || 'Broiler (Cobb 500)';
+            const pred = typeof AIPredictor !== 'undefined'
+              ? AIPredictor.predictByAge(age, count, breed)
+              : { dailyFlockFeedKg: 100, dailyFlockWaterL: 200, targetTempC: 25, broodingStatus: 'Comfort' };
+
+            return `
+              <tr>
+                <td><strong>${b.name}</strong><div class="small text-muted">${b.id}</div></td>
+                <td><span class="badge bg-light text-dark border">${breed}</span></td>
+                <td>${count.toLocaleString()}</td>
+                <td><strong class="text-primary">${age}</strong> days</td>
+                <td>
+                  <div class="small fw-bold text-dark"><i class="bi bi-basket3 text-warning me-1"></i>${pred.dailyFlockFeedKg} kg feed</div>
+                  <div class="small text-muted"><i class="bi bi-droplet-half text-primary me-1"></i>${pred.dailyFlockWaterL} L water</div>
+                </td>
+                <td>
+                  <span class="badge bg-danger-subtle text-danger fw-bold"><i class="bi bi-thermometer-half"></i> ${pred.targetTempC}°C</span>
+                  <div class="small text-muted" style="font-size: 0.72rem;">${pred.broodingStatus}</div>
+                </td>
+                <td><span class="badge ${b.healthStatus === 'Good' || b.healthStatus === 'Excellent' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'}">${b.healthStatus}</span></td>
+                <td><a href="conditions.html" class="btn btn-sm btn-light border" title="Log Condition"><i class="bi bi-clipboard2-pulse"></i></a></td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Recent Alerts List
+      const alertsContainer = document.getElementById('dashboardRecentAlertsList');
+      if (alertsContainer) {
+        if (alerts.length === 0) {
+          alertsContainer.innerHTML = `
+            <div class="text-center text-muted py-4 small">
+              <i class="bi bi-check-circle fs-4 text-success d-block mb-1"></i>
+              No active alerts. All flock parameters are stable!
+            </div>
+          `;
+        } else {
+          alertsContainer.innerHTML = alerts.slice(0, 3).map(a => `
+            <div class="list-group-item px-0 py-2 border-0 ${a.isRead ? '' : 'bg-light rounded p-2 mb-1'}">
+              <div class="d-flex align-items-start gap-3">
+                <div class="p-2 rounded-3 ${a.severity === 'Critical' ? 'bg-danger-subtle text-danger' : a.severity === 'Warning' ? 'bg-warning-subtle text-warning' : 'bg-primary-subtle text-primary'}">
+                  <i class="bi ${a.severity === 'Critical' ? 'bi-exclamation-octagon-fill' : 'bi-exclamation-triangle-fill'}"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="d-flex justify-content-between">
+                    <strong class="small ${a.severity === 'Critical' ? 'text-danger' : a.severity === 'Warning' ? 'text-warning' : 'text-dark'}">${a.title}</strong>
+                    <span class="small text-muted">${a.timestamp}</span>
+                  </div>
+                  <div class="small text-muted">${a.description}</div>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    // Flock Age AI Predictor Controller (Requirement 6)
+    function updateDesktopAgePrediction(val) {
+      const slider = document.getElementById('desktopAgeSlider');
+      const countInput = document.getElementById('desktopBirdCountInput');
+      if (!slider || typeof AIPredictor === 'undefined') return;
+
+      const age = val !== undefined ? parseInt(val) : parseInt(slider.value);
+      if (val !== undefined) slider.value = age;
+      const count = countInput ? (parseInt(countInput.value) || 5000) : 5000;
+
+      const pred = AIPredictor.predictByAge(age, count, 'Broiler (Cobb 500)');
+
+      const ageDisplay = document.getElementById('desktopAgeDisplay');
+      if (ageDisplay) ageDisplay.textContent = `${pred.ageDays} Days`;
+
+      const weekDisplay = document.getElementById('desktopAgeWeekDisplay');
+      if (weekDisplay) weekDisplay.textContent = `(Week ${pred.week})`;
+
+      const feedStage = document.getElementById('desktopPredFeedStage');
+      if (feedStage) feedStage.textContent = pred.feedStage;
+
+      const feedTotal = document.getElementById('desktopPredFeedTotal');
+      if (feedTotal) feedTotal.innerHTML = `${pred.dailyFlockFeedKg} kg <small class="fs-6 text-muted">/day</small>`;
+
+      const feedPerBird = document.getElementById('desktopPredFeedPerBird');
+      if (feedPerBird) feedPerBird.textContent = `${pred.dailyFeedPerBirdG} g / bird • ~${pred.dailyFeedBags50kg} bags (50kg)`;
+
+      const waterRatio = document.getElementById('desktopPredWaterRatio');
+      if (waterRatio) waterRatio.textContent = `${pred.waterToFeedRatio}x feed ratio`;
+
+      const waterTotal = document.getElementById('desktopPredWaterTotal');
+      if (waterTotal) waterTotal.innerHTML = `${pred.dailyFlockWaterL} L <small class="fs-6 text-muted">/day</small>`;
+
+      const waterPerBird = document.getElementById('desktopPredWaterPerBird');
+      if (waterPerBird) waterPerBird.textContent = `${pred.dailyWaterPerBirdMl} ml / bird clean drinking water`;
+
+      const tempStatus = document.getElementById('desktopPredTempStatus');
+      if (tempStatus) tempStatus.textContent = pred.broodingStatus;
+
+      const tempTarget = document.getElementById('desktopPredTempTarget');
+      if (tempTarget) tempTarget.innerHTML = `${pred.targetTempC}°C <small class="fs-6 text-muted">/ ${pred.targetTempF}°F</small>`;
+
+      const tempAdvice = document.getElementById('desktopPredTempAdvice');
+      if (tempAdvice) tempAdvice.textContent = `Comfort Range: ${pred.minComfortTempC} - ${pred.maxComfortTempC}°C • ${pred.ventilationAdvice}`;
+    }
+
+    function setDesktopAgePreset(age) {
+      const slider = document.getElementById('desktopAgeSlider');
+      if (slider) {
+        slider.value = age;
+        updateDesktopAgePrediction(age);
+      }
+    }
+
+    function handleClearData() {
+      if (confirm('Wipe all current records and start completely clean? You can add fresh farms and batches.')) {
+        MockAPI.clearAllUserData();
+        showToast('All records cleared! You can now add your custom data.', 'info', 'Data Cleared');
+        setTimeout(() => location.reload(), 400);
+      }
+    }
+
+    function handleLoadDemoData() {
+      if (confirm('Load sample demonstration data?')) {
+        MockAPI.loadSampleDemoData();
+        showToast('Sample poultry data loaded successfully!', 'success', 'Demo Loaded');
+        setTimeout(() => location.reload(), 400);
+      }
+    }
+  </script>
+</body>
+</html>

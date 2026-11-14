@@ -1,0 +1,1272 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Top Farm Switcher & Quick Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-brand-600 flex items-center justify-center text-xl font-bold">
+                🏡
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    {{ 'ఫామ్ ఎంపిక' if current_lang == 'te' else 'Active Poultry Farm' }}
+                </label>
+                {% if farms %}
+                    <form method="GET" action="{{ url_for('index') }}" class="inline">
+                        <select name="farm_id" onchange="this.form.submit()" class="font-bold text-slate-800 text-base bg-transparent border-none p-0 pr-6 focus:ring-0 cursor-pointer">
+                            {% for farm in farms %}
+                                <option value="{{ farm.id }}" {% if farm.id == selected_farm_id %}selected{% endif %}>
+                                    {{ farm.farm_name }} ({{ farm.farm_type }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                {% else %}
+                    <span class="text-sm font-semibold text-slate-500">{{ t('no_farms') }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="flex items-center space-x-2">
+            <button onclick="openModal('modal-add-farm')" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                <i class="fa-solid fa-plus mr-1.5 text-brand-600"></i>
+                <span>{{ t('add_farm') }}</span>
+            </button>
+            {% if selected_farm_id %}
+            <button onclick="openModal('modal-add-shed')" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                <i class="fa-solid fa-warehouse mr-1.5 text-amber-600"></i>
+                <span>{{ t('add_shed') }}</span>
+            </button>
+            <button onclick="openModal('modal-add-flock')" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white transition shadow-sm">
+                <i class="fa-solid fa-kiwi-bird mr-1.5"></i>
+                <span>{{ t('create_batch') }}</span>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if not farms %}
+        <!-- Clean Empty State (Prompted for real user entry) -->
+        <div class="bg-white rounded-3xl p-8 sm:p-12 text-center border border-slate-200 shadow-sm max-w-2xl mx-auto my-8">
+            <div class="w-20 h-20 bg-emerald-50 text-brand-600 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-4 shadow-inner">
+                🌱
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">
+                {{ 'మీ కోళ్ల ఫామ్‌ను ప్రారంభించండి' if current_lang == 'te' else 'Welcome to Your Clean Poultry Workspace' }}
+            </h3>
+            <p class="text-sm text-slate-500 mb-6 max-w-md mx-auto">
+                {{ 'మీ వద్ద ఉన్న అసలైన ఫారం, షెడ్డు మరియు కోళ్ల వివరాలను నమోదు చేయండి. డమ్మీ డేటా లేకుండా పూర్తిగా మీ నిజమైన రికార్డులతో పనిచేస్తుంది.' if current_lang == 'te' else 'No dummy data pre-loaded. Register your real farm, sheds, and bird flocks to start tracking IoT sensor alerts, feed, and growth.' }}
+            </p>
+            <button onclick="openModal('modal-add-farm')" class="inline-flex items-center px-5 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md transition space-x-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>{{ t('add_farm') }}</span>
+            </button>
+        </div>
+    {% else %}
+
+        <!-- Navigation Tabs for Desktop -->
+        <div class="hidden md:flex border-b border-slate-200 space-x-6">
+            <button onclick="switchTab('dashboard')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-brand-600 text-brand-600 transition" data-tab="dashboard">
+                <i class="fa-solid fa-house mr-1.5"></i>{{ t('nav_dashboard') }}
+            </button>
+            <button onclick="switchTab('flocks')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="flocks">
+                <i class="fa-solid fa-kiwi-bird mr-1.5"></i>{{ t('nav_flocks') }}
+            </button>
+            <button onclick="switchTab('daily_logs')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="daily_logs">
+                <i class="fa-solid fa-calendar-check mr-1.5"></i>{{ t('nav_daily_logs') }}
+            </button>
+            <button onclick="switchTab('iot')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="iot">
+                <i class="fa-solid fa-microchip mr-1.5"></i>{{ t('nav_iot') }}
+            </button>
+            <button onclick="switchTab('health_ai')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="health_ai">
+                <i class="fa-solid fa-heart-pulse mr-1.5"></i>{{ t('nav_health') }}
+            </button>
+            <button onclick="switchTab('vaccines')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="vaccines">
+                <i class="fa-solid fa-syringe mr-1.5"></i>{{ t('nav_vaccines') }}
+            </button>
+            <button onclick="switchTab('finances')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="finances">
+                <i class="fa-solid fa-indian-rupee-sign mr-1.5"></i>{{ t('nav_finance') }}
+            </button>
+            <button onclick="switchTab('analytics')" class="tab-btn pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition" data-tab="analytics">
+                <i class="fa-solid fa-chart-line mr-1.5"></i>{{ t('nav_analytics') }}
+            </button>
+        </div>
+
+        <!-- TAB 1: DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            
+            <!-- Real-time Alerts Banner -->
+            {% if alerts %}
+                <div class="space-y-2">
+                    {% for alert in alerts %}
+                        <div class="p-3.5 rounded-2xl flex items-center justify-between shadow-sm border
+                            {% if alert.severity == 'critical' or alert.severity == 'danger' %}bg-rose-50 border-rose-200 text-rose-900
+                            {% elif alert.severity == 'warning' %}bg-amber-50 border-amber-200 text-amber-900
+                            {% else %}bg-sky-50 border-sky-200 text-sky-900{% endif %}">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xl">
+                                    {% if alert.alert_type == 'temp_high' %}🌡️
+                                    {% elif alert.alert_type == 'water_low' %}💧
+                                    {% elif alert.alert_type == 'feed_low' %}🌾
+                                    {% elif alert.alert_type == 'ammonia_high' %}⚠️
+                                    {% else %}💀{% endif %}
+                                </span>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider">
+                                        {{ 'హెచ్చరిక' if current_lang == 'te' else 'Automated Alert' }}
+                                    </p>
+                                    <p class="text-sm font-semibold">
+                                        {{ alert.message_te if current_lang == 'te' else alert.message_en }}
+                                    </p>
+                                </div>
+                            </div>
+                            <form method="POST" action="{{ url_for('dismiss_alert', alert_id=alert.id) }}">
+                                <button type="submit" class="text-xs px-2.5 py-1 rounded-lg bg-white/70 hover:bg-white font-medium border border-slate-300">
+                                    {{ 'తీసివేయి' if current_lang == 'te' else 'Dismiss' }}
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Core Dashboard Summary KPI Cards (as specified in prompt) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                <!-- 1. Live Birds -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">{{ t('live_birds') }}</span>
+                        <span class="text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-slate-800">{{ "{:,}".format(total_live_birds) }}</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ active_flocks_count }} {{ 'యాక్టివ్ బ్యాచ్‌లు' if current_lang == 'te' else 'Active Batches' }}</p>
+                    </div>
+                </div>
+
+                <!-- 2. Eggs Today -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">{{ t('eggs_today') }}</span>
+                        <span class="text-lg">🥚</span>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-amber-600">{{ "{:,}".format(today_eggs) }}</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ 'గుడ్ల దిగుబడి' if current_lang == 'te' else 'Collected Today' }}</p>
+                    </div>
+                </div>
+
+                <!-- 3. Feed Today -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">{{ t('feed_today') }}</span>
+                        <span class="text-lg">🌾</span>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-emerald-600">{{ "{:.1f}".format(today_feed_kg) }} <span class="text-sm font-normal text-slate-500">kg</span></div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ 'ఈరోజు మేత' if current_lang == 'te' else 'Daily Intake' }}</p>
+                    </div>
+                </div>
+
+                <!-- 4. Water Consumption -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">{{ t('water_today') }}</span>
+                        <span class="text-lg">💧</span>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-cyan-600">{{ "{:.1f}".format(today_water_liters) }} <span class="text-sm font-normal text-slate-500">L</span></div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ 'నీటి వినియోగం' if current_lang == 'te' else 'Daily Water' }}</p>
+                    </div>
+                </div>
+
+                <!-- 5. Temperature -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">{{ t('temperature') }}</span>
+                        <span class="text-lg">🌡️</span>
+                    </div>
+                    <div>
+                        {% if latest_reading %}
+                            <div class="text-2xl font-black {% if latest_reading.temperature > 33 %}text-rose-600{% else %}text-slate-800{% endif %}">
+                                {{ "{:.1f}".format(latest_reading.temperature) }}°C
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-0.5">{{ latest_reading.humidity }}% {{ 'తేమ' if current_lang == 'te' else 'Humidity' }}</p>
+                        {% else %}
+                            <div class="text-base font-bold text-slate-400">--</div>
+                            <p class="text-[10px] text-slate-400 mt-0.5">{{ 'సెన్సార్ లేదు' if current_lang == 'te' else 'No sensor yet' }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- 6. Mortality & FCR -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">{{ t('mortality') }}</span>
+                        <span class="text-lg">💀</span>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black {% if today_mortality > 5 %}text-rose-600{% else %}text-slate-800{% endif %}">
+                            {{ today_mortality }}
+                        </div>
+                        <p class="text-[11px] text-brand-600 font-semibold mt-0.5">FCR: {{ "{:.2f}".format(fcr) if fcr > 0 else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Floating Buttons -->
+            <div class="bg-slate-900 text-white rounded-3xl p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <h4 class="font-bold text-base flex items-center space-x-2">
+                        <span>⚡</span>
+                        <span>{{ 'నేటి పనులు & రికార్డులు' if current_lang == 'te' else 'Daily Operations & Log Entry' }}</span>
+                    </h4>
+                    <p class="text-xs text-slate-300 mt-0.5">
+                        {{ 'మేత, నీరు, మరణాలు, గుడ్లు మరియు బరువు నమోదు చేయండి' if current_lang == 'te' else 'Record feed intake, water, bird mortality, egg count, and sample weights.' }}
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <button onclick="openModal('modal-daily-log')" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow">
+                        <i class="fa-solid fa-pen-to-square mr-1.5"></i>
+                        {{ t('record_daily') }}
+                    </button>
+                    <button onclick="openModal('modal-weight-log')" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition border border-slate-700">
+                        <i class="fa-solid fa-weight-scale mr-1.5"></i>
+                        {{ t('record_weight') }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Flocks Overview Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">
+                        {{ 'ప్రస్తుత బ్యాచ్‌లు' if current_lang == 'te' else 'Active Flock Batches' }} ({{ flocks|length }})
+                    </h3>
+                    <button onclick="openModal('modal-add-flock')" class="text-xs font-bold text-brand-600 hover:text-brand-700">
+                        + {{ t('create_batch') }}
+                    </button>
+                </div>
+
+                {% if not flocks %}
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center">
+                        <p class="text-sm text-slate-500 mb-3">
+                            {{ 'ఈ ఫారమ్‌లో ఇంకా ఏ బ్యాచ్ ప్రారంభించలేదు.' if current_lang == 'te' else 'No flock batch added for this farm yet.' }}
+                        </p>
+                        <button onclick="openModal('modal-add-flock')" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold shadow">
+                            + {{ t('create_batch') }}
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for fl in flocks %}
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold 
+                                            {% if fl.status == 'active' %}bg-emerald-100 text-emerald-800{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                            {{ fl.status.upper() }}
+                                        </span>
+                                        <h4 class="text-base font-bold text-slate-800 mt-1">{{ fl.batch_code }}</h4>
+                                        <p class="text-xs text-slate-500">{{ fl.breed }} • {{ fl.shed_name or 'Unassigned' }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-2xl font-black text-slate-800">{{ fl.current_birds }}</span>
+                                        <p class="text-[10px] text-slate-400">/ {{ fl.initial_birds }} {{ 'కోళ్లు' if current_lang == 'te' else 'birds' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-100 text-center">
+                                    <div>
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">{{ 'వయస్సు' if current_lang == 'te' else 'Age' }}</span>
+                                        <p class="text-sm font-bold text-slate-700">{{ fl.age_days }} {{ 'రోజులు' if current_lang == 'te' else 'Days' }}</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">{{ 'మరణాలు' if current_lang == 'te' else 'Mortality' }}</span>
+                                        <p class="text-sm font-bold text-rose-600">{{ fl.initial_birds - fl.current_birds }}</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] text-slate-400 uppercase font-semibold">{{ 'లక్ష్య బరువు' if current_lang == 'te' else 'Target' }}</span>
+                                        <p class="text-sm font-bold text-slate-700">{{ fl.target_weight_kg }} kg</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- TAB 2: FLOCKS MANAGEMENT -->
+        <div id="tab-flocks" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ t('nav_flocks') }}</h3>
+                    <p class="text-xs text-slate-500">{{ 'వివిధ బ్యాచ్‌ల వివరాలు, జాతి మరియు ప్రస్తుత స్థితి' if current_lang == 'te' else 'Manage poultry flock batches, breeds, and lifecycle status' }}</p>
+                </div>
+                <button onclick="openModal('modal-add-flock')" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold shadow">
+                    + {{ t('create_batch') }}
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="p-3">Batch ID</th>
+                                <th class="p-3">Breed</th>
+                                <th class="p-3">Shed</th>
+                                <th class="p-3">Arrival Date</th>
+                                <th class="p-3">Age</th>
+                                <th class="p-3">Initial</th>
+                                <th class="p-3">Current</th>
+                                <th class="p-3">Mortality</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-medium">
+                            {% for fl in flocks %}
+                            <tr>
+                                <td class="p-3 font-bold text-slate-800">{{ fl.batch_code }}</td>
+                                <td class="p-3 text-slate-600">{{ fl.breed }}</td>
+                                <td class="p-3 text-slate-600">{{ fl.shed_name or '-' }}</td>
+                                <td class="p-3 text-slate-500">{{ fl.arrival_date }}</td>
+                                <td class="p-3 font-bold text-brand-600">{{ fl.age_days }} d</td>
+                                <td class="p-3 text-slate-600">{{ fl.initial_birds }}</td>
+                                <td class="p-3 font-bold text-slate-800">{{ fl.current_birds }}</td>
+                                <td class="p-3 text-rose-600 font-bold">{{ fl.initial_birds - fl.current_birds }}</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold 
+                                        {% if fl.status == 'active' %}bg-emerald-100 text-emerald-800{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                        {{ fl.status }}
+                                    </span>
+                                </td>
+                                <td class="p-3">
+                                    {% if fl.status == 'active' %}
+                                    <form method="POST" action="{{ url_for('update_flock_status', flock_id=fl.id) }}">
+                                        <input type="hidden" name="status" value="sold">
+                                        <button type="submit" class="px-2 py-1 bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 rounded text-[11px] font-semibold">
+                                            {{ 'అమ్మకం పూర్తి (Mark Sold)' if current_lang == 'te' else 'Mark Sold' }}
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="10" class="p-6 text-center text-slate-400">
+                                    {{ 'ఇంకా ఎలాంటి బ్యాచ్ నమోదు కాలేదు' if current_lang == 'te' else 'No flock batches created yet.' }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DAILY OPERATIONS LOG -->
+        <div id="tab-daily_logs" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ t('nav_daily_logs') }}</h3>
+                    <p class="text-xs text-slate-500">{{ 'రోజువారీ మేత, నీరు, గుడ్లు మరియు మరణాల లెక్క' if current_lang == 'te' else 'Log and monitor daily poultry operations' }}</p>
+                </div>
+                <button onclick="openModal('modal-daily-log')" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold shadow">
+                    + {{ t('record_daily') }}
+                </button>
+            </div>
+
+            <!-- Daily Log Quick Form -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm max-w-2xl">
+                <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-clip text-brand-600"></i>
+                    <span>{{ 'ఈరోజు రికార్డు నమోదు చేయండి' if current_lang == 'te' else 'Log Daily Farm Intake' }}</span>
+                </h4>
+                <form method="POST" action="{{ url_for('record_daily_log') }}" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Batch / Flock</label>
+                            <select name="flock_id" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                                {% for fl in flocks %}
+                                    <option value="{{ fl.id }}">{{ fl.batch_code }} ({{ fl.breed }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+                            <input type="date" name="log_date" value="{{ date_today }}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">{{ 'మేత (kg)' if current_lang == 'te' else 'Feed (kg)' }}</label>
+                            <input type="number" step="0.1" name="feed_consumed_kg" placeholder="e.g. 280" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">{{ 'నీరు (Liters)' if current_lang == 'te' else 'Water (L)' }}</label>
+                            <input type="number" step="0.1" name="water_liters" placeholder="e.g. 600" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">{{ 'మరణాలు' if current_lang == 'te' else 'Mortality' }}</label>
+                            <input type="number" name="mortality" placeholder="0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">{{ 'గుడ్లు (Eggs)' if current_lang == 'te' else 'Eggs Good' }}</label>
+                            <input type="number" name="egg_good" placeholder="0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition">
+                        {{ 'రికార్డు భద్రపరచండి (Save Log)' if current_lang == 'te' else 'Save Daily Record' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 4: SMART SHED IOT MONITOR & SIMULATOR -->
+        <div id="tab-iot" class="tab-content hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ t('nav_iot') }}</h3>
+                    <p class="text-xs text-slate-500">{{ 'ESP32 సెన్సార్లతో లైవ్ ఉష్ణోగ్రత, తేమ, అమ్మోనియా, నీరు మరియు ఫీడర్ లెవెల్స్' if current_lang == 'te' else 'Live telemetry monitoring with ESP32 sensor integration' }}</p>
+                </div>
+            </div>
+
+            <!-- Live Sensor Dials -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <!-- Temperature -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                    <span class="text-2xl">🌡️</span>
+                    <p class="text-xs text-slate-400 font-semibold uppercase mt-1">{{ t('temperature') }}</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1">
+                        {{ latest_reading.temperature if latest_reading else '--' }}°C
+                    </p>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold 
+                        {% if latest_reading and latest_reading.temperature > 34 %}bg-rose-100 text-rose-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                        {{ 'అధికం' if latest_reading and latest_reading.temperature > 34 else 'Normal' }}
+                    </span>
+                </div>
+
+                <!-- Humidity -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                    <span class="text-2xl">💧</span>
+                    <p class="text-xs text-slate-400 font-semibold uppercase mt-1">{{ t('humidity') }}</p>
+                    <p class="text-2xl font-black text-cyan-600 mt-1">
+                        {{ latest_reading.humidity if latest_reading else '--' }}%
+                    </p>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800">
+                        Comfort: 50-70%
+                    </span>
+                </div>
+
+                <!-- Ammonia (NH3) -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                    <span class="text-2xl">☣️</span>
+                    <p class="text-xs text-slate-400 font-semibold uppercase mt-1">{{ t('ammonia') }}</p>
+                    <p class="text-2xl font-black {% if latest_reading and latest_reading.ammonia_ppm > 20 %}text-rose-600{% else %}text-slate-800{% endif %} mt-1">
+                        {{ latest_reading.ammonia_ppm if latest_reading else '--' }} <span class="text-xs font-normal">ppm</span>
+                    </p>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold 
+                        {% if latest_reading and latest_reading.ammonia_ppm > 25 %}bg-rose-100 text-rose-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                        Limit: &lt;20 ppm
+                    </span>
+                </div>
+
+                <!-- Water Tank Level -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                    <span class="text-2xl">🚰</span>
+                    <p class="text-xs text-slate-400 font-semibold uppercase mt-1">{{ 'నీటి ట్యాంక్' if current_lang == 'te' else 'Water Tank' }}</p>
+                    <p class="text-2xl font-black text-blue-600 mt-1">
+                        {{ latest_reading.water_level_pct if latest_reading else '--' }}%
+                    </p>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold 
+                        {% if latest_reading and latest_reading.water_level_pct < 20 %}bg-rose-100 text-rose-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ 'తక్కువ' if latest_reading and latest_reading.water_level_pct < 20 else 'Sufficient' }}
+                    </span>
+                </div>
+
+                <!-- Feed Hopper Level -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                    <span class="text-2xl">🌾</span>
+                    <p class="text-xs text-slate-400 font-semibold uppercase mt-1">{{ 'ఫీడర్ స్థాయి' if current_lang == 'te' else 'Feeder Level' }}</p>
+                    <p class="text-2xl font-black text-amber-600 mt-1">
+                        {{ latest_reading.feed_level_pct if latest_reading else '--' }}%
+                    </p>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold 
+                        {% if latest_reading and latest_reading.feed_level_pct < 15 %}bg-rose-100 text-rose-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                        {{ 'అయిపోతుంది' if latest_reading and latest_reading.feed_level_pct < 15 else 'Good' }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Built-in IoT Telemetry Simulator & Hardware Connector -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Simulator Form -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="text-lg">🎛️</span>
+                        <h4 class="font-bold text-sm text-slate-800">
+                            {{ 'IoT సెన్సార్ డేటా సిమ్యులేటర్' if current_lang == 'te' else 'IoT Sensor Reading Simulator' }}
+                        </h4>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4">
+                        {{ 'సెన్సార్ విలువలను మార్చి ఆటోమేటిక్ హెచ్చరికల వ్యవస్థను పరీక్షించండి:' if current_lang == 'te' else 'Test automatic alert triggers by feeding simulated ESP32 readings:' }}
+                    </p>
+
+                    <form method="POST" action="{{ url_for('ingest_iot_telemetry') }}" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Target Shed</label>
+                            <select name="shed_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                                {% for s in sheds %}
+                                    <option value="{{ s.id }}">{{ s.shed_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Temperature (°C)</label>
+                                <input type="number" step="0.1" name="temperature" value="35.0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-rose-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Humidity (%)</label>
+                                <input type="number" step="0.1" name="humidity" value="65.0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Ammonia (ppm)</label>
+                                <input type="number" step="0.1" name="ammonia_ppm" value="28.0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Water Level (%)</label>
+                                <input type="number" step="0.1" name="water_level_pct" value="18.0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow transition">
+                            <i class="fa-solid fa-satellite-dish mr-1.5 text-emerald-400"></i>
+                            {{ t('send_telemetry') }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- ESP32 Hardware Integration Snippet -->
+                <div class="bg-slate-900 text-slate-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="text-emerald-400 font-mono text-sm">&lt;/&gt;</span>
+                            <h4 class="font-bold text-sm text-white">ESP32 / Microcontroller Integration</h4>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-3">Send live HTTP POST requests directly from your ESP32 Wi-Fi hardware:</p>
+                        <pre class="bg-slate-950 p-3 rounded-xl font-mono text-[11px] text-emerald-400 overflow-x-auto">
+// Endpoint: POST /api/iot/telemetry
+{
+  "shed_id": 1,
+  "temperature": 28.5,
+  "humidity": 62.0,
+  "ammonia_ppm": 12.0,
+  "water_level_pct": 75.0,
+  "feed_level_pct": 80.0
+}</pre>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-400">
+                        Supports DHT22, MQ-135 (Ammonia), Ultrasonic HC-SR04 (Water/Feed levels).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: HEALTH & AI DECISION SUPPORT -->
+        <div id="tab-health_ai" class="tab-content hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ t('nav_health') }}</h3>
+                    <p class="text-xs text-slate-500">{{ 'వ్యాధి ప్రమాద నిర్ధారణ మరియు పశువైద్య సలహాలు' if current_lang == 'te' else 'AI-assisted poultry disease risk analysis and veterinary decision support' }}</p>
+                </div>
+            </div>
+
+            <!-- AI Risk Prediction Engine Tool -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm max-w-3xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl">
+                        🤖
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">
+                            {{ 'AI పౌల్ట్రీ వ్యాధి ప్రమాద పరీక్ష' if current_lang == 'te' else 'AI Disease Risk Assessment' }}
+                        </h4>
+                        <p class="text-xs text-slate-500">
+                            {{ 'లక్షణాలు మరియు వాతావరణ పరిస్థితుల ఆధారంగా ప్రమాదాన్ని లెక్కిస్తుంది' if current_lang == 'te' else 'Evaluates temperature, ammonia, feed drop, and clinical symptoms' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Bird Age (Days)</label>
+                            <input type="number" id="ai-age" value="18" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Temp (°C)</label>
+                            <input type="number" step="0.1" id="ai-temp" value="34.5" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Humidity (%)</label>
+                            <input type="number" step="0.1" id="ai-humidity" value="75" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Ammonia (ppm)</label>
+                            <input type="number" step="0.1" id="ai-ammonia" value="26" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            {{ 'లక్షణాలు (Symptoms: e.g. దగ్గు, రొంప, విరేచనాలు, cough, diarrhea, gasp)' if current_lang == 'te' else 'Observed Symptoms (e.g. coughing, rattling, white diarrhea, gasping, lethargy)' }}
+                        </label>
+                        <input type="text" id="ai-symptoms" placeholder="Coughing, gasping, and sudden feed drop" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                    </div>
+
+                    <button type="button" onclick="runAiDiagnosis()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>{{ t('run_ai_check') }}</span>
+                    </button>
+                </div>
+
+                <!-- AI Output Box -->
+                <div id="ai-output" class="hidden mt-6 pt-5 border-t border-slate-100">
+                    <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-purple-900">Diagnosis Assessment</span>
+                            <span id="ai-risk-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase">--</span>
+                        </div>
+                        <div class="text-sm font-bold text-slate-800" id="ai-conditions"></div>
+                        <ul class="mt-2 space-y-1 text-xs text-slate-600" id="ai-recommendations"></ul>
+                        <div class="mt-3 pt-3 border-t border-purple-200/60 text-[11px] text-slate-500 italic">
+                            ⚠️ Note: Decision-support feature. Always consult a licensed veterinarian.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consultation with Veterinarian -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm max-w-3xl">
+                <div class="flex items-center space-x-3 mb-3">
+                    <span class="text-2xl">👨‍⚕️</span>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">
+                            {{ 'పశువైద్యుని సంప్రదించండి' if current_lang == 'te' else 'Request Veterinary Consultation' }}
+                        </h4>
+                        <p class="text-xs text-slate-500">{{ 'మీ ఫారం సమస్యను డాక్టర్‌కు పంపండి' if current_lang == 'te' else 'Direct communication and prescription channel with registered poultry veterinarians' }}</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('create_consultation') }}" class="space-y-3">
+                    <input type="hidden" name="farm_id" value="{{ selected_farm_id }}">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Subject</label>
+                        <input type="text" name="subject" required placeholder="{{ 'ఉదా: శ్వాసకోశ సమస్య మరియు మరణాలు' if current_lang == 'te' else 'e.g. Sudden coughing sound and mortality increase' }}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Symptoms & Clinical Details</label>
+                        <textarea name="symptoms" rows="3" required placeholder="{{ 'కోళ్ల పరిస్థితి, మేత తీసుకోవడం మరియు లక్షణాలను వివరించండి...' if current_lang == 'te' else 'Describe symptoms, days noticed, feed intake change, and post-mortem findings...' }}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs"></textarea>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition">
+                        <i class="fa-solid fa-paper-plane mr-1"></i>
+                        {{ 'సందేశం పంపండి' if current_lang == 'te' else 'Submit to Veterinarian' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 6: VACCINATIONS -->
+        <div id="tab-vaccines" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ t('nav_vaccines') }}</h3>
+                    <p class="text-xs text-slate-500">{{ 'రాణీఖేత్, గంబోరో మరియు ఇతర టీకాల నిర్వహణ' if current_lang == 'te' else 'Vaccination scheduling, reminders, and administration tracking' }}</p>
+                </div>
+                <button onclick="openModal('modal-add-vaccine')" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold shadow">
+                    + {{ t('schedule_vaccine') }}
+                </button>
+            </div>
+
+            <!-- Standard Recommended Vaccination Schedule Reference -->
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+                <h4 class="font-bold text-xs text-emerald-900 uppercase tracking-wider mb-2">
+                    💡 Standard Broiler Vaccine Guide
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-emerald-800">
+                    <div class="bg-white/80 p-2.5 rounded-xl">
+                        <strong>Day 1-3:</strong> Marek's Disease / Newcastle (Hatchery)
+                    </div>
+                    <div class="bg-white/80 p-2.5 rounded-xl">
+                        <strong>Day 7-9:</strong> Newcastle (F1 / Lasota) - Eye Drop
+                    </div>
+                    <div class="bg-white/80 p-2.5 rounded-xl">
+                        <strong>Day 14-16:</strong> Gumboro (IBD Intermediate) - Water
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 7: FINANCES (EXPENSES & SALES) -->
+        <div id="tab-finances" class="tab-content hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ t('nav_finance') }}</h3>
+                    <p class="text-xs text-slate-500">{{ 'ఖర్చులు, అమ్మకాలు మరియు లాభ-నష్టాల లెక్కలు' if current_lang == 'te' else 'Track chick cost, feed, medicines, bird sales, and net farm profit' }}</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openModal('modal-add-expense')" class="px-3 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">
+                        + {{ t('log_expense') }}
+                    </button>
+                    <button onclick="openModal('modal-add-sale')" class="px-3 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow">
+                        + {{ t('log_sale') }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold uppercase text-slate-400">{{ 'మొత్తం ఖర్చులు' if current_lang == 'te' else 'Total Expenses' }}</span>
+                    <p class="text-2xl font-black text-rose-600 mt-1" id="fin-expenses">₹0.00</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold uppercase text-slate-400">{{ 'మొత్తం అమ్మకాలు' if current_lang == 'te' else 'Total Sales Revenue' }}</span>
+                    <p class="text-2xl font-black text-emerald-600 mt-1" id="fin-sales">₹0.00</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold uppercase text-slate-400">{{ 'నికర లాభం / నష్టం' if current_lang == 'te' else 'Net Profit / Loss' }}</span>
+                    <p class="text-2xl font-black text-slate-800 mt-1" id="fin-profit">₹0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 8: ANALYTICS & REPORTS -->
+        <div id="tab-analytics" class="tab-content hidden space-y-6">
+            <div>
+                <h3 class="text-lg font-bold text-slate-800">{{ t('nav_analytics') }}</h3>
+                <p class="text-xs text-slate-500">{{ 'గ్రాఫ్‌లు మరియు పోకడల పూర్తి విశ్లేషణ' if current_lang == 'te' else 'Visual analytics for feed intake, water, mortality, and financial trends' }}</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Feed & Water Intake Chart -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-sm text-slate-800 mb-4">{{ 'మేత & నీటి వినియోగం (Feed & Water Intake)' if current_lang == 'te' else 'Feed & Water Consumption Trend' }}</h4>
+                    <canvas id="feedChart" height="200"></canvas>
+                </div>
+
+                <!-- Mortality Trend Chart -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-sm text-slate-800 mb-4">{{ 'మరణాల రేటు (Mortality Trend)' if current_lang == 'te' else 'Daily Mortality Trend' }}</h4>
+                    <canvas id="mortalityChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+</div>
+
+<!-- ================= MODALS FOR REAL USER DATA ENTRY ================= -->
+
+<!-- 1. Modal: Add Farm -->
+<div id="modal-add-farm" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('add_farm') }}</h3>
+            <button onclick="closeModal('modal-add-farm')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('create_farm') }}" class="space-y-3">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Farm Name</label>
+                <input type="text" name="farm_name" required placeholder="e.g. Sri Lakshmi Poultry Farm" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Location / Village</label>
+                <input type="text" name="location" placeholder="e.g. Warangal, Telangana" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Farm Type</label>
+                    <select name="farm_type" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        <option value="Broiler">Broiler</option>
+                        <option value="Layer">Layer</option>
+                        <option value="Country">Country / Desi</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Total Capacity</label>
+                    <input type="number" name="total_capacity" value="5000" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ 'ఫామ్ నమోదు చేయండి (Create Farm)' if current_lang == 'te' else 'Save Farm' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 2. Modal: Add Shed -->
+<div id="modal-add-shed" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('add_shed') }}</h3>
+            <button onclick="closeModal('modal-add-shed')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('create_shed') }}" class="space-y-3">
+            <input type="hidden" name="farm_id" value="{{ selected_farm_id }}">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Shed Name / Number</label>
+                <input type="text" name="shed_name" required placeholder="e.g. Shed 2 (East Wing)" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Ventilation</label>
+                    <select name="ventilation_type" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        <option value="Tunnel">Tunnel Ventilated</option>
+                        <option value="Open-sided">Open-sided</option>
+                        <option value="Automated EC">Automated Environment Controlled</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Capacity</label>
+                    <input type="number" name="capacity" value="3000" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ t('add_shed') }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 3. Modal: Add Flock / Batch -->
+<div id="modal-add-flock" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('create_batch') }}</h3>
+            <button onclick="closeModal('modal-add-flock')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('create_flock') }}" class="space-y-3">
+            <input type="hidden" name="farm_id" value="{{ selected_farm_id }}">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Batch Code</label>
+                    <input type="text" name="batch_code" required placeholder="BATCH-2026-01" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Shed</label>
+                    <select name="shed_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        {% for s in sheds %}
+                            <option value="{{ s.id }}">{{ s.shed_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Breed</label>
+                    <select name="breed" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        <option value="Broiler">Broiler (Cobb / Ross)</option>
+                        <option value="Layer">Layer (BV 300 / Lohmann)</option>
+                        <option value="Country/Desi">Country / Desi</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Birds Count</label>
+                    <input type="number" name="initial_birds" required placeholder="5000" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-brand-600">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Arrival Date</label>
+                    <input type="date" name="arrival_date" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Target Weight (kg)</label>
+                    <input type="number" step="0.1" name="target_weight_kg" value="2.2" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ 'బ్యాచ్ ప్రారంభించండి (Start Batch)' if current_lang == 'te' else 'Start Batch' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 4. Modal: Daily Log -->
+<div id="modal-daily-log" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('record_daily') }}</h3>
+            <button onclick="closeModal('modal-daily-log')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('record_daily_log') }}" class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Batch</label>
+                    <select name="flock_id" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        {% for fl in flocks %}
+                            <option value="{{ fl.id }}">{{ fl.batch_code }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+                    <input type="date" name="log_date" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Feed Used (kg)</label>
+                    <input type="number" step="0.1" name="feed_consumed_kg" placeholder="285" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Water (L)</label>
+                    <input type="number" step="0.1" name="water_liters" placeholder="620" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Mortality Count</label>
+                    <input type="number" name="mortality" placeholder="12" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Eggs Collected</label>
+                    <input type="number" name="egg_good" placeholder="0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ 'భద్రపరచండి (Save)' if current_lang == 'te' else 'Save Daily Operations' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 5. Modal: Weight Log -->
+<div id="modal-weight-log" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('record_weight') }}</h3>
+            <button onclick="closeModal('modal-weight-log')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('record_weight') }}" class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Batch</label>
+                    <select name="flock_id" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        {% for fl in flocks %}
+                            <option value="{{ fl.id }}">{{ fl.batch_code }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Age (Days)</label>
+                    <input type="number" name="age_days" placeholder="14" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Sample Avg Weight (Grams)</label>
+                <input type="number" step="0.1" name="sample_weight_grams" placeholder="e.g. 420" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" required>
+            </div>
+            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ t('record_weight') }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 6. Modal: Add Expense -->
+<div id="modal-add-expense" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('log_expense') }}</h3>
+            <button onclick="closeModal('modal-add-expense')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('record_finance') }}" class="space-y-3">
+            <input type="hidden" name="farm_id" value="{{ selected_farm_id }}">
+            <input type="hidden" name="transaction_type" value="expense">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                    <select name="category" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        <option value="feed">Feed</option>
+                        <option value="chicks">Chicks</option>
+                        <option value="medicines">Medicines</option>
+                        <option value="vaccines">Vaccines</option>
+                        <option value="electricity">Electricity</option>
+                        <option value="labour">Labour</option>
+                        <option value="transport">Transportation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Amount (₹)</label>
+                    <input type="number" step="0.01" name="amount" required placeholder="5000" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Title / Supplier</label>
+                <input type="text" name="title" placeholder="e.g. 10 Bags Finisher Feed" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+            </div>
+            <button type="submit" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ 'ఖర్చు నమోదు చేయండి' if current_lang == 'te' else 'Save Expense' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 7. Modal: Add Sale -->
+<div id="modal-add-sale" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('log_sale') }}</h3>
+            <button onclick="closeModal('modal-add-sale')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('record_finance') }}" class="space-y-3">
+            <input type="hidden" name="farm_id" value="{{ selected_farm_id }}">
+            <input type="hidden" name="transaction_type" value="sale">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                    <select name="category" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        <option value="bird_sale">Bird Sale (Broiler)</option>
+                        <option value="egg_sale">Egg Sale</option>
+                        <option value="manure_sale">Manure Sale</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Total Revenue (₹)</label>
+                    <input type="number" step="0.01" name="amount" required placeholder="203500" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-emerald-600">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Quantity (Birds / Kg)</label>
+                    <input type="number" step="0.1" name="quantity" placeholder="1000" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Price per Kg (₹)</label>
+                    <input type="number" step="0.1" name="unit_price" placeholder="110" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ 'అమ్మకం నమోదు చేయండి' if current_lang == 'te' else 'Save Sale Record' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 8. Modal: Add Vaccine -->
+<div id="modal-add-vaccine" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-base text-slate-800">{{ t('schedule_vaccine') }}</h3>
+            <button onclick="closeModal('modal-add-vaccine')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{{ url_for('schedule_vaccine') }}" class="space-y-3">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Batch</label>
+                <select name="flock_id" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                    {% for fl in flocks %}
+                        <option value="{{ fl.id }}">{{ fl.batch_code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Vaccine Name</label>
+                <input type="text" name="vaccine_name" required placeholder="e.g. Newcastle Lasota / IBD" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+                    <input type="date" name="scheduled_date" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Dose Route</label>
+                    <select name="dose_type" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        <option value="Eye Drop">Eye Drop</option>
+                        <option value="Drinking Water">Drinking Water</option>
+                        <option value="Subcutaneous Injection">Subcutaneous Injection</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition mt-2">
+                {{ 'టీకా షెడ్యూల్ నమోదు చేయండి' if current_lang == 'te' else 'Schedule Vaccine' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Tab switching logic for Mobile and Desktop
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        const target = document.getElementById('tab-' + tabId);
+        if (target) target.classList.remove('hidden');
+
+        // Update button states
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.getAttribute('data-tab') === tabId) {
+                btn.classList.add('border-brand-600', 'text-brand-600');
+                btn.classList.remove('border-transparent', 'text-slate-500');
+            } else {
+                btn.classList.remove('border-brand-600', 'text-brand-600');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            }
+        });
+
+        if (tabId === 'analytics' || tabId === 'finances') {
+            loadAnalyticsData();
+        }
+    }
+
+    // Modal helpers
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    // Set today's date on all date inputs default
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(inp => {
+            if (!inp.value) inp.value = today;
+        });
+    });
+
+    // AI Diagnosis AJAX
+    function runAiDiagnosis() {
+        const age = document.getElementById('ai-age').value;
+        const temp = document.getElementById('ai-temp').value;
+        const humidity = document.getElementById('ai-humidity').value;
+        const ammonia = document.getElementById('ai-ammonia').value;
+        const symptoms = document.getElementById('ai-symptoms').value;
+
+        fetch('/api/ai/disease-risk', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                age_days: age,
+                temperature: temp,
+                humidity: humidity,
+                ammonia_ppm: ammonia,
+                symptoms: symptoms
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const res = data.result;
+                const outBox = document.getElementById('ai-output');
+                const badge = document.getElementById('ai-risk-badge');
+                const condEl = document.getElementById('ai-conditions');
+                const recEl = document.getElementById('ai-recommendations');
+
+                outBox.classList.remove('hidden');
+                badge.innerText = '{{ "te" }}' === '{{ current_lang }}' ? res.risk_level_te : res.risk_level;
+                
+                badge.className = 'px-3 py-1 rounded-full text-xs font-black uppercase ';
+                if (res.risk_level === 'CRITICAL' || res.risk_level === 'HIGH') {
+                    badge.className += 'bg-rose-100 text-rose-800';
+                } else if (res.risk_level === 'MEDIUM') {
+                    badge.className += 'bg-amber-100 text-amber-800';
+                } else {
+                    badge.className += 'bg-emerald-100 text-emerald-800';
+                }
+
+                condEl.innerHTML = '<strong>' + ('{{ current_lang }}' === 'te' ? 'సంభావ్య కారణాలు: ' : 'Possible Risks: ') + '</strong>' + res.possible_conditions.join(', ');
+                
+                const recs = '{{ current_lang }}' === 'te' ? res.recommendations_te : res.recommendations_en;
+                recEl.innerHTML = recs.map(r => '<li>• ' + r + '</li>').join('');
+            }
+        });
+    }
+
+    // Analytics Chart.js integration
+    let feedChartInstance = null;
+    let mortalityChartInstance = null;
+
+    function loadAnalyticsData() {
+        const farmId = '{{ selected_farm_id }}';
+        if (!farmId) return;
+
+        fetch('/api/analytics/charts/' + farmId)
+        .then(res => res.json())
+        .then(data => {
+            // Update financial cards
+            if (data.financials) {
+                const expEl = document.getElementById('fin-expenses');
+                const saleEl = document.getElementById('fin-sales');
+                const profEl = document.getElementById('fin-profit');
+                if (expEl) expEl.innerText = '₹' + data.financials.expenses.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                if (saleEl) saleEl.innerText = '₹' + data.financials.sales.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                if (profEl) {
+                    profEl.innerText = '₹' + data.financials.net_profit.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                    profEl.className = 'text-2xl font-black mt-1 ' + (data.financials.net_profit >= 0 ? 'text-emerald-600' : 'text-rose-600');
+                }
+            }
+
+            // Render Charts
+            const feedCanvas = document.getElementById('feedChart');
+            if (feedCanvas && data.dates) {
+                if (feedChartInstance) feedChartInstance.destroy();
+                feedChartInstance = new Chart(feedCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates.length ? data.dates : ['No logs yet'],
+                        datasets: [
+                            {
+                                label: 'Feed Intake (kg)',
+                                data: data.feed.length ? data.feed : [0],
+                                borderColor: '#16a34a',
+                                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'Water Intake (L)',
+                                data: data.water.length ? data.water : [0],
+                                borderColor: '#06b6d4',
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: { responsive: true }
+                });
+            }
+
+            const mortCanvas = document.getElementById('mortalityChart');
+            if (mortCanvas && data.dates) {
+                if (mortChartInstance) mortChartInstance.destroy();
+                mortChartInstance = new Chart(mortCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: data.dates.length ? data.dates : ['No logs yet'],
+                        datasets: [{
+                            label: 'Mortality Count',
+                            data: data.mortality.length ? data.mortality : [0],
+                            backgroundColor: '#f43f5e'
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}
