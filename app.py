@@ -203,9 +203,12 @@ def clean_phone(phone_str: str) -> str:
 def index_route():
     """
     Root route:
-    If user is authenticated -> redirect to dashboard.html
-    If not authenticated -> serve landing index.html
+    If explicit view=desktop requested or user is authenticated -> serve dashboard.html
+    Otherwise serve mobile-first app shell index.html
     """
+    view_pref = request.args.get("view", "").lower()
+    if view_pref == "desktop":
+        return send_from_directory("frontend", "dashboard.html")
     user = get_current_user()
     if user:
         return redirect("/dashboard.html")
@@ -221,7 +224,9 @@ def serve_login():
 def serve_register():
     return send_from_directory("frontend", "register.html")
 
+@app.route("/dashboard")
 @app.route("/dashboard.html")
+@app.route("/desktop")
 def serve_dashboard():
     return send_from_directory("frontend", "dashboard.html")
 
@@ -295,8 +300,9 @@ def serve_frontend_direct(filename):
 def api_register():
     """
     Direct user registration without OTP.
-    Required: Full Name, Mobile Number, Password, Confirm Password.
+    Required: Full Name, Mobile Number, Password.
     Optional: Email, Farm Facility Name, Location, Role.
+    Handles existing unverified placeholder users from OTP gracefully.
     """
     data = request.get_json() or {}
     name = (data.get("name") or data.get("fullName") or "").strip()
@@ -307,14 +313,17 @@ def api_register():
     role = data.get("role", "farmer").lower()
     farm_name = (data.get("farmName") or data.get("farm_name") or "").strip()
     location = (data.get("location") or "").strip()
+    country_code = (data.get("countryCode") or data.get("country_code") or "+91").strip()
 
     # Input validations
     if not name:
         return jsonify({"status": "error", "message": "Full Name is required"}), 400
 
-    phone = clean_phone(raw_phone)
-    if not phone or len(phone) < 7:
-        return jsonify({"status": "error", "message": "Valid Mobile Number is required"}), 400
+    digits = re.sub(r"\D", "", raw_phone)
+    if len(digits) < 10:
+        return jsonify({"status": "error", "message": "Valid 10-digit mobile number is required"}), 400
+    phone_10 = digits[-10:]
+    full_phone = f"{country_code} {phone_10}"
 
     if not password or len(password) < 6:
         return jsonify({"status": "error", "message": "Password must be at least 6 characters long"}), 400
@@ -323,17 +332,74 @@ def api_register():
         return jsonify({"status": "error", "message": "Passwords do not match"}), 400
 
     # Check for existing user by mobile or email
-    if User.query.filter_by(phone=phone).first():
-        return jsonify({"status": "error", "message": "This mobile number is already registered. Please log in."}), 409
+    existing_user = User.query.filter(
+        (User.phone == full_phone) |
+        (User.phone == phone_10) |
+        (User.phone.like(f"%{phone_10}%"))
+    ).first()
 
-    if email and User.query.filter_by(email=email).first():
-        return jsonify({"status": "error", "message": "This email address is already registered."}), 409
+    if email:
+        existing_email_user = User.query.filter(User.email == email.lower()).first()
+        if existing_email_user and (not existing_user or existing_email_user.id != existing_user.id):
+            return jsonify({"status": "error", "message": "This email address is already registered."}), 409
 
-    # Create new User
     try:
+        if existing_user:
+            # If user was created as unverified placeholder by OTP sending, update them with full registration details
+            if not existing_user.mobile_verified or existing_user.name == "Poultry Farmer" or existing_user.password_hash.startswith("Pass_"):
+                existing_user.name = name
+                existing_user.phone = full_phone
+                if email:
+                    existing_user.email = email
+                existing_user.role = role if role in ("farmer", "veterinarian", "admin") else "farmer"
+                existing_user.set_password(password)
+                existing_user.mobile_verified = True
+                existing_user.account_status = "active"
+
+                farm = existing_user.farms.first()
+                if farm:
+                    if farm_name:
+                        farm.farm_name = farm_name
+                    if location:
+                        farm.location = location
+                elif farm_name:
+                    initial_farm = Farm(
+                        owner_id=existing_user.id,
+                        farm_name=farm_name,
+                        location=location or "Agro Region",
+                        total_capacity=5000,
+                        farm_type="Broiler",
+                        farm_size="2 Acres",
+                        established_date=date.today()
+                    )
+                    db.session.add(initial_farm)
+
+                db.session.commit()
+
+                session["user_id"] = existing_user.id
+                session["user_name"] = existing_user.name
+                session["user_role"] = existing_user.role
+                access_token = create_access_token(identity=str(existing_user.id), expires_delta=timedelta(days=7))
+
+                user_dict = existing_user.to_dict()
+                f_farm = existing_user.farms.first()
+                if f_farm:
+                    user_dict["farm_id"] = f_farm.id
+                    user_dict["farm_name"] = f_farm.farm_name
+
+                return jsonify({
+                    "status": "success",
+                    "message": "Account registered successfully!",
+                    "token": access_token,
+                    "user": user_dict
+                }), 200
+            else:
+                return jsonify({"status": "error", "message": "This mobile number is already registered. Please sign in."}), 409
+
+        # Create brand new user
         user = User(
             name=name,
-            phone=phone,
+            phone=full_phone,
             email=email,
             role=role if role in ("farmer", "veterinarian", "admin") else "farmer",
             mobile_verified=True,
@@ -348,32 +414,33 @@ def api_register():
         setting = UserSetting(user_id=user.id, language="en", currency="INR", fcr_target=Decimal("1.60"))
         db.session.add(setting)
 
-        # Create default Farm if farm name provided
-        if farm_name:
-            initial_farm = Farm(
-                owner_id=user.id,
-                farm_name=farm_name,
-                location=location or "Agro Region",
-                total_capacity=5000,
-                farm_type="Broiler",
-                farm_size="2 Acres",
-                established_date=date.today()
-            )
-            db.session.add(initial_farm)
-
+        # Create default Farm
+        initial_farm = Farm(
+            owner_id=user.id,
+            farm_name=farm_name or "My Poultry Farm",
+            location=location or "Agro Region",
+            total_capacity=5000,
+            farm_type="Broiler",
+            farm_size="2 Acres",
+            established_date=date.today()
+        )
+        db.session.add(initial_farm)
         db.session.commit()
 
-        # Set session and generate JWT access token
         session["user_id"] = user.id
         session["user_name"] = user.name
         session["user_role"] = user.role
         access_token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=7))
 
+        user_dict = user.to_dict()
+        user_dict["farm_id"] = initial_farm.id
+        user_dict["farm_name"] = initial_farm.farm_name
+
         return jsonify({
             "status": "success",
             "message": "Account registered successfully!",
             "token": access_token,
-            "user": user.to_dict()
+            "user": user_dict
         }), 201
 
     except Exception as e:
@@ -386,6 +453,7 @@ def api_register():
 def api_login():
     """
     Direct user login using Mobile Number / Email and Password (NO OTP REQUIRED).
+    Flexible phone number matching with or without country code.
     """
     data = request.get_json() or {}
     identifier = (data.get("identifier") or data.get("phone") or data.get("email") or "").strip()
@@ -397,13 +465,14 @@ def api_login():
         return jsonify({"status": "error", "message": "Password is required"}), 400
 
     phone_clean = clean_phone(identifier)
+    digits = re.sub(r"\D", "", identifier)
+    phone_10 = digits[-10:] if len(digits) >= 10 else ""
 
-    # Search user by phone or email
-    user = User.query.filter(
-        (User.phone == phone_clean) |
-        (User.phone == identifier) |
-        (User.email == identifier.lower())
-    ).first()
+    # Search user by exact phone, 10-digit phone, or email
+    user_query = (User.phone == phone_clean) | (User.phone == identifier) | (User.email == identifier.lower())
+    if phone_10:
+        user_query = user_query | (User.phone.like(f"%{phone_10}%"))
+    user = User.query.filter(user_query).first()
 
     if not user or not user.check_password(password):
         return jsonify({"status": "error", "message": "Invalid mobile number or password."}), 401
@@ -417,11 +486,17 @@ def api_login():
     session["user_role"] = user.role
     access_token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=7))
 
+    user_dict = user.to_dict()
+    first_farm = user.farms.first()
+    if first_farm:
+        user_dict["farm_id"] = first_farm.id
+        user_dict["farm_name"] = first_farm.farm_name
+
     return jsonify({
         "status": "success",
         "message": f"Welcome back, {user.name}!",
         "token": access_token,
-        "user": user.to_dict()
+        "user": user_dict
     }), 200
 
 
@@ -429,6 +504,7 @@ def api_login():
 def api_send_otp():
     """
     Sends a 6-digit OTP to the specified mobile number for login or password reset.
+    Returns the OTP code in response for instant auto-filling and testing.
     """
     data = request.get_json() or {}
     raw_phone = (data.get("phone") or data.get("mobileNumber") or data.get("mobile") or "").strip()
@@ -477,7 +553,8 @@ def api_send_otp():
 
     otp_code = SMSService.generate_otp()
     otp_hash = SMSService.hash_otp(otp_code)
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+    # Store expires_at 15 minutes in the future
+    expires_at = datetime.utcnow() + timedelta(minutes=15)
 
     OtpVerification.query.filter_by(user_id=user.id, is_used=False).update({"is_used": True})
 
@@ -506,6 +583,7 @@ def api_send_otp():
 def api_verify_otp():
     """
     Verifies 6-digit OTP and completes mobile authentication.
+    Resilient to phone number formatting and timezone differences.
     """
     data = request.get_json() or {}
     raw_phone = (data.get("phone") or data.get("mobileNumber") or data.get("mobile") or "").strip()
@@ -524,21 +602,23 @@ def api_verify_otp():
             (User.phone.like(f"%{phone_10}%"))
         ).first()
 
-    now = datetime.now(timezone.utc)
     if user:
         otp_records = OtpVerification.query.filter(
             OtpVerification.user_id == user.id,
-            OtpVerification.is_used == False,
-            OtpVerification.expires_at > now
+            OtpVerification.is_used == False
         ).order_by(OtpVerification.id.desc()).all()
     else:
         otp_records = OtpVerification.query.filter(
-            OtpVerification.is_used == False,
-            OtpVerification.expires_at > now
-        ).order_by(OtpVerification.id.desc()).limit(10).all()
+            OtpVerification.is_used == False
+        ).order_by(OtpVerification.id.desc()).limit(15).all()
 
     matched_entry = None
+    now_naive = datetime.utcnow()
     for entry in otp_records:
+        if entry.expires_at:
+            exp = entry.expires_at.replace(tzinfo=None) if hasattr(entry.expires_at, 'tzinfo') and entry.expires_at.tzinfo else entry.expires_at
+            if exp < now_naive:
+                continue
         if SMSService.verify_otp_hash(otp_code, entry.otp_hash):
             matched_entry = entry
             break
@@ -547,8 +627,8 @@ def api_verify_otp():
         return jsonify({"status": "error", "message": "Invalid or expired OTP code"}), 400
 
     matched_entry.is_used = True
-    if not user:
-        user = User.query.get(matched_entry.user_id)
+    if not user and matched_entry.user_id:
+        user = db.session.get(User, matched_entry.user_id)
 
     if user:
         user.mobile_verified = True
@@ -601,15 +681,18 @@ def api_reset_password():
     if not user:
         return jsonify({"status": "error", "message": "User not found with this mobile number"}), 404
 
-    now = datetime.now(timezone.utc)
     otp_records = OtpVerification.query.filter(
         OtpVerification.user_id == user.id,
-        OtpVerification.is_used == False,
-        OtpVerification.expires_at > now
+        OtpVerification.is_used == False
     ).order_by(OtpVerification.id.desc()).all()
 
     matched_entry = None
+    now_naive = datetime.utcnow()
     for entry in otp_records:
+        if entry.expires_at:
+            exp = entry.expires_at.replace(tzinfo=None) if hasattr(entry.expires_at, 'tzinfo') and entry.expires_at.tzinfo else entry.expires_at
+            if exp < now_naive:
+                continue
         if SMSService.verify_otp_hash(otp_code, entry.otp_hash):
             matched_entry = entry
             break

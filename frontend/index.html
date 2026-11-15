@@ -19,6 +19,17 @@
 
   <div class="mobile-app-shell">
     
+    <!-- Desktop Switch Banner (Visible on Laptop / Desktop Screens) -->
+    <div class="desktop-top-banner d-none d-md-flex align-items-center justify-content-between px-3 py-2 text-white border-bottom" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+      <div class="d-flex align-items-center gap-2 small">
+        <span class="badge bg-success"><i class="bi bi-display me-1"></i>Desktop Screen</span>
+        <span style="font-size: 0.8rem;">Switch to full sidebar dashboard:</span>
+      </div>
+      <a href="/dashboard.html" class="btn btn-sm btn-success rounded-pill px-3 py-0.5 fw-bold text-nowrap" style="font-size: 0.78rem;">
+        Open Desktop View &rarr;
+      </a>
+    </div>
+
     <!-- Top Mobile Header -->
     <header class="mobile-header">
       <a href="#" class="mobile-brand" onclick="switchMobileTab('dashboard')">
@@ -53,8 +64,8 @@
         </a>
 
         <!-- Switch to Full Desktop Dashboard -->
-        <a href="/" class="btn btn-sm btn-outline-dark rounded-pill px-2 py-1 small" title="Switch to Full Desktop Dashboard">
-          <i class="bi bi-display me-1"></i><span class="small d-none d-sm-inline">Desktop</span>
+        <a href="/dashboard.html" class="btn btn-sm btn-success rounded-pill px-2 py-1 small" title="Switch to Full Desktop Dashboard">
+          <i class="bi bi-display me-1"></i><span class="small fw-bold">Desktop</span>
         </a>
 
         <!-- Clean Data Reset Button -->
@@ -2512,7 +2523,12 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
       }
 
-      const res = await MobileAuth.verifyOtpAndLogin(otp);
+      const code = document.getElementById('countryCodeSelect')?.value || '+91';
+      const num = document.getElementById('mobileNumberInput')?.value.trim();
+      const clean10 = (num || '').replace(/\D/g, '').slice(-10);
+      const fullPhone = clean10 ? `${code} ${clean10}` : null;
+
+      const res = await MobileAuth.verifyOtpAndLogin(otp, fullPhone);
       if (btn) {
         btn.disabled = false;
         btn.innerHTML = '<span>Verify & Sign In</span>';
@@ -2523,6 +2539,7 @@
         updateAuthModalView();
         const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
         if (modal) modal.hide();
+        setTimeout(() => location.reload(), 600);
       } else {
         showToast(res.message || 'Incorrect OTP code', 'danger');
       }
@@ -2614,6 +2631,7 @@
         updateAuthModalView();
         const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
         if (modal) modal.hide();
+        setTimeout(() => location.reload(), 600);
       } else {
         showToast(res.message || 'Registration failed', 'danger');
       }

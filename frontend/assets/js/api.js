@@ -47,9 +47,10 @@ async function apiFetch(endpoint, options = {}) {
           !window.location.pathname.endsWith('register.html') &&
           !window.location.pathname.endsWith('overview.html') &&
           !window.location.pathname.endsWith('index.html') &&
+          !window.location.pathname.endsWith('dashboard.html') &&
           window.location.pathname !== '/' &&
           !window.location.pathname.endsWith('/')) {
-        // Only redirect on protected pages
+        // Only redirect on protected sub-admin pages
         setTimeout(() => {
           window.location.href = 'login.html';
         }, 1200);
@@ -111,21 +112,24 @@ const MockAPI = {
     }
 
     return {
-      farmsCount: 0,
-      activeBatchesCount: 0,
-      totalBirds: 0,
-      totalDailyFeed: 0,
-      totalDailyWater: 0,
-      totalMortality: 0,
-      mortalityRate: '0.00',
-      healthScore: 95,
+      farmsCount: 1,
+      activeBatchesCount: 1,
+      totalBirds: 4850,
+      totalDailyFeed: 265.0,
+      totalDailyWater: 530.0,
+      totalMortality: 3,
+      mortalityRate: '0.06',
+      healthScore: 94,
       riskLevel: 'Low',
       criticalAlertsCount: 0,
-      temperature: 28.0,
-      humidity: 62.0,
-      ammonia: 12.0,
-      pendingTasks: 0,
-      recentActivities: [],
+      temperature: 25.5,
+      humidity: 58.0,
+      ammonia: 11.0,
+      pendingTasks: 1,
+      recentActivities: [
+        { title: 'Broiler Flock Age 21 Microclimate Check', time: '12 mins ago', type: 'health' },
+        { title: 'IoT Telemetry Normal (25.5°C, 58% RH)', time: '30 mins ago', type: 'iot' }
+      ],
       fcr: 1.58
     };
   },
@@ -946,6 +950,31 @@ const MockAPI = {
 
   async saveFarmGeo(farmId, geoData) {
     return geoData;
+  },
+
+  clearAllUserData() {
+    localStorage.removeItem('smart_poultry_farms');
+    localStorage.removeItem('smart_poultry_batches');
+    localStorage.removeItem('smart_poultry_selected_farm');
+    localStorage.removeItem('smart_poultry_conditions');
+    localStorage.removeItem('smart_poultry_alerts');
+    localStorage.removeItem('smart_poultry_vaccinations');
+    localStorage.removeItem('smart_poultry_inventory');
+    localStorage.removeItem('smart_poultry_eggs');
+    return true;
+  },
+
+  loadSampleDemoData() {
+    const sampleFarms = [
+      { id: 'F-101', name: 'Sunrise Broiler Unit 1', location: 'Hyderabad Agro Zone', total_capacity: 5000, currentBirds: 4850, birdType: 'Broiler', healthScore: 94, riskLevel: 'Low', mortalityRate: 0.5 }
+    ];
+    const sampleBatches = [
+      { id: 'B-201', farmId: 'F-101', name: 'Batch 101-Cobb500', birdType: 'Broiler (Cobb 500)', birdCount: 4850, ageDays: 21, mortalityRate: 0.5, healthScore: 94, riskLevel: 'Low' }
+    ];
+    localStorage.setItem('smart_poultry_farms', JSON.stringify(sampleFarms));
+    localStorage.setItem('smart_poultry_batches', JSON.stringify(sampleBatches));
+    localStorage.setItem('smart_poultry_selected_farm', 'F-101');
+    return true;
   }
 };
 

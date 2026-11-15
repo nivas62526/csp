@@ -149,12 +149,13 @@ const MobileAuth = {
   // 4. Send OTP for Mobile Login / Reset
   async sendOtpForLogin(phone, countryCode = '+91') {
     try {
-      this.pendingMobile = `${countryCode} ${phone.replace(/\\D/g, '').slice(-10)}`;
+      const digits = String(phone || '').replace(/\D/g, '').slice(-10);
+      this.pendingMobile = `${countryCode} ${digits}`;
       const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ phone: phone, countryCode: countryCode })
+        body: JSON.stringify({ phone: digits, countryCode: countryCode })
       });
 
       const data = await response.json();
@@ -163,7 +164,7 @@ const MobileAuth = {
         if (data.otp) {
           console.info(`[SmartPoultry OTP] Verification code: ${data.otp}`);
         }
-        return { success: true, message: data.message, phone: data.phone, otp: data.otp };
+        return { success: true, message: data.message, phone: data.phone || this.pendingMobile, otp: data.otp };
       } else {
         return { success: false, message: data.message || 'Failed to dispatch OTP.' };
       }
@@ -174,13 +175,14 @@ const MobileAuth = {
   },
 
   // 5. Verify OTP and Sign In
-  async verifyOtpAndLogin(otp) {
+  async verifyOtpAndLogin(otp, phone = null) {
     try {
+      const targetPhone = phone || this.pendingMobile || '';
       const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ phone: this.pendingMobile, otp: otp })
+        body: JSON.stringify({ phone: targetPhone, otp: otp })
       });
 
       const data = await response.json();
@@ -201,11 +203,12 @@ const MobileAuth = {
   // 6. Reset Password via OTP
   async resetPassword(phone, otp, newPassword) {
     try {
+      const digits = String(phone || '').replace(/\D/g, '').slice(-10);
       const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ phone: phone, otp: otp, password: newPassword })
+        body: JSON.stringify({ phone: digits, otp: otp, password: newPassword })
       });
 
       const data = await response.json();

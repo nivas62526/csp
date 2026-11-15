@@ -161,6 +161,11 @@
         </div>
 
         <div class="topbar-right">
+          <!-- Switch to Mobile App -->
+          <a href="/" class="btn btn-sm btn-outline-success rounded-pill me-2 d-none d-sm-inline-flex align-items-center" title="Switch to Mobile App View">
+            <i class="bi bi-phone me-1"></i><span>Mobile App</span>
+          </a>
+
           <!-- Quick Data Tools (Start Fresh / Load Sample) -->
           <div class="btn-group btn-group-sm me-2 d-none d-md-inline-flex">
             <button type="button" class="btn btn-outline-secondary" onclick="handleClearData()" title="Wipe all data and start empty">
@@ -215,6 +220,13 @@
           </div>
         </div>
       </header>
+
+      <!-- Guest Preview Notice -->
+      <div id="desktopGuestNotice" class="alert alert-info py-2 px-3 mb-0 small text-center border-0 rounded-0 d-none" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #e2e8f0;">
+        <i class="bi bi-info-circle text-info me-2"></i>You are viewing the <strong>Live Desktop Dashboard</strong> in Guest Preview Mode.
+        <a href="login.html" class="btn btn-sm btn-outline-light rounded-pill ms-2 px-2 py-0">Sign In</a> or 
+        <a href="register.html" class="btn btn-sm btn-success rounded-pill ms-1 px-2 py-0">Register Farm</a> to save cloud records.
+      </div>
 
       <!-- Dashboard Body Content -->
       <div class="app-content">
@@ -629,6 +641,21 @@
       PoultryCharts.initDashboardEnvChart('dashboardEnvChart');
       await renderDynamicDashboard();
       updateDesktopAgePrediction(21);
+
+      // Sync user info in sidebar from localStorage
+      const userData = localStorage.getItem('smart_poultry_auth_user');
+      if (userData) {
+        try {
+          const u = JSON.parse(userData);
+          document.querySelectorAll('.sync-user-name').forEach(el => el.textContent = u.name || u.fullName || 'Poultry Farmer');
+          document.querySelectorAll('.sync-user-farm').forEach(el => el.textContent = u.farm_name || 'My Poultry Farm');
+          document.querySelectorAll('.sync-user-email').forEach(el => el.textContent = u.email || '');
+        } catch(e) {}
+      } else {
+        // Show guest preview notice
+        const notice = document.getElementById('desktopGuestNotice');
+        if (notice) notice.classList.remove('d-none');
+      }
     });
 
     async function renderDynamicDashboard() {

@@ -239,14 +239,18 @@
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
 
       const cleanDigits = rawInput.replace(/\D/g, '');
-      const fullIdentifier = (cleanDigits.length === 10) ? `${code}${cleanDigits}` : rawInput;
+      let fullIdentifier = rawInput;
+      if (cleanDigits.length === 10) {
+        // Try with country code first
+        fullIdentifier = `${code}${cleanDigits}`;
+      }
 
       const res = await MobileAuth.loginWithPassword(fullIdentifier, password);
       if (res.success) {
         showAlert('Login successful! Loading your farm data...', 'success');
         setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 600);
+          window.location.href = 'dashboard.html';
+        }, 500);
       } else {
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard';
