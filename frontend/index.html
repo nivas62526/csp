@@ -2471,7 +2471,12 @@
         document.getElementById('displayPendingMobile').textContent = `${code} ${num}`;
         document.getElementById('authStepPhone').classList.add('d-none');
         document.getElementById('authStepOtp').classList.remove('d-none');
-        showToast('OTP code dispatched via SMS!', 'success');
+        if (res.otp) {
+          document.getElementById('otpInput').value = res.otp;
+          showToast(`OTP Code Sent! (Verification Code: ${res.otp})`, 'success');
+        } else {
+          showToast('OTP code dispatched via SMS!', 'success');
+        }
       } else {
         showToast(res.message || 'Failed to dispatch OTP SMS', 'danger');
       }

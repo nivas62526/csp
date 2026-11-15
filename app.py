@@ -45,6 +45,7 @@ from models import (
     Medicine, Expense, Sale, Inventory, Task, Notification,
     UserSetting, DailyRecord, Alert, OtpVerification
 )
+from sms_service import SMSService
 from translations import get_text, TRANSLATIONS
 import ai_engine
 
@@ -422,6 +423,205 @@ def api_login():
         "token": access_token,
         "user": user.to_dict()
     }), 200
+
+
+@app.route("/api/auth/send-otp", methods=["POST"])
+def api_send_otp():
+    """
+    Sends a 6-digit OTP to the specified mobile number for login or password reset.
+    """
+    data = request.get_json() or {}
+    raw_phone = (data.get("phone") or data.get("mobileNumber") or data.get("mobile") or "").strip()
+    country_code = (data.get("countryCode") or data.get("country_code") or "+91").strip()
+
+    if not raw_phone:
+        return jsonify({"status": "error", "message": "Mobile number is required"}), 400
+
+    digits = re.sub(r"\D", "", raw_phone)
+    if len(digits) >= 10:
+        phone_10 = digits[-10:]
+    else:
+        return jsonify({"status": "error", "message": "Please enter a valid 10-digit mobile number"}), 400
+
+    full_phone = f"{country_code} {phone_10}"
+
+    user = User.query.filter(
+        (User.phone == phone_10) |
+        (User.phone == full_phone) |
+        (User.phone.like(f"%{phone_10}%"))
+    ).first()
+
+    if not user:
+        user = User(
+            name="Poultry Farmer",
+            phone=full_phone,
+            role="farmer",
+            language="en",
+            account_status="active",
+            mobile_verified=False
+        )
+        user.set_password(f"Pass_{phone_10}")
+        db.session.add(user)
+        db.session.commit()
+
+        new_farm = Farm(
+            owner_id=user.id,
+            farm_name="My Poultry Farm",
+            location="Shed 1",
+            total_capacity=5000,
+            farm_type="Broiler",
+            established_date=date.today()
+        )
+        db.session.add(new_farm)
+        db.session.commit()
+
+    otp_code = SMSService.generate_otp()
+    otp_hash = SMSService.hash_otp(otp_code)
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+
+    OtpVerification.query.filter_by(user_id=user.id, is_used=False).update({"is_used": True})
+
+    otp_entry = OtpVerification(
+        user_id=user.id,
+        otp_hash=otp_hash,
+        expires_at=expires_at,
+        attempts=0,
+        is_used=False
+    )
+    db.session.add(otp_entry)
+    db.session.commit()
+
+    sms_res = SMSService.send_otp(phone_10, otp_code)
+
+    return jsonify({
+        "status": "success",
+        "message": f"6-digit verification code sent to {full_phone}",
+        "phone": full_phone,
+        "otp": otp_code,
+        "provider": sms_res.get("provider", "mock")
+    }), 200
+
+
+@app.route("/api/auth/verify-otp", methods=["POST"])
+def api_verify_otp():
+    """
+    Verifies 6-digit OTP and completes mobile authentication.
+    """
+    data = request.get_json() or {}
+    raw_phone = (data.get("phone") or data.get("mobileNumber") or data.get("mobile") or "").strip()
+    otp_code = (data.get("otp") or data.get("code") or "").strip()
+
+    if not otp_code or len(otp_code) < 4:
+        return jsonify({"status": "error", "message": "Please enter a valid OTP code"}), 400
+
+    digits = re.sub(r"\D", "", raw_phone) if raw_phone else ""
+    phone_10 = digits[-10:] if len(digits) >= 10 else ""
+
+    user = None
+    if phone_10:
+        user = User.query.filter(
+            (User.phone == phone_10) |
+            (User.phone.like(f"%{phone_10}%"))
+        ).first()
+
+    now = datetime.now(timezone.utc)
+    if user:
+        otp_records = OtpVerification.query.filter(
+            OtpVerification.user_id == user.id,
+            OtpVerification.is_used == False,
+            OtpVerification.expires_at > now
+        ).order_by(OtpVerification.id.desc()).all()
+    else:
+        otp_records = OtpVerification.query.filter(
+            OtpVerification.is_used == False,
+            OtpVerification.expires_at > now
+        ).order_by(OtpVerification.id.desc()).limit(10).all()
+
+    matched_entry = None
+    for entry in otp_records:
+        if SMSService.verify_otp_hash(otp_code, entry.otp_hash):
+            matched_entry = entry
+            break
+
+    if not matched_entry:
+        return jsonify({"status": "error", "message": "Invalid or expired OTP code"}), 400
+
+    matched_entry.is_used = True
+    if not user:
+        user = User.query.get(matched_entry.user_id)
+
+    if user:
+        user.mobile_verified = True
+    db.session.commit()
+
+    session["user_id"] = user.id
+    session["user_name"] = user.name
+    session["user_role"] = user.role
+    session.permanent = True
+
+    token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=7))
+    user_dict = user.to_dict()
+    first_farm = user.farms.first()
+    if first_farm:
+        user_dict["farm_id"] = first_farm.id
+        user_dict["farm_name"] = first_farm.farm_name
+
+    return jsonify({
+        "status": "success",
+        "message": "Mobile verification successful",
+        "token": token,
+        "user": user_dict
+    }), 200
+
+
+@app.route("/api/auth/reset-password", methods=["POST"])
+def api_reset_password():
+    """
+    Resets user password via verified OTP.
+    """
+    data = request.get_json() or {}
+    raw_phone = (data.get("phone") or "").strip()
+    otp_code = (data.get("otp") or "").strip()
+    new_password = (data.get("password") or data.get("newPassword") or "").strip()
+
+    if not raw_phone or not otp_code or not new_password:
+        return jsonify({"status": "error", "message": "Mobile number, OTP, and new password are required"}), 400
+
+    if len(new_password) < 6:
+        return jsonify({"status": "error", "message": "New password must be at least 6 characters"}), 400
+
+    digits = re.sub(r"\D", "", raw_phone)
+    phone_10 = digits[-10:] if len(digits) >= 10 else ""
+
+    user = User.query.filter(
+        (User.phone == phone_10) |
+        (User.phone.like(f"%{phone_10}%"))
+    ).first()
+
+    if not user:
+        return jsonify({"status": "error", "message": "User not found with this mobile number"}), 404
+
+    now = datetime.now(timezone.utc)
+    otp_records = OtpVerification.query.filter(
+        OtpVerification.user_id == user.id,
+        OtpVerification.is_used == False,
+        OtpVerification.expires_at > now
+    ).order_by(OtpVerification.id.desc()).all()
+
+    matched_entry = None
+    for entry in otp_records:
+        if SMSService.verify_otp_hash(otp_code, entry.otp_hash):
+            matched_entry = entry
+            break
+
+    if not matched_entry:
+        return jsonify({"status": "error", "message": "Invalid or expired OTP code"}), 400
+
+    matched_entry.is_used = True
+    user.set_password(new_password)
+    db.session.commit()
+
+    return jsonify({"status": "success", "message": "Password reset successfully. You can now login."}), 200
 
 
 @app.route("/api/auth/me", methods=["GET"])

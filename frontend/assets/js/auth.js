@@ -144,6 +144,80 @@ const MobileAuth = {
     localStorage.removeItem('smart_poultry_selected_farm');
     this.checkAuthStatus();
     window.location.href = 'login.html';
+  },
+
+  // 4. Send OTP for Mobile Login / Reset
+  async sendOtpForLogin(phone, countryCode = '+91') {
+    try {
+      this.pendingMobile = `${countryCode} ${phone.replace(/\\D/g, '').slice(-10)}`;
+      const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ phone: phone, countryCode: countryCode })
+      });
+
+      const data = await response.json();
+      if (response.ok && data.status === 'success') {
+        this.currentOtp = data.otp || null;
+        if (data.otp) {
+          console.info(`[SmartPoultry OTP] Verification code: ${data.otp}`);
+        }
+        return { success: true, message: data.message, phone: data.phone, otp: data.otp };
+      } else {
+        return { success: false, message: data.message || 'Failed to dispatch OTP.' };
+      }
+    } catch (e) {
+      console.error('Error in sendOtpForLogin:', e);
+      return { success: false, message: 'Could not connect to server. Please try again.' };
+    }
+  },
+
+  // 5. Verify OTP and Sign In
+  async verifyOtpAndLogin(otp) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ phone: this.pendingMobile, otp: otp })
+      });
+
+      const data = await response.json();
+      if (response.ok && data.status === 'success') {
+        if (data.token) localStorage.setItem(JWT_TOKEN_KEY, data.token);
+        if (data.user) localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        this.checkAuthStatus();
+        return { success: true, user: data.user, token: data.token, message: data.message };
+      } else {
+        return { success: false, message: data.message || 'Invalid OTP code.' };
+      }
+    } catch (e) {
+      console.error('Error in verifyOtpAndLogin:', e);
+      return { success: false, message: 'Could not connect to server. Please try again.' };
+    }
+  },
+
+  // 6. Reset Password via OTP
+  async resetPassword(phone, otp, newPassword) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ phone: phone, otp: otp, password: newPassword })
+      });
+
+      const data = await response.json();
+      if (response.ok && data.status === 'success') {
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: data.message || 'Failed to reset password.' };
+      }
+    } catch (e) {
+      console.error('Error in resetPassword:', e);
+      return { success: false, message: 'Could not connect to server. Please try again.' };
+    }
   }
 };
 

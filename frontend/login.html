@@ -277,11 +277,16 @@
       }
 
       if (res.success) {
-        showResetAlert('OTP dispatched to your mobile phone via SMS!', 'success');
         document.getElementById('resetTargetDisplay').textContent = `${code} ${num}`;
         document.getElementById('resetStepPhone').classList.add('d-none');
         document.getElementById('resetStepVerify').classList.remove('d-none');
-        document.getElementById('resetOtpInput').value = '';
+        if (res.otp) {
+          document.getElementById('resetOtpInput').value = res.otp;
+          showResetAlert(`OTP sent to phone! (Code: ${res.otp})`, 'success');
+        } else {
+          showResetAlert('OTP dispatched to your mobile phone via SMS!', 'success');
+          document.getElementById('resetOtpInput').value = '';
+        }
         document.getElementById('resetOtpInput').focus();
       } else {
         showResetAlert(res.message || 'Failed to dispatch OTP SMS.', 'danger');
