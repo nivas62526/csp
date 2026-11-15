@@ -353,3 +353,8 @@ def predict_age_requirements(breed="Broiler (Cobb 500)", age_days=21, bird_count
             f"షెడ్ ఉష్ణోగ్రత {target_temp_c}°C ఉండేలా డిజిటల్ మీటర్లతో నిరంతరం పర్యవేక్షించండి."
         ]
     }
+
+def estimate_feed_requirements(age_days=21, bird_count=1000, breed="Cobb 500"):
+    """Alias for backwards and endpoint compatibility"""
+    return predict_age_requirements(breed=breed, age_days=age_days, bird_count=bird_count)
+

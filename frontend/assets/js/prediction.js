@@ -639,28 +639,53 @@ const AIPredictor = {
     const minTempF = Math.round((minTempC * 9 / 5) + 32);
     const maxTempF = Math.round((maxTempC * 9 / 5) + 32);
 
+    const targetTempRound = Math.round(targetTempC * 10) / 10;
+    const minTempRound = Math.round(minTempC * 10) / 10;
+    const maxTempRound = Math.round(maxTempC * 10) / 10;
+    const feedPerBirdRound = Math.round(gramsPerBird * 10) / 10;
+    const feedDailyKgRound = Math.round(dailyFeedKg * 10) / 10;
+    const waterDailyLRound = Math.round(dailyWaterLiters * 10) / 10;
+    const waterPerBirdRound = Math.round(waterMlPerBird * 10) / 10;
+    const weekNum = Math.ceil(ageDays / 7);
+
     return {
       ageDays,
-      ageWeeks: Math.ceil(ageDays / 7),
+      ageWeeks: weekNum,
+      week: weekNum,
       birdCount,
       breed,
+      // Flat properties for direct binding
+      feedStage: feedStage,
+      dailyFlockFeedKg: feedDailyKgRound,
+      dailyFeedPerBirdG: feedPerBirdRound,
+      dailyFeedBags50kg: bags50kg,
+      waterToFeedRatio: waterRatio,
+      dailyFlockWaterL: waterDailyLRound,
+      dailyWaterPerBirdMl: waterPerBirdRound,
+      broodingStatus: broodingStatus,
+      targetTempC: targetTempRound,
+      targetTempF: targetTempF,
+      minComfortTempC: minTempRound,
+      maxComfortTempC: maxTempRound,
+      ventilationAdvice: climateAdvice,
+      // Nested objects
       food: {
-        perBirdGrams: Math.round(gramsPerBird * 10) / 10,
-        dailyKg: Math.round(dailyFeedKg * 10) / 10,
+        perBirdGrams: feedPerBirdRound,
+        dailyKg: feedDailyKgRound,
         weeklyKg: Math.round(weeklyFeedKg * 10) / 10,
         bags50kg: bags50kg,
         stage: feedStage
       },
       water: {
-        perBirdMl: Math.round(waterMlPerBird * 10) / 10,
-        dailyLiters: Math.round(dailyWaterLiters * 10) / 10,
+        perBirdMl: waterPerBirdRound,
+        dailyLiters: waterDailyLRound,
         weeklyLiters: Math.round(weeklyWaterLiters * 10) / 10,
         ratio: waterRatio
       },
       temperature: {
-        targetC: Math.round(targetTempC * 10) / 10,
-        minC: Math.round(minTempC * 10) / 10,
-        maxC: Math.round(maxTempC * 10) / 10,
+        targetC: targetTempRound,
+        minC: minTempRound,
+        maxC: maxTempRound,
         targetF: targetTempF,
         minF: minTempF,
         maxF: maxTempF,

@@ -398,7 +398,7 @@
       };
     }
 
-    function runConditionAnalysis() {
+    async function runConditionAnalysis() {
       const formData = getFormData();
       const spinner = document.getElementById('aiAnalyzingSpinner');
       const resultCard = document.getElementById('conditionResultCard');
@@ -407,45 +407,81 @@
       spinner.classList.remove('d-none');
       resultCard.classList.add('d-none');
 
-      setTimeout(() => {
-        const evalResult = AIPredictor.calculateConditionRisk(formData);
-        spinner.classList.add('d-none');
-        resultCard.classList.remove('d-none');
-        saveBtn.style.display = 'inline-flex';
+      let backendPred = null;
+      try {
+        const apiRes = await apiFetch('/api/ai/disease-risk', {
+          method: 'POST',
+          body: JSON.stringify({
+            age_days: 28,
+            temperature: parseFloat(formData.temperature) || 28.0,
+            humidity: parseFloat(formData.humidity) || 60.0,
+            ammonia_ppm: 14.0,
+            mortality: parseFloat(formData.mortality) || 0.0,
+            symptoms: formData.symptoms ? formData.symptoms.join(', ') : ''
+          })
+        });
+        if (apiRes && apiRes.prediction) {
+          backendPred = apiRes.prediction;
+        }
+      } catch (err) {
+        console.warn('Backend AI API error, falling back to client model:', err);
+      }
 
-        // Render evaluation results
-        const riskBadge = document.getElementById('resRiskBadge');
-        const cardEl = document.getElementById('conditionResultCard');
+      const evalResult = AIPredictor.calculateConditionRisk(formData);
+      if (backendPred) {
+        if (backendPred.risk_level === 'CRITICAL' || backendPred.risk_level === 'HIGH') {
+          evalResult.riskLevel = 'High';
+        } else if (backendPred.risk_level === 'MEDIUM') {
+          evalResult.riskLevel = 'Medium';
+        }
+        if (backendPred.possible_conditions && backendPred.possible_conditions.length > 0) {
+          evalResult.conditionRiskTitle = backendPred.possible_conditions.join(' & ');
+        }
+        if (backendPred.recommendations_en && backendPred.recommendations_en.length > 0) {
+          evalResult.recommendations = backendPred.recommendations_en.map((rec, i) => ({
+            title: `Protocol #${i+1}`,
+            desc: rec,
+            priority: evalResult.riskLevel
+          }));
+        }
+      }
 
-        cardEl.className = `prediction-result-card ${evalResult.riskLevel === 'High' ? 'risk-high' : evalResult.riskLevel === 'Medium' ? 'risk-medium' : 'risk-low'}`;
-        riskBadge.className = `badge ${evalResult.riskLevel === 'High' ? 'bg-danger' : evalResult.riskLevel === 'Medium' ? 'bg-warning text-dark' : 'bg-success'} px-3 py-2 fw-bold`;
-        riskBadge.innerHTML = `<i class="bi bi-shield-fill me-1"></i> ${evalResult.riskLevel} Disease-Risk`;
+      spinner.classList.add('d-none');
+      resultCard.classList.remove('d-none');
+      saveBtn.style.display = 'inline-flex';
 
-        document.getElementById('resConfidence').textContent = `${evalResult.confidence}% Confidence`;
-        document.getElementById('resTitle').textContent = evalResult.conditionRiskTitle;
-        document.getElementById('resSummary').textContent = evalResult.reasons.join(' ');
+      // Render evaluation results
+      const riskBadge = document.getElementById('resRiskBadge');
+      const cardEl = document.getElementById('conditionResultCard');
 
-        // Render Indicators
-        const indContainer = document.getElementById('resIndicatorsContainer');
-        indContainer.innerHTML = evalResult.indicators.map(ind => `
-          <span class="badge ${ind.status === 'danger' ? 'bg-danger-subtle text-danger' : ind.status === 'warning' ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success'} border p-2">
-            ${ind.label}: ${ind.value}
-          </span>
-        `).join('');
+      cardEl.className = `prediction-result-card ${evalResult.riskLevel === 'High' ? 'risk-high' : evalResult.riskLevel === 'Medium' ? 'risk-medium' : 'risk-low'}`;
+      riskBadge.className = `badge ${evalResult.riskLevel === 'High' ? 'bg-danger' : evalResult.riskLevel === 'Medium' ? 'bg-warning text-dark' : 'bg-success'} px-3 py-2 fw-bold`;
+      riskBadge.innerHTML = `<i class="bi bi-shield-fill me-1"></i> ${evalResult.riskLevel} Disease-Risk`;
 
-        // Render Recommendations
-        const recContainer = document.getElementById('resRecsContainer');
-        recContainer.innerHTML = evalResult.recommendations.map(r => `
-          <div class="list-group-item small py-2 bg-light">
-            <strong class="d-block ${r.priority === 'High' ? 'text-danger' : r.priority === 'Medium' ? 'text-warning' : 'text-success'}">
-              <i class="bi bi-check-circle-fill me-1"></i> ${r.title}
-            </strong>
-            <span class="text-muted">${r.desc}</span>
-          </div>
-        `).join('');
+      document.getElementById('resConfidence').textContent = `${evalResult.confidence}% Confidence`;
+      document.getElementById('resTitle').textContent = evalResult.conditionRiskTitle;
+      document.getElementById('resSummary').textContent = evalResult.reasons.join(' ');
 
-        showToast(`AI Risk assessment complete: ${evalResult.riskLevel} Risk`, evalResult.riskLevel === 'High' ? 'danger' : 'info');
-      }, 700);
+      // Render Indicators
+      const indContainer = document.getElementById('resIndicatorsContainer');
+      indContainer.innerHTML = evalResult.indicators.map(ind => `
+        <span class="badge ${ind.status === 'danger' ? 'bg-danger-subtle text-danger' : ind.status === 'warning' ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success'} border p-2">
+          ${ind.label}: ${ind.value}
+        </span>
+      `).join('');
+
+      // Render Recommendations
+      const recContainer = document.getElementById('resRecsContainer');
+      recContainer.innerHTML = evalResult.recommendations.map(r => `
+        <div class="list-group-item small py-2 bg-light">
+          <strong class="d-block ${r.priority === 'High' ? 'text-danger' : r.priority === 'Medium' ? 'text-warning' : 'text-success'}">
+            <i class="bi bi-check-circle-fill me-1"></i> ${r.title}
+          </strong>
+          <span class="text-muted">${r.desc}</span>
+        </div>
+      `).join('');
+
+      showToast(`AI Risk assessment complete: ${evalResult.riskLevel} Risk`, evalResult.riskLevel === 'High' ? 'danger' : 'info');
     }
 
     function loadSampleConditionData() {

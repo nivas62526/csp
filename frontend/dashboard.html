@@ -837,7 +837,7 @@
     }
 
     // Flock Age AI Predictor Controller (Requirement 6)
-    function updateDesktopAgePrediction(val) {
+    async function updateDesktopAgePrediction(val) {
       const slider = document.getElementById('desktopAgeSlider');
       const countInput = document.getElementById('desktopBirdCountInput');
       if (!slider || typeof AIPredictor === 'undefined') return;
@@ -846,7 +846,41 @@
       if (val !== undefined) slider.value = age;
       const count = countInput ? (parseInt(countInput.value) || 5000) : 5000;
 
-      const pred = AIPredictor.predictByAge(age, count, 'Broiler (Cobb 500)');
+      let pred = AIPredictor.predictByAge(age, count, 'Broiler (Cobb 500)');
+
+      // Fetch live backend calculation from Flask ai_engine
+      try {
+        if (typeof apiFetch === 'function') {
+          const apiRes = await apiFetch('/api/ai/feed-estimate', {
+            method: 'POST',
+            body: JSON.stringify({ age_days: age, bird_count: count, breed: 'Broiler (Cobb 500)' })
+          });
+          if (apiRes && apiRes.feed_estimation) {
+            const f = apiRes.feed_estimation;
+            if (f.feed) {
+              pred.dailyFlockFeedKg = f.feed.daily_flock_kg || pred.dailyFlockFeedKg;
+              pred.dailyFeedPerBirdG = f.feed.per_bird_grams || pred.dailyFeedPerBirdG;
+              pred.dailyFeedBags50kg = f.feed.daily_bags_50kg || pred.dailyFeedBags50kg;
+              pred.feedStage = f.feed.feed_stage || pred.feedStage;
+            }
+            if (f.water) {
+              pred.dailyFlockWaterL = f.water.daily_flock_liters || pred.dailyFlockWaterL;
+              pred.dailyWaterPerBirdMl = f.water.per_bird_ml || pred.dailyWaterPerBirdMl;
+              pred.waterToFeedRatio = f.water.ratio_to_feed || pred.waterToFeedRatio;
+            }
+            if (f.temperature) {
+              pred.targetTempC = f.temperature.target_c || pred.targetTempC;
+              pred.targetTempF = f.temperature.target_f || pred.targetTempF;
+              pred.minComfortTempC = f.temperature.min_comfort_c || pred.minComfortTempC;
+              pred.maxComfortTempC = f.temperature.max_comfort_c || pred.maxComfortTempC;
+              pred.broodingStatus = f.temperature.brooding_status || pred.broodingStatus;
+              pred.ventilationAdvice = f.temperature.ventilation_advice || pred.ventilationAdvice;
+            }
+          }
+        }
+      } catch (e) {
+        // Fallback to client model seamlessly
+      }
 
       const ageDisplay = document.getElementById('desktopAgeDisplay');
       if (ageDisplay) ageDisplay.textContent = `${pred.ageDays} Days`;

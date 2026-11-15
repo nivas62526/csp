@@ -584,12 +584,99 @@
           progressContainer.classList.add('d-none');
 
           const symptoms = document.getElementById('cvSymptomsInput') ? document.getElementById('cvSymptomsInput').value.trim() : '';
-          const analysis = await AIPredictor.analyzeImage(currentImageSrc, currentSamplePreset, symptoms);
+          let analysis = null;
+          try {
+            // Call Python Flask Backend REST API
+            const backendRes = await apiFetch('/api/ai/image-prediction', {
+              method: 'POST',
+              body: JSON.stringify({
+                sample_type: currentSamplePreset || 'uploaded',
+                symptoms: symptoms,
+                image_data: currentImageSrc
+              })
+            });
+            if (backendRes && backendRes.vision_result) {
+              analysis = backendRes.vision_result;
+            }
+          } catch (err) {
+            console.warn('Backend AI API error, falling back to client predictor:', err);
+          }
+          if (!analysis) {
+            analysis = await AIPredictor.analyzeImage(currentImageSrc, currentSamplePreset, symptoms);
+          }
           renderCvResult(analysis);
-          showToast(`Image analysis completed: ${analysis.riskLevel} Visual Risk`, analysis.riskLevel === 'High' ? 'danger' : 'success');
+          showToast(`AI Analysis completed: ${analysis.riskLevel} Visual Risk`, analysis.riskLevel === 'High' ? 'danger' : 'success');
         }
       }, 120);
     }
+
+    function submitCvSymptoms() {
+      runImageAnalysis();
+    }
+
+    function renderCvResult(res) {
+      const resultCard = document.getElementById('cvResultCard');
+      const badge = document.getElementById('cvRiskBadge');
+      const title = document.getElementById('cvConditionTitle');
+      const summary = document.getElementById('cvSummary');
+      const conf = document.getElementById('cvConfidence');
+      const featuresContainer = document.getElementById('cvFeaturesContainer');
+      const guidance = document.getElementById('cvGuidance');
+      const symptomsBox = document.getElementById('cvReportedSymptomsBox');
+      const symptomsText = document.getElementById('cvReportedSymptomsText');
+
+      if (!resultCard) return;
+
+      // Risk level styling
+      resultCard.classList.remove('risk-low', 'risk-medium', 'risk-high');
+      if (res.riskLevel === 'High') {
+        resultCard.classList.add('risk-high');
+        if (badge) {
+          badge.className = 'badge bg-danger px-3 py-2 fw-bold';
+          badge.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> High Visual Risk';
+        }
+      } else if (res.riskLevel === 'Medium') {
+        resultCard.classList.add('risk-medium');
+        if (badge) {
+          badge.className = 'badge bg-warning text-dark px-3 py-2 fw-bold';
+          badge.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> Moderate Risk';
+        }
+      } else {
+        resultCard.classList.add('risk-low');
+        if (badge) {
+          badge.className = 'badge bg-success px-3 py-2 fw-bold';
+          badge.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Low Visual Risk';
+        }
+      }
+
+      if (conf) conf.textContent = `${res.confidence || 95}% Confidence`;
+      if (title) title.textContent = res.visualCondition || 'Healthy Plumage & Alert Posture';
+      if (summary) summary.textContent = res.aiSummary || 'Visual Health Indicator: No ocular discharge, comb crusting, or feather disarray detected.';
+      if (guidance) guidance.textContent = res.recommendedActions || 'Maintain baseline hygiene, clean drinking water, and standard feeding intervals.';
+
+      // Reported Symptoms
+      if (symptomsBox && symptomsText) {
+        if (res.reportedSymptoms) {
+          symptomsText.textContent = res.reportedSymptoms;
+          symptomsBox.classList.remove('d-none');
+        } else {
+          symptomsBox.classList.add('d-none');
+        }
+      }
+
+      // Feature Biometrics
+      if (featuresContainer && res.detectedFeatures) {
+        featuresContainer.innerHTML = res.detectedFeatures.map(f => `
+          <div class="col-6">
+            <div class="p-2 border rounded-2 ${f.isGood ? 'bg-light' : 'bg-danger-subtle border-danger-subtle'}">
+              <div class="small fw-bold text-muted">${f.label}</div>
+              <div class="small ${f.isGood ? 'text-success' : 'text-danger fw-bold'}">
+                <i class="bi ${f.isGood ? 'bi-check-circle' : 'bi-exclamation-circle'} me-1"></i>${f.status}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
 
       // Render Safety & Precautions
       const safetyList = document.getElementById('cvSafetyList');

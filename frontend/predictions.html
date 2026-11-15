@@ -98,9 +98,39 @@
             <p class="page-subtitle">Unified synthesis of Computer Vision image biometrics with flock environmental conditions</p>
           </div>
           <div class="d-flex gap-2">
+            <button class="btn btn-primary" onclick="runLiveAiAssessment()" id="runAssessmentBtn">
+              <i class="bi bi-arrow-repeat me-1"></i> <span id="runAssessmentBtnText">Re-calculate AI Prediction</span>
+            </button>
             <a href="recommendations.html" class="btn btn-outline-primary">
               <i class="bi bi-lightbulb-fill"></i> View Recommendations
             </a>
+          </div>
+        </div>
+
+        <!-- Flock Selector & Quick Controls -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-3">
+            <div class="row g-3 align-items-center">
+              <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Select Active Flock / Batch:</label>
+                <select class="form-select form-select-sm" id="predFlockSelect" onchange="onFlockChanged()">
+                  <option value="B-102">Batch B-102 (Broiler Cobb 500 - 31 Days)</option>
+                  <option value="B-101">Batch B-101 (Ross 308 - 14 Days)</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted mb-1">Telemetry Status:</label>
+                <div><span class="badge bg-success-subtle text-success border"><i class="bi bi-broadcast me-1"></i> Sensors Online</span></div>
+              </div>
+              <div class="col-md-5 text-md-end">
+                <a href="image-prediction.html" class="btn btn-sm btn-outline-success me-2">
+                  <i class="bi bi-camera me-1"></i> Open Vision Scanner
+                </a>
+                <a href="conditions.html" class="btn btn-sm btn-outline-info">
+                  <i class="bi bi-clipboard2-pulse me-1"></i> Record Conditions
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -150,32 +180,32 @@
         </div>
 
         <!-- Large Combined Assessment Hero Card -->
-        <div class="dashboard-card mb-4 border-2 border-warning shadow-sm">
-          <div class="dashboard-card-header bg-warning-subtle py-3">
+        <div class="dashboard-card mb-4 border-2 shadow-sm" id="predCombinedCard">
+          <div class="dashboard-card-header py-3" id="predCardHeader">
             <div class="d-flex align-items-center gap-2">
-              <i class="bi bi-shield-fill-exclamation text-warning fs-4"></i>
+              <i class="bi bi-shield-fill-exclamation fs-4" id="predRiskIcon"></i>
               <h5 class="fw-bold mb-0 text-dark">Combined Multi-Modal AI Assessment</h5>
             </div>
-            <span class="badge bg-warning text-dark px-3 py-2 fw-bold fs-6">MEDIUM RISK (88.4% Confidence)</span>
+            <span class="badge px-3 py-2 fw-bold fs-6" id="predRiskBadge">EVALUATING...</span>
           </div>
           <div class="dashboard-card-body">
             <div class="row g-4 align-items-center">
               <div class="col-lg-8">
-                <h5 class="fw-bold mb-2">Integrated Flocks Risk Early-Warning: Sub-optimal Stress Indicators Detected</h5>
-                <p class="text-muted small mb-3">
-                  The Multi-Modal inference system synthesized visual observations of mild conjunctival redness and ruffled posture with farm telemetry showing an 18% decrease in feed consumption and elevated mortality in Batch B-102.
+                <h5 class="fw-bold mb-2" id="predConditionTitle">Integrated Flocks Risk Early-Warning</h5>
+                <p class="text-muted small mb-3" id="predSummary">
+                  Analyzing latest telemetry and optical indicators across the flock...
                 </p>
                 <div class="row g-2">
                   <div class="col-sm-6">
                     <div class="p-2 bg-light rounded border">
                       <span class="small text-muted d-block">Vision Model Status:</span>
-                      <strong class="text-warning"><i class="bi bi-camera me-1"></i> Medium Visual Risk (89.2% Conf.)</strong>
+                      <strong id="predVisionStatus"><i class="bi bi-camera me-1"></i> Scanning visual biometrics...</strong>
                     </div>
                   </div>
                   <div class="col-sm-6">
                     <div class="p-2 bg-light rounded border">
                       <span class="small text-muted d-block">Condition Model Status:</span>
-                      <strong class="text-warning"><i class="bi bi-clipboard2-pulse me-1"></i> Medium Health Risk (87.6% Conf.)</strong>
+                      <strong id="predConditionStatus"><i class="bi bi-clipboard2-pulse me-1"></i> Calculating telemetry metrics...</strong>
                     </div>
                   </div>
                 </div>
@@ -184,8 +214,8 @@
               <div class="col-lg-4 text-center border-start">
                 <div class="p-3 bg-light rounded-3">
                   <div class="text-muted small fw-bold mb-1">COMPOSITE RISK INDEX</div>
-                  <div class="display-5 fw-extrabold text-warning">58 <span class="fs-5 text-muted">/ 100</span></div>
-                  <div class="badge bg-warning text-dark px-3 py-1 mt-1">Medium Risk Action Zone</div>
+                  <div class="display-5 fw-extrabold" id="predRiskScore">-- <span class="fs-5 text-muted">/ 100</span></div>
+                  <div class="badge px-3 py-1 mt-1" id="predRiskZone">Calculating...</div>
                   <div class="mt-3">
                     <a href="recommendations.html" class="btn btn-sm btn-primary w-100">
                       <i class="bi bi-check2-circle"></i> View Recommended Protocol
@@ -204,9 +234,9 @@
             <div class="dashboard-card h-100 mb-0">
               <div class="dashboard-card-header">
                 <h5 class="dashboard-card-title">
-                  <i class="bi bi-clipboard-data text-primary"></i> Monitored Farm Conditions (Batch B-102)
+                  <i class="bi bi-clipboard-data text-primary"></i> <span id="predConditionsTitle">Monitored Farm Conditions (Batch B-102)</span>
                 </h5>
-                <span class="badge bg-light text-dark border">Age: 31 Days</span>
+                <span class="badge bg-light text-dark border" id="predFlockAgeBadge">Age: 31 Days</span>
               </div>
               <div class="dashboard-card-body">
                 <div class="table-responsive mb-3">
@@ -214,37 +244,37 @@
                     <tbody>
                       <tr>
                         <td class="text-muted fw-semibold">Ambient Temperature</td>
-                        <td><strong>28.5 °C</strong></td>
-                        <td><span class="badge bg-warning-subtle text-warning">Elevated (+3.5°C)</span></td>
+                        <td><strong id="predValTemp">28.5 °C</strong></td>
+                        <td><span class="badge bg-warning-subtle text-warning" id="predBadgeTemp">Elevated (+3.5°C)</span></td>
                       </tr>
                       <tr>
                         <td class="text-muted fw-semibold">Relative Humidity</td>
-                        <td><strong>64.0 %</strong></td>
-                        <td><span class="badge bg-success-subtle text-success">Normal</span></td>
+                        <td><strong id="predValHumidity">64.0 %</strong></td>
+                        <td><span class="badge bg-success-subtle text-success" id="predBadgeHumidity">Normal</span></td>
                       </tr>
                       <tr>
                         <td class="text-muted fw-semibold">Daily Feed Consumption</td>
-                        <td><strong>210 kg</strong></td>
-                        <td><span class="badge bg-danger-subtle text-danger">Low (-18%)</span></td>
+                        <td><strong id="predValFeed">210 kg</strong></td>
+                        <td><span class="badge bg-danger-subtle text-danger" id="predBadgeFeed">Low (-18%)</span></td>
                       </tr>
                       <tr>
                         <td class="text-muted fw-semibold">Daily Water Intake</td>
-                        <td><strong>410 L</strong></td>
-                        <td><span class="badge bg-success-subtle text-success">Normal</span></td>
+                        <td><strong id="predValWater">410 L</strong></td>
+                        <td><span class="badge bg-success-subtle text-success" id="predBadgeWater">Normal</span></td>
                       </tr>
                       <tr>
                         <td class="text-muted fw-semibold">Daily Mortality</td>
-                        <td><strong>5 birds</strong></td>
-                        <td><span class="badge bg-danger-subtle text-danger">Elevated</span></td>
+                        <td><strong id="predValMortality">5 birds</strong></td>
+                        <td><span class="badge bg-danger-subtle text-danger" id="predBadgeMortality">Elevated</span></td>
                       </tr>
                       <tr>
                         <td class="text-muted fw-semibold">Flock Activity Level</td>
-                        <td><strong>Low Activity</strong></td>
-                        <td><span class="badge bg-warning-subtle text-warning">Suppressed</span></td>
+                        <td><strong id="predValActivity">Low Activity</strong></td>
+                        <td><span class="badge bg-warning-subtle text-warning" id="predBadgeActivity">Suppressed</span></td>
                       </tr>
                       <tr>
                         <td class="text-muted fw-semibold">Reported Clinical Signs</td>
-                        <td colspan="2"><span class="badge bg-danger-subtle text-danger me-1">Sneezing</span> <span class="badge bg-danger-subtle text-danger">Reduced Feed Intake</span></td>
+                        <td colspan="2" id="predValSymptoms"><span class="badge bg-danger-subtle text-danger me-1">Sneezing</span> <span class="badge bg-danger-subtle text-danger">Reduced Feed Intake</span></td>
                       </tr>
                     </tbody>
                   </table>
@@ -268,44 +298,20 @@
               </div>
               <div class="dashboard-card-body">
                 <h6 class="fw-bold small text-muted text-uppercase mb-2">Automated Risk Indicator Signals</h6>
-                <div class="row g-2 mb-3">
-                  <div class="col-6">
-                    <div class="p-2 bg-light rounded border">
-                      <span class="small text-muted d-block">Temperature:</span>
-                      <span class="small fw-bold text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Warning (Heat Stress)</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="p-2 bg-light rounded border">
-                      <span class="small text-muted d-block">Humidity:</span>
-                      <span class="small fw-bold text-success"><i class="bi bi-check-circle me-1"></i>Normal (64%)</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="p-2 bg-light rounded border">
-                      <span class="small text-muted d-block">Feed Consumption:</span>
-                      <span class="small fw-bold text-danger"><i class="bi bi-x-circle me-1"></i>Low Intake Alert</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="p-2 bg-light rounded border">
-                      <span class="small text-muted d-block">Water Consumption:</span>
-                      <span class="small fw-bold text-success"><i class="bi bi-check-circle me-1"></i>Normal Intake</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="p-2 bg-light rounded border">
-                      <span class="small text-muted d-block">Mortality Trend:</span>
-                      <span class="small fw-bold text-danger"><i class="bi bi-arrow-up-circle me-1"></i>Elevated Spike</span>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="p-2 bg-light rounded border">
-                      <span class="small text-muted d-block">Flock Activity:</span>
-                      <span class="small fw-bold text-warning"><i class="bi bi-dash-circle me-1"></i>Low Movement</span>
-                    </div>
-                  </div>
+                <div class="row g-2 mb-3" id="predRiskIndicatorsGrid">
+                  <!-- Generated by script -->
                 </div>
+
+                <div class="ai-disclaimer-box">
+                  <i class="bi bi-shield-check"></i>
+                  <span class="small">
+                    <strong>AI Safety Assurance:</strong> Results are early warning risk probabilities designed to prevent flock loss. No antibiotic or medication prescriptions are dispensed without veterinarian review.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
                 <div class="ai-disclaimer-box">
                   <i class="bi bi-shield-check"></i>
@@ -324,6 +330,300 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/api.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/prediction.js"></script>
   <script src="assets/js/dashboard.js"></script>
+  <script>
+    const FLOCK_PRESETS = {
+      'B-102': {
+        name: 'Batch B-102 (Broiler Cobb 500)',
+        age: 31,
+        temperature: 28.5,
+        humidity: 64.0,
+        feedConsumption: 210,
+        waterConsumption: 410,
+        mortality: 5,
+        activityLevel: 'Low',
+        symptoms: 'Sneezing, Reduced Feed Intake'
+      },
+      'B-101': {
+        name: 'Batch B-101 (Ross 308)',
+        age: 14,
+        temperature: 24.0,
+        humidity: 58.0,
+        feedConsumption: 260,
+        waterConsumption: 510,
+        mortality: 1,
+        activityLevel: 'Normal',
+        symptoms: 'None'
+      }
+    };
+
+    let currentTelemetry = FLOCK_PRESETS['B-102'];
+
+    async function loadFarmsAndFlocks() {
+      try {
+        const select = document.getElementById('predFlockSelect');
+        if (!select) return;
+
+        const res = await apiFetch('/api/flocks');
+        if (res && res.flocks && res.flocks.length > 0) {
+          select.innerHTML = res.flocks.map(f => `
+            <option value="${f.id}" data-age="${f.age_days || 25}" data-birds="${f.bird_count || 1000}">${f.flock_name || f.batch_name || 'Flock #' + f.id} (${f.breed || 'Broiler'} - ${f.age_days || 25}d)</option>
+          `).join('');
+        }
+      } catch (err) {
+        console.warn('Using local flock presets:', err);
+      }
+    }
+
+    function onFlockChanged() {
+      const select = document.getElementById('predFlockSelect');
+      const val = select ? select.value : 'B-102';
+      if (FLOCK_PRESETS[val]) {
+        currentTelemetry = FLOCK_PRESETS[val];
+      } else {
+        const opt = select.selectedOptions[0];
+        const age = opt ? parseInt(opt.getAttribute('data-age') || '25') : 25;
+        currentTelemetry = {
+          name: opt ? opt.textContent : 'Active Flock',
+          age: age,
+          temperature: 25.0,
+          humidity: 60.0,
+          feedConsumption: 240,
+          waterConsumption: 480,
+          mortality: 2,
+          activityLevel: 'Normal',
+          symptoms: 'None'
+        };
+      }
+      updateTelemetryTable(currentTelemetry);
+      runLiveAiAssessment();
+    }
+
+    function updateTelemetryTable(t) {
+      const ageBadge = document.getElementById('predFlockAgeBadge');
+      if (ageBadge) ageBadge.textContent = `Age: ${t.age} Days`;
+
+      const title = document.getElementById('predConditionsTitle');
+      if (title) title.textContent = `Monitored Farm Conditions (${t.name || 'Active Batch'})`;
+
+      const tempEl = document.getElementById('predValTemp');
+      const tempBadge = document.getElementById('predBadgeTemp');
+      if (tempEl) tempEl.textContent = `${t.temperature} °C`;
+      if (tempBadge) {
+        if (t.temperature > 30) {
+          tempBadge.className = 'badge bg-danger-subtle text-danger';
+          tempBadge.textContent = 'High Heat Stress';
+        } else if (t.temperature > 27) {
+          tempBadge.className = 'badge bg-warning-subtle text-warning';
+          tempBadge.textContent = 'Elevated (+3°C)';
+        } else {
+          tempBadge.className = 'badge bg-success-subtle text-success';
+          tempBadge.textContent = 'Normal';
+        }
+      }
+
+      const humEl = document.getElementById('predValHumidity');
+      if (humEl) humEl.textContent = `${t.humidity} %`;
+
+      const feedEl = document.getElementById('predValFeed');
+      const feedBadge = document.getElementById('predBadgeFeed');
+      if (feedEl) feedEl.textContent = `${t.feedConsumption} kg`;
+      if (feedBadge) {
+        if (t.feedConsumption < 180) {
+          feedBadge.className = 'badge bg-danger-subtle text-danger';
+          feedBadge.textContent = 'Low (-20%)';
+        } else {
+          feedBadge.className = 'badge bg-success-subtle text-success';
+          feedBadge.textContent = 'Normal';
+        }
+      }
+
+      const waterEl = document.getElementById('predValWater');
+      if (waterEl) waterEl.textContent = `${t.waterConsumption} L`;
+
+      const mortEl = document.getElementById('predValMortality');
+      const mortBadge = document.getElementById('predBadgeMortality');
+      if (mortEl) mortEl.textContent = `${t.mortality} birds`;
+      if (mortBadge) {
+        if (t.mortality >= 5) {
+          mortBadge.className = 'badge bg-danger-subtle text-danger';
+          mortBadge.textContent = 'Elevated';
+        } else {
+          mortBadge.className = 'badge bg-success-subtle text-success';
+          mortBadge.textContent = 'Normal';
+        }
+      }
+
+      const actEl = document.getElementById('predValActivity');
+      const actBadge = document.getElementById('predBadgeActivity');
+      if (actEl) actEl.textContent = `${t.activityLevel} Activity`;
+      if (actBadge) {
+        if (t.activityLevel === 'Low') {
+          actBadge.className = 'badge bg-warning-subtle text-warning';
+          actBadge.textContent = 'Suppressed';
+        } else {
+          actBadge.className = 'badge bg-success-subtle text-success';
+          actBadge.textContent = 'Optimal';
+        }
+      }
+
+      const sympEl = document.getElementById('predValSymptoms');
+      if (sympEl) {
+        if (!t.symptoms || t.symptoms === 'None') {
+          sympEl.innerHTML = '<span class="badge bg-success-subtle text-success">None Reported</span>';
+        } else {
+          sympEl.innerHTML = t.symptoms.split(',').map(s => `<span class="badge bg-danger-subtle text-danger me-1">${s.trim()}</span>`).join('');
+        }
+      }
+    }
+
+    async function runLiveAiAssessment() {
+      const btn = document.getElementById('runAssessmentBtn');
+      const btnText = document.getElementById('runAssessmentBtnText');
+      if (btnText) btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Processing AI Models...';
+      if (btn) btn.disabled = true;
+
+      try {
+        // 1. Calculate condition risk via AIPredictor
+        const condResult = AIPredictor.calculateConditionRisk(currentTelemetry);
+
+        // 2. Fetch backend AI risk prediction for cross-validation
+        let backendResult = null;
+        try {
+          const apiRes = await apiFetch('/api/ai/disease-risk', {
+            method: 'POST',
+            body: JSON.stringify({
+              age_days: currentTelemetry.age,
+              temperature: currentTelemetry.temperature,
+              humidity: currentTelemetry.humidity,
+              ammonia_ppm: 14.0,
+              mortality: currentTelemetry.mortality,
+              symptoms: currentTelemetry.symptoms
+            })
+          });
+          if (apiRes && apiRes.prediction) {
+            backendResult = apiRes.prediction;
+          }
+        } catch (e) {
+          console.warn('Backend AI API fallback to client model:', e);
+        }
+
+        // 3. Get latest visual scan or use default
+        let latestVision = null;
+        if (typeof MockAPI !== 'undefined' && MockAPI.getScanHistory) {
+          const scans = MockAPI.getScanHistory();
+          if (scans && scans.length > 0) {
+            latestVision = scans[0];
+          }
+        }
+        if (!latestVision) {
+          latestVision = {
+            riskLevel: condResult.riskLevel === 'High' ? 'Medium' : 'Low',
+            confidence: 89.2,
+            visualCondition: condResult.riskLevel === 'High' ? 'Sub-optimal Plumage & Mild Lethargy' : 'Healthy Plumage & Alert Posture'
+          };
+        }
+
+        // 4. Combine multi-modal models
+        const combined = AIPredictor.combineAnalysis(latestVision, condResult);
+
+        // Render Combined Assessment
+        const card = document.getElementById('predCombinedCard');
+        const header = document.getElementById('predCardHeader');
+        const badge = document.getElementById('predRiskBadge');
+        const icon = document.getElementById('predRiskIcon');
+        const title = document.getElementById('predConditionTitle');
+        const summary = document.getElementById('predSummary');
+        const visionStatus = document.getElementById('predVisionStatus');
+        const conditionStatus = document.getElementById('predConditionStatus');
+        const scoreEl = document.getElementById('predRiskScore');
+        const zoneBadge = document.getElementById('predRiskZone');
+
+        const isHigh = combined.overallRiskLevel === 'High' || (backendResult && backendResult.risk_level === 'CRITICAL');
+        const isMed = combined.overallRiskLevel === 'Medium' || (backendResult && backendResult.risk_level === 'HIGH');
+
+        if (card) {
+          card.className = `dashboard-card mb-4 border-2 shadow-sm ${isHigh ? 'border-danger' : isMed ? 'border-warning' : 'border-success'}`;
+        }
+        if (header) {
+          header.className = `dashboard-card-header py-3 ${isHigh ? 'bg-danger-subtle' : isMed ? 'bg-warning-subtle' : 'bg-success-subtle'}`;
+        }
+        if (badge) {
+          badge.className = `badge px-3 py-2 fw-bold fs-6 ${isHigh ? 'bg-danger text-white' : isMed ? 'bg-warning text-dark' : 'bg-success text-white'}`;
+          badge.textContent = `${combined.overallRiskLevel.toUpperCase()} RISK (${combined.confidence}% Confidence)`;
+        }
+        if (icon) {
+          icon.className = `bi ${isHigh ? 'bi-shield-fill-x text-danger' : isMed ? 'bi-shield-fill-exclamation text-warning' : 'bi-shield-fill-check text-success'} fs-4`;
+        }
+
+        if (title) {
+          title.textContent = isHigh 
+            ? 'Critical Flocks Risk Early-Warning: Multi-Pathology Indicators Alert'
+            : isMed
+            ? 'Integrated Flocks Risk Early-Warning: Sub-optimal Stress Indicators Detected'
+            : 'Optimal Flock Biosecurity & Low Pathology Risk';
+        }
+
+        if (summary) {
+          summary.textContent = combined.synthesisExplanation || 'Synthesized computer vision visual telemetry with real-time flock environmental monitoring.';
+        }
+
+        if (visionStatus) {
+          visionStatus.innerHTML = `<i class="bi bi-camera me-1"></i> ${latestVision.riskLevel} Visual Risk (${latestVision.confidence || 90}% Conf.)`;
+        }
+        if (conditionStatus) {
+          conditionStatus.innerHTML = `<i class="bi bi-clipboard2-pulse me-1"></i> ${condResult.riskLevel} Health Risk (${condResult.confidence}% Conf.)`;
+        }
+
+        if (scoreEl) {
+          const scoreColor = isHigh ? 'text-danger' : isMed ? 'text-warning' : 'text-success';
+          scoreEl.className = `display-5 fw-extrabold ${scoreColor}`;
+          scoreEl.innerHTML = `${combined.compositeRiskScore} <span class="fs-5 text-muted">/ 100</span>`;
+        }
+
+        if (zoneBadge) {
+          zoneBadge.className = `badge px-3 py-1 mt-1 ${isHigh ? 'bg-danger text-white' : isMed ? 'bg-warning text-dark' : 'bg-success text-white'}`;
+          zoneBadge.textContent = isHigh ? 'Critical Intervention Required' : isMed ? 'Medium Risk Action Zone' : 'Standard Maintenance Zone';
+        }
+
+        // Render AI Risk Indicators Grid
+        const grid = document.getElementById('predRiskIndicatorsGrid');
+        if (grid && condResult.indicators) {
+          grid.innerHTML = condResult.indicators.map(ind => {
+            const isDanger = ind.status === 'danger';
+            const isWarn = ind.status === 'warning';
+            const iconClass = isDanger ? 'bi-x-circle text-danger' : isWarn ? 'bi-exclamation-triangle text-warning' : 'bi-check-circle text-success';
+            const textClass = isDanger ? 'text-danger' : isWarn ? 'text-warning' : 'text-success';
+            return `
+              <div class="col-6">
+                <div class="p-2 bg-light rounded border">
+                  <span class="small text-muted d-block">${ind.label}:</span>
+                  <span class="small fw-bold ${textClass}"><i class="bi ${iconClass} me-1"></i>${ind.value}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        showToast(`AI Risk Score: ${combined.compositeRiskScore}/100 (${combined.overallRiskLevel} Risk)`, isHigh ? 'danger' : 'success');
+
+      } catch (err) {
+        console.error('Error running AI assessment:', err);
+        showToast('Error calculating AI prediction: ' + err.message, 'danger');
+      } finally {
+        if (btnText) btnText.innerHTML = '<i class="bi bi-arrow-repeat me-1"></i> Re-calculate AI Prediction';
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof I18n !== 'undefined') I18n.init();
+      loadFarmsAndFlocks();
+      updateTelemetryTable(currentTelemetry);
+      runLiveAiAssessment();
+    });
+  </script>
 </body>
 </html>
