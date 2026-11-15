@@ -46,7 +46,9 @@ async function apiFetch(endpoint, options = {}) {
       if (!window.location.pathname.endsWith('login.html') &&
           !window.location.pathname.endsWith('register.html') &&
           !window.location.pathname.endsWith('overview.html') &&
-          !window.location.pathname.endsWith('index.html')) {
+          !window.location.pathname.endsWith('index.html') &&
+          window.location.pathname !== '/' &&
+          !window.location.pathname.endsWith('/')) {
         // Only redirect on protected pages
         setTimeout(() => {
           window.location.href = 'login.html';

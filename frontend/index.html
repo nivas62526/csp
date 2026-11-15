@@ -1464,18 +1464,17 @@
   <script src="assets/js/voice-input.js"></script>
   <script>
     let currentMobileImage = '';
-    let currentAuthMode = 'login';
 
     document.addEventListener('DOMContentLoaded', async () => {
-      I18n.init();
-      MobileAuth.init();
-      await refreshAllCustomerViews();
-      await loadEggAndMarketViews();
-      await loadHygieneView();
-      await loadGeoStructureView();
-      initMobileImageInput();
-      updateAuthModalView();
-      updateScanLangButtons();
+      try { I18n.init(); } catch (e) { console.warn('I18n init error:', e); }
+      try { MobileAuth.init(); } catch (e) { console.warn('MobileAuth init error:', e); }
+      try { await refreshAllCustomerViews(); } catch (e) { console.warn('refreshAllCustomerViews error:', e); }
+      try { await loadEggAndMarketViews(); } catch (e) { console.warn('loadEggAndMarketViews error:', e); }
+      try { await loadHygieneView(); } catch (e) { console.warn('loadHygieneView error:', e); }
+      try { await loadGeoStructureView(); } catch (e) { console.warn('loadGeoStructureView error:', e); }
+      try { initMobileImageInput(); } catch (e) { console.warn('initMobileImageInput error:', e); }
+      try { updateAuthModalView(); } catch (e) { console.warn('updateAuthModalView error:', e); }
+      try { updateScanLangButtons(); } catch (e) { console.warn('updateScanLangButtons error:', e); }
     });
 
     // 1. Mobile Tab Switcher
@@ -1509,6 +1508,7 @@
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    window.switchMobileTab = switchMobileTab;
 
     // 2. Refresh Customer Views & Stats
     async function refreshAllCustomerViews() {
