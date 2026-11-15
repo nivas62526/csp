@@ -203,15 +203,37 @@ def clean_phone(phone_str: str) -> str:
 def index_route():
     """
     Root route:
-    If explicit view=desktop requested or user is authenticated -> serve dashboard.html
-    Otherwise serve mobile-first app shell index.html
+    If explicit view=desktop requested or user is on desktop browser -> serve dashboard.html
+    If explicit view=mobile requested or user is on mobile browser -> serve index.html
     """
     view_pref = request.args.get("view", "").lower()
     if view_pref == "desktop":
         return send_from_directory("frontend", "dashboard.html")
+    if view_pref == "mobile":
+        return send_from_directory("frontend", "index.html")
+
     user = get_current_user()
     if user:
         return redirect("/dashboard.html")
+
+    # Detect if request is from mobile or desktop
+    ua = (request.headers.get("User-Agent") or "").lower()
+    is_mobile = any(m in ua for m in ["mobile", "android", "iphone", "ipod", "blackberry", "windows phone", "opera mini", "iemobile"])
+    if not is_mobile:
+        return send_from_directory("frontend", "dashboard.html")
+
+    return send_from_directory("frontend", "index.html")
+
+@app.route("/index.html")
+def serve_index_html():
+    view_pref = request.args.get("view", "").lower()
+    if view_pref == "desktop":
+        return redirect("/dashboard.html")
+    if view_pref != "mobile":
+        ua = (request.headers.get("User-Agent") or "").lower()
+        is_mobile = any(m in ua for m in ["mobile", "android", "iphone", "ipod", "blackberry", "windows phone", "opera mini", "iemobile"])
+        if not is_mobile:
+            return redirect("/dashboard.html")
     return send_from_directory("frontend", "index.html")
 
 @app.route("/login")
@@ -630,8 +652,10 @@ def api_verify_otp():
     if not user and matched_entry.user_id:
         user = db.session.get(User, matched_entry.user_id)
 
-    if user:
-        user.mobile_verified = True
+    if not user:
+        return jsonify({"status": "error", "message": "User account not found. Please register first."}), 404
+
+    user.mobile_verified = True
     db.session.commit()
 
     session["user_id"] = user.id

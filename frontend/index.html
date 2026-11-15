@@ -14,6 +14,18 @@
   
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/mobile-app.css">
+
+  <script>
+    // Immediate desktop detection: redirect to full desktop dashboard for monitors >=992px
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (window.innerWidth >= 992 && params.get('view') !== 'mobile' && !sessionStorage.getItem('prefer_mobile_view')) {
+          window.location.replace('/dashboard.html');
+        }
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body class="mobile-app-body">
 
@@ -25,7 +37,7 @@
         <span class="badge bg-success"><i class="bi bi-display me-1"></i>Desktop Screen</span>
         <span style="font-size: 0.8rem;">Switch to full sidebar dashboard:</span>
       </div>
-      <a href="/dashboard.html" class="btn btn-sm btn-success rounded-pill px-3 py-0.5 fw-bold text-nowrap" style="font-size: 0.78rem;">
+      <a href="/dashboard.html" onclick="sessionStorage.removeItem('prefer_mobile_view')" class="btn btn-sm btn-success rounded-pill px-3 py-0.5 fw-bold text-nowrap" style="font-size: 0.78rem;">
         Open Desktop View &rarr;
       </a>
     </div>
@@ -64,7 +76,7 @@
         </a>
 
         <!-- Switch to Full Desktop Dashboard -->
-        <a href="/dashboard.html" class="btn btn-sm btn-success rounded-pill px-2 py-1 small" title="Switch to Full Desktop Dashboard">
+        <a href="/dashboard.html" onclick="sessionStorage.removeItem('prefer_mobile_view')" class="btn btn-sm btn-success rounded-pill px-2 py-1 small" title="Switch to Full Desktop Dashboard">
           <i class="bi bi-display me-1"></i><span class="small fw-bold">Desktop</span>
         </a>
 
@@ -1102,6 +1114,7 @@
 
           <!-- 1. PASSWORD LOGIN SECTION (DEFAULT) -->
           <div id="authModePassword">
+            <div id="modalPassAlert" class="alert alert-danger py-2 px-3 small rounded-3 mb-3 d-none"></div>
             <div class="mb-3">
               <label class="form-label small fw-bold">Mobile Number or Email</label>
               <div class="input-group">
@@ -1134,13 +1147,14 @@
 
             <div class="text-center pt-2 border-top">
               <span class="small text-muted">Don't have an account?</span>
-              <a href="register.html" class="small text-success fw-bold text-decoration-none ms-1">Register New Farm &rarr;</a>
+              <a href="#" onclick="switchAuthMode('register'); return false;" class="small text-success fw-bold text-decoration-none ms-1">Register New Farm &rarr;</a>
             </div>
           </div>
 
           <!-- 2. MOBILE OTP SECTION -->
           <div id="authModeOtp" class="d-none">
             <div id="authStepPhone">
+              <div id="modalOtpPhoneAlert" class="alert alert-danger py-2 px-3 small rounded-3 mb-2 d-none"></div>
               <div class="mb-3">
                 <label class="form-label small fw-bold" data-i18n="enterMobile">Enter 10-Digit Mobile Number</label>
                 <div class="input-group">
@@ -1162,6 +1176,7 @@
             </div>
 
             <div id="authStepOtp" class="d-none">
+              <div id="modalOtpVerifyAlert" class="alert alert-danger py-2 px-3 small rounded-3 mb-2 d-none"></div>
               <div class="text-center mb-3">
                 <div class="p-2 rounded-circle bg-success-subtle text-success mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
                   <i class="bi bi-chat-left-dots"></i>
@@ -1194,6 +1209,8 @@
 
           <!-- 3. REGISTRATION SECTION -->
           <div id="authModeRegister" class="d-none">
+            <div id="modalRegAlert" class="alert alert-danger py-2 px-3 small rounded-3 mb-2 d-none"></div>
+            <div id="modalRegSuccess" class="alert alert-success py-2 px-3 small rounded-3 mb-2 d-none"></div>
             <div class="mb-2">
               <label class="form-label small fw-bold" data-i18n="yourName">Full Name <span class="text-danger">*</span></label>
               <input type="text" class="form-control form-control-sm" id="regFullName" placeholder="e.g. Ramesh Patel" required>
@@ -1205,7 +1222,7 @@
             <div class="mb-2">
               <label class="form-label small fw-bold">Mobile Number <span class="text-danger">*</span></label>
               <div class="input-group input-group-sm">
-                <select class="form-select" id="regCountryCode" style="max-width: 90px;">
+                <select class="form-select" id="regCountryCode" style="max-width: 95px;">
                   <option value="+91" selected>🇮🇳 +91</option>
                   <option value="+1">🇺🇸 +1</option>
                   <option value="+44">🇬🇧 +44</option>
@@ -1221,6 +1238,11 @@
             <button type="button" class="btn btn-success w-100 py-2 rounded-pill fw-bold" id="btnModalRegister" onclick="handleModalRegister()">
               <i class="bi bi-building-add me-1"></i> Create Farm Account
             </button>
+
+            <div class="text-center pt-2 mt-2 border-top">
+              <span class="small text-muted">Already registered?</span>
+              <a href="#" onclick="switchAuthMode('password'); return false;" class="small text-success fw-bold text-decoration-none ms-1">Sign In &rarr;</a>
+            </div>
           </div>
 
           <!-- 4. PROFILE / LOGGED IN SECTION -->
@@ -1474,6 +1496,15 @@
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/voice-input.js"></script>
   <script>
+    // Automatic desktop screen detection: If user is on a desktop/laptop monitor (>=992px),
+    // redirect to the Full Desktop Dashboard unless they explicitly opted for mobile view with ?view=mobile
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (window.innerWidth >= 992 && urlParams.get('view') !== 'mobile' && !sessionStorage.getItem('prefer_mobile_view')) {
+        window.location.replace('/dashboard.html');
+      }
+    } catch(e) {}
+
     let currentMobileImage = '';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -2457,13 +2488,34 @@
       }
     }
 
+    if (typeof window.showToast !== 'function') {
+      window.showToast = function(msg, type = 'info') {
+        console.log(`[Toast ${type}]: ${msg}`);
+      };
+    }
+
+    function showModalAlert(elementId, msg, type = 'danger') {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.className = `alert alert-${type} py-2 px-3 small rounded-3 mb-2`;
+        el.textContent = msg;
+        el.classList.remove('d-none');
+      }
+    }
+
+    function clearModalAlert(elementId) {
+      const el = document.getElementById(elementId);
+      if (el) el.classList.add('d-none');
+    }
+
     async function handleSendOtp() {
+      clearModalAlert('modalOtpPhoneAlert');
       const code = document.getElementById('countryCodeSelect').value;
       const num = document.getElementById('mobileNumberInput').value.trim();
       const btn = document.getElementById('btnModalSendOtp');
 
-      if (!num || num.length < 10) {
-        showToast('Please enter a valid 10-digit mobile number', 'warning');
+      if (!num || num.replace(/\D/g, '').length < 10) {
+        showModalAlert('modalOtpPhoneAlert', 'Please enter a valid 10-digit mobile number.', 'warning');
         return;
       }
 
@@ -2472,49 +2524,59 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending OTP...';
       }
 
-      const res = await MobileAuth.sendOtpForLogin(num, code);
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-send-check me-1"></i> <span>Send OTP</span>';
-      }
-
-      if (res.success) {
-        document.getElementById('displayPendingMobile').textContent = `${code} ${num}`;
-        document.getElementById('authStepPhone').classList.add('d-none');
-        document.getElementById('authStepOtp').classList.remove('d-none');
-        if (res.otp) {
-          document.getElementById('otpInput').value = res.otp;
-          showToast(`OTP Code Sent! (Verification Code: ${res.otp})`, 'success');
+      try {
+        const res = await MobileAuth.sendOtpForLogin(num, code);
+        if (res.success) {
+          document.getElementById('displayPendingMobile').textContent = `${code} ${num}`;
+          document.getElementById('authStepPhone').classList.add('d-none');
+          document.getElementById('authStepOtp').classList.remove('d-none');
+          if (res.otp) {
+            document.getElementById('otpInput').value = res.otp;
+            showModalAlert('modalOtpVerifyAlert', `Verification Code: ${res.otp}`, 'success');
+            showToast(`OTP Code Sent! (Verification Code: ${res.otp})`, 'success');
+          } else {
+            showToast('OTP code dispatched via SMS!', 'success');
+          }
         } else {
-          showToast('OTP code dispatched via SMS!', 'success');
+          showModalAlert('modalOtpPhoneAlert', res.message || 'Failed to dispatch OTP SMS.', 'danger');
         }
-      } else {
-        showToast(res.message || 'Failed to dispatch OTP SMS', 'danger');
+      } catch (err) {
+        showModalAlert('modalOtpPhoneAlert', 'Network error or server unavailable. Please try again.', 'danger');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-send-check me-1"></i> <span>Send OTP</span>';
+        }
       }
     }
 
     async function handleResendOtp() {
       const code = document.getElementById('countryCodeSelect').value;
       const num = document.getElementById('mobileNumberInput').value.trim();
-      const res = await MobileAuth.sendOtpForLogin(num, code);
-      if (res.success) {
-        showToast('New OTP dispatched via SMS!', 'info');
-      } else {
-        showToast(res.message || 'Could not resend OTP', 'warning');
-      }
+      try {
+        const res = await MobileAuth.sendOtpForLogin(num, code);
+        if (res.success) {
+          showToast('New OTP dispatched via SMS!', 'info');
+        } else {
+          showToast(res.message || 'Could not resend OTP', 'warning');
+        }
+      } catch(e) {}
     }
 
     function resetAuthStep() {
+      clearModalAlert('modalOtpPhoneAlert');
+      clearModalAlert('modalOtpVerifyAlert');
       document.getElementById('authStepOtp').classList.add('d-none');
       document.getElementById('authStepPhone').classList.remove('d-none');
     }
 
     async function handleVerifyOtp() {
+      clearModalAlert('modalOtpVerifyAlert');
       const otp = document.getElementById('otpInput').value.trim();
       const btn = document.getElementById('btnModalVerifyOtp');
 
       if (!otp || otp.length < 6) {
-        showToast('Please enter the 6-digit OTP code', 'warning');
+        showModalAlert('modalOtpVerifyAlert', 'Please enter the 6-digit OTP code.', 'warning');
         return;
       }
 
@@ -2528,35 +2590,44 @@
       const clean10 = (num || '').replace(/\D/g, '').slice(-10);
       const fullPhone = clean10 ? `${code} ${clean10}` : null;
 
-      const res = await MobileAuth.verifyOtpAndLogin(otp, fullPhone);
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '<span>Verify & Sign In</span>';
-      }
-
-      if (res.success) {
-        showToast(`Welcome! Signed in as ${res.user.phone || res.user.name}`, 'success');
-        updateAuthModalView();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
-        if (modal) modal.hide();
-        setTimeout(() => location.reload(), 600);
-      } else {
-        showToast(res.message || 'Incorrect OTP code', 'danger');
+      try {
+        const res = await MobileAuth.verifyOtpAndLogin(otp, fullPhone);
+        if (res.success) {
+          showModalAlert('modalOtpVerifyAlert', 'Signed in successfully! Loading dashboard...', 'success');
+          showToast(`Welcome! Signed in as ${res.user.phone || res.user.name}`, 'success');
+          updateAuthModalView();
+          setTimeout(() => {
+            const modalEl = document.getElementById('mobileAuthModal');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            if (modal) modal.hide();
+            location.reload();
+          }, 600);
+        } else {
+          showModalAlert('modalOtpVerifyAlert', res.message || 'Incorrect OTP code. Please check and retry.', 'danger');
+        }
+      } catch (err) {
+        showModalAlert('modalOtpVerifyAlert', 'Verification error. Please retry.', 'danger');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Verify & Sign In</span>';
+        }
       }
     }
 
     async function handleModalPasswordLogin() {
+      clearModalAlert('modalPassAlert');
       const code = document.getElementById('modalPassCountryCode')?.value || '+91';
       const rawId = document.getElementById('modalPassIdentifier')?.value.trim();
       const password = document.getElementById('modalPassPassword')?.value;
       const btn = document.getElementById('btnModalPassLogin');
 
       if (!rawId) {
-        showToast('Please enter your mobile number or email', 'warning');
+        showModalAlert('modalPassAlert', 'Please enter your mobile number or email.', 'warning');
         return;
       }
       if (!password) {
-        showToast('Please enter your password', 'warning');
+        showModalAlert('modalPassAlert', 'Please enter your password.', 'warning');
         return;
       }
 
@@ -2568,23 +2639,34 @@
       const cleanNum = rawId.replace(/\D/g, '');
       const fullIdentifier = (cleanNum.length === 10) ? `${code}${cleanNum}` : rawId;
 
-      const res = await MobileAuth.loginWithPassword(fullIdentifier, password);
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard';
-      }
-
-      if (res.success) {
-        showToast(`Welcome back, ${res.user.name || res.user.phone}!`, 'success');
-        updateAuthModalView();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
-        if (modal) modal.hide();
-      } else {
-        showToast(res.message || 'Invalid mobile number or password', 'danger');
+      try {
+        const res = await MobileAuth.loginWithPassword(fullIdentifier, password);
+        if (res.success) {
+          showModalAlert('modalPassAlert', `Welcome back, ${res.user.name || res.user.phone}!`, 'success');
+          showToast(`Welcome back, ${res.user.name || res.user.phone}!`, 'success');
+          updateAuthModalView();
+          setTimeout(() => {
+            const modalEl = document.getElementById('mobileAuthModal');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            if (modal) modal.hide();
+            location.reload();
+          }, 500);
+        } else {
+          showModalAlert('modalPassAlert', res.message || 'Invalid mobile number or password.', 'danger');
+        }
+      } catch (err) {
+        showModalAlert('modalPassAlert', 'Could not connect to server. Please try again.', 'danger');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard';
+        }
       }
     }
 
     async function handleModalRegister() {
+      clearModalAlert('modalRegAlert');
+      clearModalAlert('modalRegSuccess');
       const name = document.getElementById('regFullName')?.value.trim();
       const farmName = document.getElementById('regFarmName')?.value.trim();
       const code = document.getElementById('regCountryCode')?.value || '+91';
@@ -2593,15 +2675,15 @@
       const btn = document.getElementById('btnModalRegister');
 
       if (!name) {
-        showToast('Please enter your full name', 'warning');
+        showModalAlert('modalRegAlert', 'Please enter your full name.', 'warning');
         return;
       }
-      if (!phone || phone.length < 10) {
-        showToast('Please enter a valid 10-digit mobile number', 'warning');
+      if (!phone || phone.replace(/\D/g, '').length < 10) {
+        showModalAlert('modalRegAlert', 'Please enter a valid 10-digit mobile number.', 'warning');
         return;
       }
       if (!password || password.length < 6) {
-        showToast('Password must be at least 6 characters', 'warning');
+        showModalAlert('modalRegAlert', 'Password must be at least 6 characters long.', 'warning');
         return;
       }
 
@@ -2613,27 +2695,36 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Registering...';
       }
 
-      const res = await MobileAuth.registerWithPassword({
-        fullName: name,
-        farmName: farmName || 'My Poultry Farm',
-        phone: fullPhone,
-        password: password,
-        location: 'Agro Sector'
-      });
+      try {
+        const res = await MobileAuth.registerWithPassword({
+          fullName: name,
+          farmName: farmName || 'My Poultry Farm',
+          phone: fullPhone,
+          password: password,
+          location: 'Agro Sector'
+        });
 
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-building-add me-1"></i> Create Farm Account';
-      }
-
-      if (res.success) {
-        showToast('Account created successfully! Logged in.', 'success');
-        updateAuthModalView();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('mobileAuthModal'));
-        if (modal) modal.hide();
-        setTimeout(() => location.reload(), 600);
-      } else {
-        showToast(res.message || 'Registration failed', 'danger');
+        if (res.success) {
+          showModalAlert('modalRegSuccess', 'Account created successfully! Logging you in...', 'success');
+          showToast('Account created successfully! Logged in.', 'success');
+          updateAuthModalView();
+          setTimeout(() => {
+            const modalEl = document.getElementById('mobileAuthModal');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            if (modal) modal.hide();
+            location.reload();
+          }, 600);
+        } else {
+          showModalAlert('modalRegAlert', res.message || 'Registration failed. If already registered, please sign in.', 'danger');
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
+        showModalAlert('modalRegAlert', 'Network error or server unavailable. Please try again.', 'danger');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-building-add me-1"></i> Create Farm Account';
+        }
       }
     }
 

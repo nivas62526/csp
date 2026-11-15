@@ -5,9 +5,9 @@
  * Supports Full CRUD for all 18 modules with real database persistence
  */
 
-const API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL)
+var API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL)
   ? window.API_BASE_URL
-  : (window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:5000');
+  : (typeof window !== 'undefined' && window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:5000');
 
 function getAuthHeaders() {
   const token = localStorage.getItem('smart_poultry_jwt_token');

@@ -5,13 +5,13 @@
  * NO OTP Required for Registration or Login
  */
 
-const AUTH_STORAGE_KEY = 'smart_poultry_auth_user';
-const JWT_TOKEN_KEY = 'smart_poultry_jwt_token';
-const API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL)
+var AUTH_STORAGE_KEY = (typeof window !== 'undefined' && window.AUTH_STORAGE_KEY) || 'smart_poultry_auth_user';
+var JWT_TOKEN_KEY = (typeof window !== 'undefined' && window.JWT_TOKEN_KEY) || 'smart_poultry_jwt_token';
+var API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL)
   ? window.API_BASE_URL
-  : (window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:5000');
+  : (typeof window !== 'undefined' && window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:5000');
 
-const MobileAuth = {
+var MobileAuth = {
   currentOtp: null,
   countdownInterval: null,
   pendingMobile: null,
